@@ -1,6 +1,3 @@
-# Jetbrains IDE's
-.idea/
-
 # Python
 venv
 __pycache__/
