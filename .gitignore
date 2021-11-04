@@ -1,11 +1,10 @@
-# Jetbrain's IDE
-.idea
-
 # Python
 venv
 __pycache__/
 *.py[cod]
 *$py.class
+!/jupyter-notebooks/.ipynb_checkpoints/
 
 # Data
 data-sets
+pickled-data
