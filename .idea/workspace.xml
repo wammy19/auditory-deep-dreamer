@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" afterDir="false" />
+    <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/journal/week1.md" beforeDir="false" afterPath="$PROJECT_DIR$/journal/week1.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,8 +42,17 @@
       <option name="presentableId" value="Default" />
       <updated>1635243397543</updated>
       <workItem from="1635243403028" duration="247000" />
-      <workItem from="1635246695787" duration="3321000" />
+      <workItem from="1635246695787" duration="3735000" />
+      <workItem from="1635678033908" duration="1354000" />
     </task>
+    <task id="LOCAL-00001" summary="Updated week_1 journal.">
+      <created>1635329822266</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1635329822266</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -65,5 +72,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Updated week_1 journal." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated week_1 journal." />
   </component>
 </project>
