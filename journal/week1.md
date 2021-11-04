@@ -31,6 +31,7 @@ Various links to datasets, research papers, and educational videos/blog tutorial
 2. [Uncle Bob’ SOLID Principles for Machine Learning Engineers: Course Overview](https://www.youtube.com/watch?v=ul8LLiFY0Dw&list=PL-wATfeyAMNpZ6-ESiXK9BnZmGLjqECt9)
 3. [How to Write AI (Audio) Research Papers](https://www.youtube.com/watch?v=ZV6SoKurivI&list=PL-wATfeyAMNrTDAV2A-pLxVpwXadbd-4O)
 4. [Signals and Systems (MIT lecture videos)](https://ocw.mit.edu/resources/res-6-007-signals-and-systems-spring-2011/index.htm)
+5. [Unconventional Neural Networks](https://www.youtube.com/playlist?list=PLQVvvaa0QuDdfN3lrO0NDYxa1JwCYes-E)
 
     i. More updated version [Discrete-Time Signal Processing](https://www.edx.org/course/discrete-time-signal-processing-4) 
 
