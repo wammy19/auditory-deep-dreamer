@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
-      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jupyter-notebooks/.ipynb_checkpoints/cat_and_dog_classification-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/cat_and_dog_classification.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/cat_and_dog_classification.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +57,7 @@
       <workItem from="1635243403028" duration="247000" />
       <workItem from="1635246695787" duration="3735000" />
       <workItem from="1635678033908" duration="1354000" />
-      <workItem from="1636059005557" duration="9195000" />
+      <workItem from="1636059005557" duration="9430000" />
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>
