@@ -6,7 +6,7 @@ Yet to come...
 
 ### Running jupyter-notebooks with docker.
 
-The quickest way to get up Tensorflow running on GPU is with a docker container as
+The quickest way to get Tensorflow running on GPU is with a docker container as
 suggested [here](https://www.tensorflow.org/install/docker). The following are links to the required software and
 instructions on how to install them.
 
