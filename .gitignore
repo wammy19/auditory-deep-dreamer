@@ -4,6 +4,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 jupyter-notebooks/.ipynb_checkpoints/
+tensorboard-logs
 
 # Data
 data-sets
