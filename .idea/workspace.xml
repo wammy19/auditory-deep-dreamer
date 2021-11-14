@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/journal/week1.md" beforeDir="false" afterPath="$PROJECT_DIR$/journal/research__material.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jupyter-notebooks/cat_and_dog_classification.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/cat_and_dog_classification.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -44,7 +46,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ai" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
@@ -65,6 +67,13 @@
       <workItem from="1636112526949" duration="52000" />
       <workItem from="1636112590918" duration="270000" />
       <workItem from="1636119075446" duration="3418000" />
+      <workItem from="1636374748387" duration="71000" />
+      <workItem from="1636374830765" duration="2417000" />
+      <workItem from="1636377260295" duration="10254000" />
+      <workItem from="1636459121359" duration="2126000" />
+      <workItem from="1636468442273" duration="2917000" />
+      <workItem from="1636562246159" duration="31000" />
+      <workItem from="1636911989065" duration="729000" />
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>

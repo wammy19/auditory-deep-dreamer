@@ -7,8 +7,9 @@
       <excludeFolder url="file://$MODULE_DIR$/pickled-data" />
       <excludeFolder url="file://$MODULE_DIR$/jupyter-notebooks/.ipynb_checkpoints" />
       <excludeFolder url="file://$MODULE_DIR$/tensorboard-logs" />
+      <excludeFolder url="file://$MODULE_DIR$/models" />
     </content>
-    <orderEntry type="jdk" jdkName="Remote Python 3.8.10 Docker Compose (jupyter at [/Users/andreaspiteri/uni/year-3/creative-project/auditory-deepdream/docker-compose.yml])" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.8 (auditory-deepdream)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

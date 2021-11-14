@@ -8,20 +8,21 @@ services:
       - ./data-sets:/data-sets
       - ./pickled-data:/pickled-data
       - ./tensorboard-logs:/tensorboard-logs
+      - ./models:/models
     command: jupyter notebook /notebook --port=8888 --ip=0.0.0.0 --allow-root
     ports:
       - "8888:8888"
       - "6006:6006"
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: 4
-#          memory: 4gb
-#        reservations:
-#          devices:
-#            - driver: nvidia
-#              count: 1
-#              capabilities: [ compute, utility ]
+    deploy:
+      resources:
+        limits:
+          cpus: 4
+          memory: 4gb
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ compute, utility ]
 
   tensorboard:
     image: lspvic/tensorboard-notebook
