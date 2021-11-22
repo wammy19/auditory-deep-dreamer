@@ -1,4 +1,4 @@
-# Week 1
+# Research Material
 
 Various links to datasets, research papers, and educational videos/blog tutorials.
 
@@ -22,8 +22,8 @@ Various links to datasets, research papers, and educational videos/blog tutorial
 6. [Audio classification using braided convolutional neural networks (more modern approach proposed)](https://librarysearch.gold.ac.uk/primo-explore/fulldisplay?docid=TN_cdi_crossref_primary_10_1049_iet_spr_2019_0381&context=PC&vid=44GOL_VU1&lang=en_US&search_scope=default_scope&adaptor=primo_central_multiple_fe&tab=default_tab&query=any,contains,Audio%20Classification&facet=searchcreationdate,include,2020%7C,%7C2022&mode=Basic&offset=0)
 7. [Data augmentation approaches for improving animal audio classification (more modern, and contains cats)](https://librarysearch.gold.ac.uk/primo-explore/fulldisplay?docid=TN_cdi_crossref_primary_10_1016_j_ecoinf_2020_101084&context=PC&vid=44GOL_VU1&lang=en_US&search_scope=default_scope&adaptor=primo_central_multiple_fe&tab=default_tab&query=any,contains,Audio%20Classification&facet=searchcreationdate,include,2020%7C,%7C2022&mode=Basic&offset=0)
 8. [Real-Time Guitar Amplifier Emulation with Deep Learning (mainly interested in the real time aspect)](https://www.mdpi.com/2076-3417/10/3/766/htm)
-    
-    i. Related blog: [Understanding LSTM Networks](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+
+   i. Related blog: [Understanding LSTM Networks](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)
 
 ## Videos
 
@@ -34,9 +34,23 @@ Various links to datasets, research papers, and educational videos/blog tutorial
 5. [Understanding the training and validation loss curves](https://www.youtube.com/watch?v=p3CcfIjycBA)
 7. [Unconventional Neural Networks](https://www.youtube.com/playlist?list=PLQVvvaa0QuDdfN3lrO0NDYxa1JwCYes-E)
 
-    i. More updated version [Discrete-Time Signal Processing](https://www.edx.org/course/discrete-time-signal-processing-4) 
+   i. More updated
+   version [Discrete-Time Signal Processing](https://www.edx.org/course/discrete-time-signal-processing-4)
 
 ## Blogs
 
 1. [Audio Deep Learning Made Simple: Sound Classification, Step-by-Step](https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5)
 2. [Audio Deep Learning Made Simple (Part 2): Why Mel Spectrograms perform better](https://towardsdatascience.com/audio-deep-learning-made-simple-part-2-why-mel-spectrograms-perform-better-aad889a93505)
+3. [Review of Popular Deep Learning Architectures](https://blog.paperspace.com/popular-deep-learning-architectures-resnet-inceptionv3-squeezenet/#:~:text=Inception%20v3%20was%20trained%20on,rates%20compared%20to%20its%20contemporaries.)
+
+## Git repos
+
+1. [Tensorflow Lucid](https://github.com/tensorflow/lucid)
+
+## Documentation
+
+1. [Tensorflow DeepDream tutorial](https://www.tensorflow.org/tutorials/generative/deepdream)
+
+## Jupyter notebooks
+
+1. [Recovery Audio from PNG Spectrogram](https://github.com/sikora507/elgen/blob/master/src/audio%20analysis.ipynb)
