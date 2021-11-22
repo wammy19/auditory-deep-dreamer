@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +70,7 @@
       <workItem from="1636562246159" duration="31000" />
       <workItem from="1636911989065" duration="729000" />
       <workItem from="1636971284372" duration="44000" />
-      <workItem from="1637578488450" duration="2523000" />
+      <workItem from="1637578488450" duration="3056000" />
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>

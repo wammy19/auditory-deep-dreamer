@@ -3,3 +3,5 @@
 FROM tensorflow/tensorflow:latest-gpu-jupyter
 
 RUN pip install librosa torchaudio
+RUN apt-get update
+RUN apt-get install -y sox
