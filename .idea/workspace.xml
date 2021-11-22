@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
-      <change beforePath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/journal/research__material.md" beforeDir="false" afterPath="$PROJECT_DIR$/journal/research__material.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/deep_dream_tensorflow_tutorial.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/deep_dream_tensorflow_tutorial.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +82,7 @@
       <workItem from="1637614656269" duration="3444000" />
       <workItem from="1637618112060" duration="458000" />
       <workItem from="1637618620893" duration="5000" />
-      <workItem from="1637618665405" duration="1253000" />
+      <workItem from="1637618665405" duration="1531000" />
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>
