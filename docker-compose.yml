@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   jupyter:
-    image: tensorflow/tensorflow:latest-gpu-jupyter
+    image: aspit002/audio-deepdream-dev-env
     volumes:
       - ./jupyter-notebooks:/notebook
       - ./data-sets:/data-sets
