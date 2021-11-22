@@ -17,9 +17,13 @@ Requirements:
 - [Nvidia Drivers](https://phoenixnap.com/kb/install-nvidia-drivers-ubuntu)
 - [Cuda Tool Kit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html)
 
+Build docker image for developer environment:
+
+`docker build . -t aspit002/audio-deepdream-dev-env`
+
 To start up the Jupyter server run:
 
-`sudo docker-compose up -d && sudo docker-compose logs -f`
+`docker-compose up -d && sudo docker-compose logs -f`
 
 Then follow the link with token, example link:
 
@@ -27,6 +31,6 @@ Then follow the link with token, example link:
 
 To stop the Jupyter server run:
 
-`sudo docker-compose kill`
+`docker-compose kill`
 
 _Note: Tensorflow's Docker image uses Python3.8_
