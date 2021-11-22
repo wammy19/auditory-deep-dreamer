@@ -6,6 +6,7 @@ services:
     volumes:
       - ./jupyter-notebooks:/notebook
       - ./data-sets:/data-sets
+      - ./audio-files:/audio-files
       - ./pickled-data:/pickled-data
       - ./tensorboard-logs:/tensorboard-logs
       - ./models:/models
