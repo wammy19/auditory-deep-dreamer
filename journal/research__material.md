@@ -42,10 +42,12 @@ Various links to datasets, research papers, and educational videos/blog tutorial
 1. [Audio Deep Learning Made Simple: Sound Classification, Step-by-Step](https://towardsdatascience.com/audio-deep-learning-made-simple-sound-classification-step-by-step-cebc936bbe5)
 2. [Audio Deep Learning Made Simple (Part 2): Why Mel Spectrograms perform better](https://towardsdatascience.com/audio-deep-learning-made-simple-part-2-why-mel-spectrograms-perform-better-aad889a93505)
 3. [Review of Popular Deep Learning Architectures](https://blog.paperspace.com/popular-deep-learning-architectures-resnet-inceptionv3-squeezenet/#:~:text=Inception%20v3%20was%20trained%20on,rates%20compared%20to%20its%20contemporaries.)
+4. [Getting to Know the Mel Spectrogram](https://towardsdatascience.com/getting-to-know-the-mel-spectrogram-31bca3e2d9d0)
 
 ## Git repos
 
 1. [Tensorflow Lucid](https://github.com/tensorflow/lucid)
+2. [Kapre - tensorflow.Model layer that computes mel spectrogram in GPU](https://github.com/keunwoochoi/kapre)
 
 ## Documentation
 

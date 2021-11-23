@@ -14,6 +14,7 @@ services:
 
       # Mounting my library folder to a PYTHONPATH in the docker container.
       - ./lib/image_deep_dream:/usr/local/lib/python3.8/dist-packages/image_deep_dream
+      - ./lib/utils:/usr/local/lib/python3.8/dist-packages/utils
     command: jupyter notebook /notebook --port=8888 --ip=0.0.0.0 --allow-root
     ports:
       - "8888:8888"

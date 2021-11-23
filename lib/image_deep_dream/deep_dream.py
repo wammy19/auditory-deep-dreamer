@@ -103,7 +103,7 @@ class DeepDream(tf.Module):
         :param octave_scale:
         :return:
 
-        Will create a deep dream image returned as a
+        Will create a deep dream image returned as a tf.Tensor.
         """
 
         _base_shape: Tensor = tf.shape(_img)
