@@ -2,28 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
-      <change afterPath="$PROJECT_DIR$/lib/image_deep_dream/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/image_deep_dream/deep_dream.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libcuda.so" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libcuda.so.1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libcuda.so.460.91.03" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libcuda.so.495.29.05" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-allocator.so.1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-allocator.so.495.29.05" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-cfg.so.1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-cfg.so.495.29.05" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-compiler.so.495.29.05" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-ml.so.1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-ml.so.495.29.05" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-opencl.so.1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-opencl.so.495.29.05" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-ptxjitcompiler.so.1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-ptxjitcompiler.so.460.91.03" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/x86_64-linux-gnu/libnvidia-ptxjitcompiler.so.495.29.05" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/utils/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/deep_dream_tensorflow_tutorial.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/deep_dream_tensorflow_tutorial.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +88,7 @@
       <workItem from="1637661965752" duration="656000" />
       <workItem from="1637662634485" duration="93000" />
       <workItem from="1637662734644" duration="353000" />
-      <workItem from="1637663100083" duration="705000" />
+      <workItem from="1637663100083" duration="1146000" />
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>
