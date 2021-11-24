@@ -12,7 +12,7 @@ services:
       - ./tensorboard-logs:/tensorboard-logs
       - ./models:/models
 
-      # Mounting my library folder to a PYTHONPATH in the docker container.
+      # Mounting my library directory to the PYTHONPATH in the docker container.
       - ./lib/image_deep_dream:/usr/local/lib/python3.8/dist-packages/image_deep_dream
       - ./lib/utils:/usr/local/lib/python3.8/dist-packages/utils
     command: jupyter notebook /notebook --port=8888 --ip=0.0.0.0 --allow-root
@@ -24,11 +24,11 @@ services:
         limits:
           cpus: 4
           memory: 4gb
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [ compute, utility ]
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: 1s
+#              capabilities: [ compute, utility ]
 
   tensorboard:
     image: lspvic/tensorboard-notebook
