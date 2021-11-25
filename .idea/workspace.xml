@@ -2,10 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
+      <change beforePath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/batch-conv-mp3-to-wav.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/mandolin_spectrogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/mandolin_spec.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/mazzy.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/mazzy.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/1_cat_and_dog_classification.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/1_cat_and_dog_classification.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/2_audio_mel_encoding_and_reversal_example.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/2_audio_mel_encoding_and_reversal_example.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/4_deep_dream_spectrogram.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/4_deep_dream_spectrogram.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/image_deep_dream/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/deep_dream/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/image_deep_dream/deep_dream.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/deep_dream/deep_dream.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/batch-conv-mp3-to-wav.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/batch-conv-mp3-to-wav.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,7 +107,9 @@
       <workItem from="1637685896208" duration="65000" />
       <workItem from="1637685972398" duration="1007000" />
       <workItem from="1637686992811" duration="4120000" />
-      <workItem from="1637745428415" duration="1787000" />
+      <workItem from="1637745428415" duration="2630000" />
+      <workItem from="1637756091161" duration="270000" />
+      <workItem from="1637756393372" duration="6509000" />
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>

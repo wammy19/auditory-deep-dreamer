@@ -4,12 +4,12 @@ from tensorflow.keras import Model
 from typing import List, Tuple
 
 
-class DeepDream(tf.Module):
+class DeepDreamer(tf.Module):
     """
     This code is refactored code from the Tensorflow documentation.
 
-    The purpose of following through this Tensorflow guide is to get an understanding on how to access models layers
-    and extract their output.
+    The purpose of following through this Tensorflow guide is to get an understanding on how to access a models layers
+    for extracting their output.
 
     Source: https://www.tensorflow.org/tutorials/generative/deepdream
     """
@@ -87,7 +87,7 @@ class DeepDream(tf.Module):
         return gradients
 
 
-    def run_deep_dream(
+    def dreamify(
             self,
             _img: Tensor,
             steps_per_octave: int = 10,
@@ -111,6 +111,7 @@ class DeepDream(tf.Module):
         _img = tf.keras.applications.inception_v3.preprocess_input(_img)
 
         initial_shape = _img.shape[:-1]
+        print(initial_shape)
         _img = tf.image.resize(_img, initial_shape)
 
         for octave in octaves:
