@@ -9,9 +9,10 @@ from typing import Union
 from .constants import SAMPLE_RATE
 
 
-def display_mel_spectrogram(mel_spectrogram: np.ndarray, sample_rate: int = SAMPLE_RATE) -> None:
+def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool, sample_rate: int = SAMPLE_RATE) -> None:
     """
-    :param mel_spectrogram: np.ndarray that is returned from librosa.feature.melspectrogram
+    :param mel_spec: np.ndarray that is returned from librosa.feature.melspectrogram
+    :param is_log_mel: Set to True if you've passed the mel spectrogram through librosa.power_to_db()
     :param sample_rate: sample rate.
     :return: None
 
@@ -21,14 +22,15 @@ def display_mel_spectrogram(mel_spectrogram: np.ndarray, sample_rate: int = SAMP
     plt.clf()  # Clear plot.
 
     fig, ax = plt.subplots()
-    S_dB: np.ndarray = librosa.power_to_db(mel_spectrogram, ref=np.max)
+
+    if not is_log_mel:  # Convert mel spec to log scale.
+        mel_spec: np.ndarray = librosa.power_to_db(mel_spec, ref=np.max)
 
     image = librosa.display.specshow(
-        S_dB,
+        mel_spec,
         x_axis='time',
         y_axis='mel',
         sr=sample_rate,
-        fmax=8000,
         ax=ax
     )
 

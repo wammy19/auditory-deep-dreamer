@@ -23,12 +23,12 @@ services:
       resources:
         limits:
           cpus: 4
-          memory: 4gb
-#        reservations:
-#          devices:
-#            - driver: nvidia
-#              count: 1s
-#              capabilities: [ compute, utility ]
+          memory: 8gb
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ compute, utility ]
 
   tensorboard:
     image: lspvic/tensorboard-notebook
