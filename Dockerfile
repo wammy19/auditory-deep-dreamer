@@ -3,7 +3,7 @@
 FROM tensorflow/tensorflow:latest-gpu-jupyter
 
 # Python
-RUN pip install librosa pandas opencv-python scikit-image pydub torchaudio
+RUN pip install librosa pandas opencv-python scikit-image pydub torchaudio kapre
 
 RUN apt-get update
 RUN apt-get install -y sox libsox-fmt-mp3 ffmpeg libsm6 libxext6
