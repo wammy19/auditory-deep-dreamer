@@ -32,7 +32,7 @@ def convert_wav_as_log_mel(
         num_mels: int = consts.NUM_MELS
 ) -> np.ndarray:
     """
-    :param sample: numpy array that is returned from librosa.load()
+    :param sample: numpy array that is returned from librosa.load()[0]
     :param sample_rate:
     :param num_FFT:
     :param mel_hop_len:
