@@ -1,18 +1,19 @@
 # **Auditory DeepDream**
 
-### Downloading datasets.
+### Downloading datasets
 
 Yet to come...
 
-### Running jupyter-notebooks with docker.
+### Running with Docker
+
+_Note about GPU usage:_
 
 The quickest way to get Tensorflow running on GPU is with a docker container as
 suggested [here](https://www.tensorflow.org/install/docker). The following are links to the required software and
 instructions on how to install them.
 
-Requirements:
+Requirements for GPU:
 
-- [Docker](https://docs.docker.com/engine/install/ubuntu/)
 - [Nvidia Container Tools](https://github.com/NVIDIA/nvidia-docker)
 - [Nvidia Drivers](https://phoenixnap.com/kb/install-nvidia-drivers-ubuntu)
 - [Cuda Tool Kit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html)
@@ -20,6 +21,13 @@ Requirements:
 Build docker image for developer environment:
 
 `docker build . -t aspit002/audio-deepdream-dev-env`
+
+Before spinning up the containers, have a look at the docker-compose.yml file. If your machine doesn't have an Nvidia
+GPU, you will need to comment out the devices being passed into the container. Also set the memory for the container
+appropriately. It's currently set to 20gb because I have a lot of memory on machine.
+
+You also won't be able to run any notebooks that require a dataset as they are not available in the repo. In the
+future, I might create downloader scripts so this isn't an issue.
 
 To start up the Jupyter server run:
 
