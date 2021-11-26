@@ -23,7 +23,7 @@ services:
       resources:
         limits:
           cpus: 4
-          memory: 8gb
+          memory: 20gb  # Caution! I'm setting this to a lot of memory because my machine has 32gb.
         reservations:
           devices:
             - driver: nvidia
