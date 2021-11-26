@@ -39,7 +39,7 @@ def convert_wav_as_log_mel(
     :param num_mels:
     :return:
 
-    Converts a loaded wav file into a log mel spectrogram.
+    Converts a loaded wav file into a log mel-spectrogram.
     """
 
     encoded_sample: np.ndarray = melspectrogram(
