@@ -21,6 +21,7 @@ Various links to datasets, research papers, and educational videos/blog tutorial
 5. [CNN Architectures for Large-Scale Audio Classification](https://research.google/pubs/pub45611/)
 6. [Audio classification using braided convolutional neural networks (more modern approach proposed)](https://librarysearch.gold.ac.uk/primo-explore/fulldisplay?docid=TN_cdi_crossref_primary_10_1049_iet_spr_2019_0381&context=PC&vid=44GOL_VU1&lang=en_US&search_scope=default_scope&adaptor=primo_central_multiple_fe&tab=default_tab&query=any,contains,Audio%20Classification&facet=searchcreationdate,include,2020%7C,%7C2022&mode=Basic&offset=0)
 7. [Data augmentation approaches for improving animal audio classification (more modern, and contains cats)](https://librarysearch.gold.ac.uk/primo-explore/fulldisplay?docid=TN_cdi_crossref_primary_10_1016_j_ecoinf_2020_101084&context=PC&vid=44GOL_VU1&lang=en_US&search_scope=default_scope&adaptor=primo_central_multiple_fe&tab=default_tab&query=any,contains,Audio%20Classification&facet=searchcreationdate,include,2020%7C,%7C2022&mode=Basic&offset=0)
+9. [Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders](https://arxiv.org/pdf/1704.01279.pdf)
 8. [Real-Time Guitar Amplifier Emulation with Deep Learning (mainly interested in the real time aspect)](https://www.mdpi.com/2076-3417/10/3/766/htm)
 
    i. Related blog: [Understanding LSTM Networks](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)

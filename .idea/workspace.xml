@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/4_deep_dream_spectrogram.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/4_deep_dream_spectrogram.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/deep_dream/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/deep_dream/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/deep_dream/deep_dream.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/deep_dream/deep_dreamer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +97,8 @@
       <workItem from="1637686992811" duration="4120000" />
       <workItem from="1637875719364" duration="696000" />
       <workItem from="1637915966640" duration="10680000" />
-      <workItem from="1637932016971" duration="2151000" />
+      <workItem from="1637932016971" duration="2753000" />
+      <workItem from="1638185823505" duration="1053000" />
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>
