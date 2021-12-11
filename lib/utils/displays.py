@@ -58,3 +58,11 @@ def display_audio_player(audio_file: np.ndarray, sample_rate: int = SAMPLE_RATE)
     """
 
     core_display(display.Audio(audio_file, rate=sample_rate))
+
+
+def display_wave_form(audio_file: np.ndarray, sample_rate: int = SAMPLE_RATE):
+    """
+    :return:
+    """
+
+    librosa.display.waveshow(audio_file, sr = sample_rate)

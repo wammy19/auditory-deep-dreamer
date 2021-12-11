@@ -10,13 +10,15 @@
       <excludeFolder url="file://$MODULE_DIR$/tensorboard-logs" />
       <excludeFolder url="file://$MODULE_DIR$/models" />
     </content>
-    <orderEntry type="jdk" jdkName="Remote Python 3.8.10 Docker Compose (jupyter at [/home/andrea/dev/uni/auditory-deepdream/docker-compose.yml]) (2)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.9" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyNamespacePackagesService">
     <option name="namespacePackageFolders">
       <list>
         <option value="$MODULE_DIR$/lib/deep_dream" />
+        <option value="$MODULE_DIR$/lib/ai_tools" />
+        <option value="$MODULE_DIR$/lib/utils" />
       </list>
     </option>
   </component>
