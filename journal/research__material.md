@@ -46,6 +46,7 @@ Various links to datasets, research papers, and educational videos/blog tutorial
 4. [Getting to Know the Mel Spectrogram](https://towardsdatascience.com/getting-to-know-the-mel-spectrogram-31bca3e2d9d0)
 5. [A Recipe for Training Neural Networks](https://karpathy.github.io/2019/04/25/recipe/)
 6. [Yes you should understand backprop](https://karpathy.medium.com/yes-you-should-understand-backprop-e2f06eab496b)
+7. [A detailed example of how to use data generators with Keras](https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly)
 
 ## Git repos
 

@@ -65,4 +65,5 @@ def display_wave_form(audio_file: np.ndarray, sample_rate: int = SAMPLE_RATE):
     :return:
     """
 
-    librosa.display.waveshow(audio_file, sr = sample_rate)
+    librosa.display.waveshow(audio_file, sr=sample_rate)
+    plt.show()
