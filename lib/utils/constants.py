@@ -9,4 +9,4 @@ NUM_FFT: int = 2_048
 MEL_TO_AUDIO_N_ITERATIONS: int = 32
 
 # Pre Processing.
-TRIM_DB: int = 25
+TRIM_DB: int = 45
