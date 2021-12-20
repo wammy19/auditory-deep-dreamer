@@ -1,6 +1,7 @@
 import IPython.display as display
 from IPython.core.display import display as core_display
 import librosa.display
+from librosa.util import normalize
 import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
@@ -50,14 +51,16 @@ def display_image(_image: Union[np.array, Tensor]) -> None:
     display.display(PIL.Image.fromarray(np.array(_image)))
 
 
-def display_audio_player(audio_file: np.ndarray, sample_rate: int = SAMPLE_RATE) -> None:
+def display_audio_player(signal: np.ndarray, sample_rate: int = SAMPLE_RATE) -> None:
     """
+    :param: signal - Audio sample loaded from librosa.load()
+    :param: sample_rate - (optional).
     :return:
 
     Displays an audio player.
     """
 
-    core_display(display.Audio(audio_file, rate=sample_rate))
+    core_display(display.Audio(signal, rate=sample_rate, normalize=False))
 
 
 def display_wave_form(audio_file: np.ndarray, sample_rate: int = SAMPLE_RATE):
