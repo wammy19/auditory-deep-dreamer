@@ -2,10 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
-      <change afterPath="$PROJECT_DIR$/lib/ai_tools/data_generator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/organize_nsynth_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/data_generator_test_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/7_librosa_utils_examples.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/7_librosa_utils_examples.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ai_tools/data_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ai_tools/data_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/organize_nsynth_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/organize_nsynth_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +36,9 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="202WvW9XxDV4rTSHxlrB65K7Hku" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -47,7 +55,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Python" />
+    <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.notebooks.jupyter.connections.configuration.JupyterServerConfigurable" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -105,6 +113,16 @@
       <workItem from="1639054627884" duration="5447000" />
       <workItem from="1639063062442" duration="4457000" />
       <workItem from="1639393486996" duration="7938000" />
+      <workItem from="1639477455980" duration="220000" />
+      <workItem from="1639586445157" duration="4008000" />
+      <workItem from="1639600304323" duration="1000000" />
+      <workItem from="1639601344523" duration="323000" />
+      <workItem from="1639647843973" duration="521000" />
+      <workItem from="1640007526047" duration="1471000" />
+      <workItem from="1640009200960" duration="670000" />
+      <workItem from="1640009892334" duration="742000" />
+      <workItem from="1640011774742" duration="193000" />
+      <workItem from="1640012149432" duration="21000" />
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>

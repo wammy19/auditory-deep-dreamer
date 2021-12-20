@@ -1,10 +1,13 @@
+"""
+Script for organizing Google's nSynth data set into a different structure from that is downloaded.
+"""
+
 import os
 import re
 import shutil
 
 patter_for_instrument: re.Pattern = re.compile(r'^.*?(?=_)')
-
-path_to_data_sets: str = '../data-sets/nsynth/validaiton'
+path_to_data_sets: str = '../data-sets/nsynth/validation'
 
 for file in os.listdir(path_to_data_sets):
 
