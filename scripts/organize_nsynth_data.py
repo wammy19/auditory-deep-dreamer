@@ -1,5 +1,5 @@
 """
-Script for organizing Google's nSynth data set into a different structure from that is downloaded.
+Helper script for organizing Google's nSynth dataset into a different file structure from what is downloaded.
 """
 
 import os
@@ -7,7 +7,7 @@ import re
 import shutil
 
 patter_for_instrument: re.Pattern = re.compile(r'^.*?(?=_)')
-path_to_data_sets: str = '../data-sets/nsynth/validation'
+path_to_data_sets: str = '../data-sets/nsynth/train'
 
 for file in os.listdir(path_to_data_sets):
 
