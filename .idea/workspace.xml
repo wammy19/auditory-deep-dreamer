@@ -2,13 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
-      <change afterPath="$PROJECT_DIR$/scripts/processing_nsynth_dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jupyter-notebooks/8_data_generator_test.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/ai_tools/examples.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media/audio/Adults_In_April_Master Bus-St.mp3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/utils/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/constants.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/organize_nsynth_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/organize_nsynth_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/6_basic_classifier.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/6_basic_classifier.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jupyter-notebooks/7_audio_pre_processing_pipeline.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/jupyter-notebooks/7_audio_pre_processing_pipeline.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ai_tools/data_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ai_tools/data_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/processing_nsynth_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/processing_nsynth_dataset.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,6 +122,8 @@
       <workItem from="1640009892334" duration="742000" />
       <workItem from="1640011774742" duration="193000" />
       <workItem from="1640012149432" duration="19825000" />
+      <workItem from="1640101772963" duration="3229000" />
+      <workItem from="1640163431126" duration="4815000" />
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>
