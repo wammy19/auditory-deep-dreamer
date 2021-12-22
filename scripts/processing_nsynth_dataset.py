@@ -15,8 +15,8 @@ from utils.audio_processors import segment_signal
 import utils.constants as consts
 
 number_of_threads: int = 16
-path_to_dataset: str = '../data-sets/philharmonia_dataset'
-path_for_writing: str = '../data-sets/processed_philharmonia_dataset'
+path_to_dataset: str = '../data-sets/nsynth'
+path_for_writing: str = '../data-sets/processed_nsynth'
 
 
 def process_audio(path_to_wavs: str, path_for_saving_processed_audio: str):
@@ -35,11 +35,6 @@ def process_audio(path_to_wavs: str, path_for_saving_processed_audio: str):
     os.makedirs(writing_path, exist_ok=True)
 
     for file in tqdm(os.listdir(path_to_wavs), desc=f'{data_type} - {inst_class}'):  # wav files.
-
-        # Ignore other files which aren't audio files.
-        if '.wav' not in file:
-            pass
-
         path_to_sample: str = os.path.join(path_to_wavs, file)
 
         # Load in audio and process it.
@@ -86,7 +81,7 @@ def generate_paths_to_wav_files(path_to_data_set: str) -> Generator[str, None, N
             yield path_to_classes
 
 
-paths_to_wavs: Generator[str, None, None] = generate_paths_to_wav_files(path_to_dataset)
+paths_to_wavs: Generator[str, None, None] = generate_paths_to_wav_files('../data-sets/nsynth')
 os.makedirs(path_for_writing, exist_ok=True)
 
 # Concurrently process all audio.
