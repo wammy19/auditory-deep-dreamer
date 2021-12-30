@@ -2,9 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f2eae34-de2f-4a9a-91f5-79695deb6a38" name="Changes" comment="Updated week_1 journal.">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_25_11_2021,_09_39_[Changes]/shelved.patch" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_25_11_2021__09_39__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/conda-env.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/test_conda_dependencies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/auditory-deepdream.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils/displays.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/displays.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+>>>>>>> f017134a9e5bd2b0e0b83791c585eb3319b53910
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,7 +56,11 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../ai" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
+<<<<<<< HEAD
     <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.notebooks.jupyter.connections.configuration.JupyterServerConfigurable" />
+=======
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+>>>>>>> f017134a9e5bd2b0e0b83791c585eb3319b53910
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -101,9 +115,26 @@
       <workItem from="1637915966640" duration="10680000" />
       <workItem from="1637932016971" duration="2753000" />
       <workItem from="1638185823505" duration="1053000" />
+<<<<<<< HEAD
       <workItem from="1638973733784" duration="2573000" />
       <workItem from="1639043529274" duration="1156000" />
       <workItem from="1639071368527" duration="1326000" />
+=======
+      <workItem from="1639054627884" duration="5447000" />
+      <workItem from="1639063062442" duration="4457000" />
+      <workItem from="1639393486996" duration="7938000" />
+      <workItem from="1639477455980" duration="220000" />
+      <workItem from="1639586445157" duration="4008000" />
+      <workItem from="1639600304323" duration="1000000" />
+      <workItem from="1639601344523" duration="323000" />
+      <workItem from="1639647843973" duration="521000" />
+      <workItem from="1640007526047" duration="1471000" />
+      <workItem from="1640009200960" duration="670000" />
+      <workItem from="1640009892334" duration="742000" />
+      <workItem from="1640011774742" duration="193000" />
+      <workItem from="1640012149432" duration="19825000" />
+      <workItem from="1640362661719" duration="3073000" />
+>>>>>>> f017134a9e5bd2b0e0b83791c585eb3319b53910
     </task>
     <task id="LOCAL-00001" summary="Updated week_1 journal.">
       <created>1635329822266</created>
