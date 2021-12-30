@@ -1,0 +1,9 @@
+# Container intended for running a python script that terminates.
+# Source: https://hub.docker.com/r/tensorflow/tensorflow/
+FROM tensorflow/tensorflow:latest-gpu
+
+RUN apt-get update
+RUN apt-get install -y sox libsox-fmt-mp3 ffmpeg libsm6 libxext6
+
+# Python
+RUN pip install librosa kapre numpy==1.20

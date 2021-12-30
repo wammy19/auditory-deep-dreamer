@@ -1,7 +1,6 @@
 import IPython.display as display
 from IPython.core.display import display as core_display
 import librosa.display
-from librosa.util import normalize
 import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
