@@ -2,7 +2,9 @@
 
 ### Downloading datasets
 
-Yet to come...
+Small data set (≈2gb):
+
+`wget https://www.dropbox.com/s/dhwccfh5lfq0d4t/small_nsynth.zip && unzip small_nsynth.zip`
 
 ### Running with Docker
 
