@@ -7,9 +7,12 @@ from tensorflow.keras.optimizers import Adam
 from typing import Tuple
 import utils.constants as consts
 
+
 def build_simple_cnn() -> Sequential:
     """
     :return: A compiled tensorflow.keras.Model ready for fitting.
+
+    An example model for testing purposes.
     """
 
     # Shape: (num_samples, sample_rate, channels)
