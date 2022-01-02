@@ -1,6 +1,7 @@
 # Audio settings.
 # General
 SAMPLE_RATE: int = 22_050
+DELTA_TIME: float = 1.0  # Time of audio file in seconds.
 
 # Mel Spec.
 MEL_HOP_LEN: int = 512
