@@ -8,4 +8,5 @@ tensorflow==2.6.1
 keras==2.6.0
 tqdm==4.61.0
 kapre~=0.3.6
-sklearn
+sklearn==1.0.1
+scipy==1.7.2
