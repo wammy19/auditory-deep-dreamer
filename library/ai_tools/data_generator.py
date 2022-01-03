@@ -16,6 +16,7 @@ class DataGenerator(Sequence):
     DataGenerator inspired from: https://www.youtube.com/watch?v=OUHU7K_dD30
     """
 
+
     def __init__(
             self,
             wav_paths: List[str],
