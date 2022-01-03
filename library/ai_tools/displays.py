@@ -49,6 +49,23 @@ def plot_learning_metrics(
     plt.show()
 
 
+def plot_history(history: History):
+    """
+    :param history: History returned from keras model tf.Model.fit() method.
+    :return: None
+
+    Plots accuracy and loss metrics.
+    """
+
+    # Train and validation loss.
+    plot_learning_metrics(history, title='Training and validation loss', x_label='Epochs', y_label='Loss',
+                          metric='loss', line_label='Validation loss', dots_label='Training loss')
+
+    # Train and validation accuracy.
+    plot_learning_metrics(history, title='Training and validation acc', x_label='Epochs', y_label='Accuracy',
+                          metric='accuracy', line_label='Validation acc', dots_label='Training acc')
+
+
 def display_optimal_epoch_and_metrics(_history: History) -> None:
     """
     :param _history:
