@@ -1,29 +1,32 @@
-from ai_tools import DataGenerator
-from ai_tools.models import build_simple_cnn
 import sys
-from tensorflow.keras.models import Sequential
 
 sys.path.append('../library/')  # Add custom library to PYTHONPATH.
 
+from ai_tools import DataGenerator
+from ai_tools.models import build_conv2d_example
+from tensorflow.keras.models import Model
+from typing import List
+from utils.helpers import load_data, Data
 
-def main() -> None:
-    """
-    :return: None
-    """
+# Create train and validation generators.
+train_data_generator, val_data_generator = DataGenerator.from_path_to_audio(
+    '../data-sets/small_nsynth/train',
+    batch_size=124
+)
 
-    # Create train and validation generators.
-    train_data_generator, val_data_generator = DataGenerator.from_path_to_audio('../data-sets/small_nsynth/train')
+# Build model.
+model: Model = build_conv2d_example()
 
-    # Build model.
-    model: Sequential = build_simple_cnn()
+# Train model.
+history = model.fit(
+    train_data_generator,
+    validation_data=val_data_generator,
+    epochs=5
+)
 
-    # Train model.
-    history = model.fit(
-        train_data_generator,
-        validation_data=val_data_generator,
-        epochs=3
-    )
+model.save('../models/simple_nsynth_classification')
 
+# X_test, y_test = load_data('../data-sets/small_nsynth/test')
 
-if __name__ == "__main__":
-    main()
+# model.evaluate(X_test, y_test)
+
