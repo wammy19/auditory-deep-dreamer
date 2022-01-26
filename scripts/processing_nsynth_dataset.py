@@ -32,7 +32,7 @@ def process_audio(path_to_wavs: str, path_for_saving_processed_audio: str):
     inst_class: str = re.findall(r'([^/]+)/?$', path_to_wavs)[0]
     writing_path: str = os.path.join(path_for_saving_processed_audio, data_type, inst_class)
 
-    os.makedirs(writing_path, exist_ok=True)
+    os.makedirs(writing_path, exist_ok=True)  # Won't create folder if it exists.
 
     for file in tqdm(os.listdir(path_to_wavs), desc=f'{data_type} - {inst_class}'):  # wav files.
         path_to_sample: str = os.path.join(path_to_wavs, file)
@@ -55,7 +55,7 @@ def generate_paths_to_wav_files(path_to_data_set: str) -> Generator[str, None, N
     """
     :return: Path to dataset.
 
-    Generates the paths to wav files which for a data set that is organized like so:
+    Generates the paths to wav files for a data set that is organized like so:
 
     data-set
     |

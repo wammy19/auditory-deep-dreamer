@@ -9,3 +9,4 @@ tensorboard-logs
 # Data
 data-sets
 pickled-data
+models
