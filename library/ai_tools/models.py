@@ -113,4 +113,5 @@ def build_conv2d_example(N_CLASSES=2, sample_rate=consts.SAMPLE_RATE) -> Model:
     model.compile(optimizer='adam',
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
+
     return model
