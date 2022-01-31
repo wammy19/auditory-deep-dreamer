@@ -1,0 +1,19 @@
+# Git
+.git
+.gitignore
+
+# DIR
+data-sets
+journal
+media
+models
+pickled-data
+scripts
+tensorboard-logs
+venv
+
+# Misc
+LICENSE
+*.md
+
+
