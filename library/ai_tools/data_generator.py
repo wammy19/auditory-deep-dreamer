@@ -1,10 +1,9 @@
 from __future__ import annotations
 from glob import glob
 import numpy as np
+from librosa import load
 import os
-from scipy.io import wavfile
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical, Sequence
 from typing import List, Optional, Tuple
 import utils.constants as consts
@@ -22,17 +21,17 @@ class DataGenerator(Sequence):
             wav_paths: List[str],
             labels: np.ndarray,
             n_classes: int,
-            batch_size=16,
+            batch_size: int = 16,
             sample_rate: int = consts.SAMPLE_RATE,
             shuffle: bool = True
     ):
-        self.wav_paths = wav_paths
-        self.labels = labels
-        self.sample_rate = sample_rate
-        self.n_classes = n_classes
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.indexes: Optional[np.array] = None  # Get's defined in '.on_epoch_end()'
+        self._wav_paths = wav_paths
+        self._labels = labels
+        self._sample_rate = sample_rate
+        self._n_classes = n_classes
+        self._batch_size = batch_size
+        self._shuffle = shuffle
+        self._indexes: Optional[np.array] = None  # Get's defined in '.on_epoch_end()'
         self.on_epoch_end()
 
 
@@ -41,7 +40,7 @@ class DataGenerator(Sequence):
         :return: int
         """
 
-        return int(np.floor(len(self.wav_paths) / self.batch_size))
+        return int(np.floor(len(self._wav_paths) / self._batch_size))
 
 
     def __getitem__(self, index: int) -> Tuple[np.ndarray, np.array]:
@@ -52,18 +51,18 @@ class DataGenerator(Sequence):
         Loads a batch of audio data with it's corresponding label and returns it.
         """
 
-        indexes: List[int] = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]
-        wav_paths: List[str] = [self.wav_paths[i] for i in indexes]
-        labels: List[int] = [self.labels[i] for i in indexes]
+        indexes: List[int] = self._indexes[index * self._batch_size:(index + 1) * self._batch_size]
+        wav_paths: List[str] = [self._wav_paths[i] for i in indexes]
+        labels: List[int] = [self._labels[i] for i in indexes]
 
-        # generate a batch of time data
-        X: np.ndarray = np.empty((self.batch_size, int(self.sample_rate), 1), dtype=np.float32)
-        y: np.array = np.empty((self.batch_size, self.n_classes), dtype=np.float32)
+        # generate a batch of time data.
+        X: np.ndarray = np.empty((self._batch_size, self._sample_rate, 1), dtype=np.float32)
+        y: np.array = np.empty((self._batch_size, self._n_classes), dtype=np.float32)
 
+        # Load audio and one-hot encoding of labels.
         for i, (path, label) in enumerate(zip(wav_paths, labels)):
-            wav: np.ndarray = wavfile.read(path)[1]
-            X[i,] = wav.reshape(-1, 1)
-            y[i,] = to_categorical(label, num_classes=self.n_classes)
+            X[i,] = load(path, mono=True)[0].reshape(-1, 1)
+            y[i,] = to_categorical(label, num_classes=self._n_classes)
 
         return X, y
 
@@ -75,35 +74,33 @@ class DataGenerator(Sequence):
         Shuffles wave paths so they get loaded in different batches for each epoch.
         """
 
-        self.indexes = np.arange(len(self.wav_paths))
+        self._indexes = np.arange(len(self._wav_paths))
 
-        if self.shuffle:
-            np.random.shuffle(self.indexes)
+        if self._shuffle:
+            np.random.shuffle(self._indexes)
 
 
     @classmethod
     def from_path_to_audio(
             cls,
             path_to_audio: str,
-            validation_split: float = 0.1,
             batch_size: int = 16,
             sample_rate: int = consts.SAMPLE_RATE,
             shuffle: bool = True
-    ) -> Tuple[DataGenerator, DataGenerator]:
+    ) -> DataGenerator:
         """
         :param path_to_audio: str - Path to root folder of audio files.
-        :param validation_split: float - Number between 0 - 1. Default is 0.1 (10%).
         :param batch_size: int - Number of '.wav' files to load in a batch.
         :param sample_rate: Sample rate of audio files, must be the same for all files.
         :param shuffle: Randomly shuffle data after each epoch.
         :return: Tuple[DataGenerator, DataGenerator] - (train_generator, validation_generator)
 
-        Returns two DataGenerator classes for training and validation from a given path to a root folder that contains
-        ontology with audio files.
+        Returns an audio DataGenerator class from a given path to a root folder that contains the ontology with audio
+        files.
 
         Example of file structure:
 
-        root-folder
+        root
         |
         |_________strings
         |         |
@@ -119,36 +116,18 @@ class DataGenerator(Sequence):
         wav_paths = [x.replace(os.sep, '/') for x in wav_paths if '.wav' in x]
 
         classes: List[str] = sorted(os.listdir(path_to_audio))  # Example: ['string', 'reed']
-        n_classes: int = len(os.listdir(path_to_audio))
+        n_classes: int = len(classes)
 
         # Encode labels.
         label_encoder = LabelEncoder()
         label_encoder.fit(classes)
         labels: np.ndarray = label_encoder.transform([os.path.split(x)[0].split('/')[-1] for x in wav_paths])
 
-        # Split train data for validation set.
-        wav_train, wav_val, label_train, label_val = train_test_split(
+        return cls(
             wav_paths,
             labels,
-            test_size=validation_split,
-            random_state=0
+            n_classes,
+            batch_size,
+            sample_rate,
+            shuffle
         )
-
-        return \
-            cls(  # Train data generator.
-                wav_train,
-                label_train,
-                n_classes,
-                batch_size,
-                sample_rate,
-                shuffle
-
-            ), \
-            cls(  # Validation data generator.
-                wav_val,
-                label_val,
-                n_classes,
-                batch_size,
-                sample_rate,
-                shuffle
-            )

@@ -6,8 +6,8 @@ import utils.constants as consts
 
 def segment_signal(audio_signal: np.ndarray, sample_rate: int = consts.SAMPLE_RATE) -> List[np.ndarray]:
     """
-    :param audio_signal: np.ndarray of audio returned from librosa.load()
-    :param sample_rate: Sample rate of audio that has been loaded.
+    :param: audio_signal: np.ndarray of audio returned from librosa.load()
+    :param: sample_rate: Sample rate of audio that has been loaded.
     :return: List[np.ndarray] - List of 1 second slices of audio.
 
     Slices up an audio signal into segments that are all 1 second long. Returns a List with each 1 second segment.
@@ -27,9 +27,9 @@ def segment_signal(audio_signal: np.ndarray, sample_rate: int = consts.SAMPLE_RA
     # Loop through signal and chop it up into 1 second segments.
     while start_index < audio_signal.size:
         one_second_sample: np.ndarray = audio_signal[start_index: start_index + consts.SAMPLE_RATE]
-        one_second_sample = fix_length(one_second_sample, consts.SAMPLE_RATE)
+        one_second_sample = fix_length(one_second_sample, consts.SAMPLE_RATE)  # Ensure signal is a second-long.
 
         all_audio_segments.append(one_second_sample)
-        start_index += sample_rate
+        start_index += (sample_rate // 2)
 
     return all_audio_segments

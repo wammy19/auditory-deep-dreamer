@@ -5,11 +5,12 @@ Helper script for organizing Google's nSynth dataset into a different file struc
 import os
 import re
 import shutil
+from tqdm import tqdm
 
 patter_for_instrument: re.Pattern = re.compile(r'^.*?(?=_)')
-path_to_data_sets: str = '../data-sets/nsynth/train'
+path_to_data_sets: str = '../data-sets/nsynth/all-files'
 
-for file in os.listdir(path_to_data_sets):
+for file in tqdm(os.listdir(path_to_data_sets)):
 
     if os.path.isdir(os.path.join(path_to_data_sets, file)):  # Ignore directories.
         continue

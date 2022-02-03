@@ -19,7 +19,7 @@ class Data:
 
 def load_data(path_to_audio: str) -> List[Data]:
     """
-    :param path_to_audio:
+    :param path_to_audio: Path to a directory full of .wav files.
     :return:
     """
 

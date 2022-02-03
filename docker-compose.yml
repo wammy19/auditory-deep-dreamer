@@ -2,57 +2,57 @@ version: '3.7'
 
 services:
   # Service for starting up a jupyter server.
-  #  jupyter:
-  # image: aspit002/audio-deepdream-dev-env-jupyter
-  # volumes:
-  #   - ./jupyter-notebooks:/notebook
-  #   - ./data-sets:/data-sets
-  #   - ./media:/media
-  #   - ./pickled-data:/pickled-data
-  #   - ./tensorboard-logs:/tensorboard-logs
-  #   - ./models:/models
-  #
-  #   # Mounting my library directory to the PYTHONPATH in the docker container.
-  #   - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
-  #   - ./library/utils:/usr/local/lib/python3.8/dist-packages/utils
-  #   - ./library/ai_tools:/usr/local/lib/python3.8/dist-packages/ai_tools
-  # command: jupyter notebook /notebook --port=8888 --ip=0.0.0.0 --allow-root
-  # ports:
-  #   - "8888:8888"
-  #   - "6006:6006"
-  # deploy:
-  #   resources:
-  #     limits:
-  #       cpus: 4
-  #       memory: 20gb  # Caution! I'm setting this to a lot of memory because my machine has 32gb.
-  #     reservations:
-  #       devices:
-  #         - driver: nvidia
-  #           count: 1
-  #           capabilities: [ compute, utility ]
-
-  # Service which will run ./src/main.py and terminate.
-  script-runner:
-    image: aspit002/audio-deepdream-dev-env
+  jupyter:
+    image: aspit002/audio-deepdream-dev-env-jupyter
     volumes:
-      - ./src:/src
+      - ./jupyter-notebooks:/notebook
       - ./data-sets:/data-sets
       - ./media:/media
       - ./pickled-data:/pickled-data
       - ./tensorboard-logs:/tensorboard-logs
       - ./models:/models
-      - ./library:/library
-    command: python /src/main.py
+
+      # Mounting my library directory to the PYTHONPATH in the docker container.
+      - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
+      - ./library/utils:/usr/local/lib/python3.8/dist-packages/utils
+      - ./library/ai_tools:/usr/local/lib/python3.8/dist-packages/ai_tools
+    command: jupyter notebook /notebook --port=8888 --ip=0.0.0.0 --allow-root
+    ports:
+      - "8888:8888"
+      - "6006:6006"
     deploy:
       resources:
         limits:
           cpus: 4
-          memory: 20gb
+          memory: 20gb  # Caution! I'm setting this to a lot of memory because my machine has 32gb.
         reservations:
           devices:
             - driver: nvidia
               count: 1
               capabilities: [ compute, utility ]
+
+  # Service which will run ./src/main.py and terminate.
+#  script-runner:
+#    image: aspit002/audio-deepdream-dev-env
+#    volumes:
+#      - ./src:/src
+#      - ./data-sets:/data-sets
+#      - ./media:/media
+#      - ./pickled-data:/pickled-data
+#      - ./tensorboard-logs:/tensorboard-logs
+#      - ./models:/models
+#      - ./library:/library
+#    command: python /src/main.py
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: 4
+#          memory: 20gb
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: 1
+#              capabilities: [ compute, utility ]
 
 #  # Service spins up a tensorboard server.
 #  tensorboard:
