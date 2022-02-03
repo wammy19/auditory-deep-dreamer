@@ -8,8 +8,6 @@ services:
       - ./jupyter-notebooks:/notebook
       - ./data-sets:/data-sets
       - ./media:/media
-      - ./pickled-data:/pickled-data
-      - ./tensorboard-logs:/tensorboard-logs
       - ./models:/models
 
       # Mounting my library directory to the PYTHONPATH in the docker container.
