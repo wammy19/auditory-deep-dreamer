@@ -6,7 +6,7 @@ services:
     image: aspit002/audio-deepdream-dev-env-jupyter
     volumes:
       - ./jupyter-notebooks:/notebook
-      - ./data-sets:/data-sets
+      - ../data-sets:/data-sets
       - ./media:/media
       - ./models:/models
 

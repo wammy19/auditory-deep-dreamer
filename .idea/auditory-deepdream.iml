@@ -9,6 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/jupyter-notebooks/.ipynb_checkpoints" />
       <excludeFolder url="file://$MODULE_DIR$/tensorboard-logs" />
       <excludeFolder url="file://$MODULE_DIR$/models" />
+      <excludeFolder url="file://$MODULE_DIR$/scripts/.pytest_cache" />
     </content>
     <orderEntry type="jdk" jdkName="Poetry (auditory-deepdream)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
