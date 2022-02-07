@@ -8,6 +8,7 @@ from utils.midi_note_table import MidiNoteTable
 def rename_samples(path_to_audio_files, instrument: str) -> None:
     """
     :param path_to_audio_files:
+    :param instrument:
     :return:
     """
 

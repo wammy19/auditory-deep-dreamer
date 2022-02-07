@@ -59,8 +59,8 @@ def generate_paths_to_wav_files(_path_to_dataset: str) -> Generator[str, None, N
 
 def main():
     number_of_threads: int = 16
-    path_to_dataset: str = '../data-sets/nsynth'
-    path_for_writing: str = '../data-sets/processed_nsynth'
+    path_to_dataset: str = '../../data-sets/philharmonia_dataset'
+    path_for_writing: str = '../../data-sets/processed_philharmonia_dataset'
 
     paths_to_wavs: Generator[str, None, None] = generate_paths_to_wav_files(path_to_dataset)
     os.makedirs(path_for_writing, exist_ok=True)

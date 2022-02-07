@@ -66,7 +66,6 @@ def move_files(path_to_dataset: str, instrument: str) -> None:
 def main() -> None:
     path_to_dataset: str = '../../data-sets/processed_nsynth'
     ontology: List[str] = sorted(os.listdir(path_to_dataset))
-    num_workers: int = 3
 
     if 'test' in ontology:
         ontology.remove('validation')

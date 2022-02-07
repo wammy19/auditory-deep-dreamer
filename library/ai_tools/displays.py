@@ -49,9 +49,9 @@ def plot_learning_metrics(
     plt.show()
 
 
-def plot_history(history: History):
+def plot_history(history: History) -> None:
     """
-    :param history: History returned from keras model tf.Model.fit() method.
+    :param: history: History returned from keras model tf.Model.fit() method.
     :return: None
 
     Plots accuracy and loss metrics.
