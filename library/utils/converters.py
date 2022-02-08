@@ -8,8 +8,8 @@ import utils.constants as consts
 
 def open_image_as_np_array(path_to_img: str, max_dim: Optional[int] = None) -> np.ndarray:
     """
-    :param path_to_img: Path to an image.
-    :param max_dim: Maximum dimensions of image.
+    :param: path_to_img: Path to an image.
+    :param: max_dim: Maximum dimensions of image.
     :return:
 
     Loads an image and converts it into a numpy array. If a value for max_dim is passed, the image
@@ -32,11 +32,11 @@ def convert_wav_as_log_mel(
         num_mels: int = consts.NUM_MELS
 ) -> np.ndarray:
     """
-    :param sample: numpy array that is returned from librosa.load()[0]
-    :param sample_rate:
-    :param num_FFT:
-    :param mel_hop_len:
-    :param num_mels:
+    :param: sample: numpy array that is returned from librosa.load()[0]
+    :param: sample_rate:
+    :param: num_FFT:
+    :param: mel_hop_len:
+    :param: num_mels:
     :return:
 
     Converts a loaded wav file into a log mel-spectrogram.
