@@ -43,24 +43,27 @@ def move_files(path_to_dataset: str, instrument: str) -> None:
     validation_split: List[str] = instrument_paths[test_split_amount:test_split_amount * 2].copy()
     train_split: List[str] = instrument_paths[test_split_amount * 3:].copy()
 
-    del instrument_paths  # Clear memory.
+    print(len(instrument_paths))
+    print(len(test_split) + len(validation_split) + len(train_split))
 
-    # Move test data.
-    for test, validation in zip(test_split, validation_split):
-        try:
-            move(join(path_to_dataset, instrument, test), join(path_to_dataset, 'test', instrument))
-            move(join(path_to_dataset, instrument, validation), join(path_to_dataset, 'validation', instrument))
-
-        except FileNotFoundError as err:
-            print(err)
-
-    # Move training data.
-    for train in train_split:
-        try:
-            move(join(path_to_dataset, instrument, train), join(path_to_dataset, 'train', instrument))
-
-        except FileNotFoundError as err:
-            print(err)
+    # del instrument_paths
+    #
+    # # Move test data.
+    # for test, validation in zip(test_split, validation_split):
+    #     try:
+    #         move(join(path_to_dataset, instrument, test), join(path_to_dataset, 'test', instrument))
+    #         move(join(path_to_dataset, instrument, validation), join(path_to_dataset, 'validation', instrument))
+    #
+    #     except FileNotFoundError as err:
+    #         print(err)
+    #
+    # # Move training data.
+    # for train in train_split:
+    #     try:
+    #         move(join(path_to_dataset, instrument, train), join(path_to_dataset, 'train', instrument))
+    #
+    #     except FileNotFoundError as err:
+    #         print(err)
 
 
 def main() -> None:

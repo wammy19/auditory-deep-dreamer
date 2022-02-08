@@ -46,7 +46,7 @@ def midi_number_to_note(number: int) -> str:
     :return: str
 
     A table of notes that can be queried using a midi number.
-    source: https://gist.github.com/devxpy/063968e0a2ef9b6db0bd6af8079dad2a
+    Source: https://gist.github.com/devxpy/063968e0a2ef9b6db0bd6af8079dad2a
     """
 
     note_in_octave = len(consts.NOTE_TABLE)
