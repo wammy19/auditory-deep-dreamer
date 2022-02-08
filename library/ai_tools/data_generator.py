@@ -31,7 +31,7 @@ class DataGenerator(Sequence):
         self._n_classes = n_classes
         self._batch_size = batch_size
         self._shuffle = shuffle
-        self._indexes: Optional[np.array] = None  # Get's defined in '.on_epoch_end()'
+        self._indexes: Optional[np.array] = None  # Gets defined in '.on_epoch_end()'
         self.on_epoch_end()
 
 
@@ -45,7 +45,7 @@ class DataGenerator(Sequence):
 
     def __getitem__(self, index: int) -> Tuple[np.ndarray, np.array]:
         """
-        :param index: int
+        :param: index: int
         :return: Tuple[np.ndarray, np.array] - (data, label)
 
         Loads a batch of audio data with it's corresponding label and returns it.
@@ -71,13 +71,18 @@ class DataGenerator(Sequence):
         """
         :return: None
 
-        Shuffles wave paths so they get loaded in different batches for each epoch.
+        Shuffles wave paths, so they get loaded in different batches for each epoch.
         """
 
         self._indexes = np.arange(len(self._wav_paths))
 
         if self._shuffle:
             np.random.shuffle(self._indexes)
+
+
+    @staticmethod
+    def _get_pitch_labels() -> np.ndarray:
+        pass
 
 
     @classmethod
@@ -89,10 +94,10 @@ class DataGenerator(Sequence):
             shuffle: bool = True
     ) -> DataGenerator:
         """
-        :param path_to_audio: str - Path to root folder of audio files.
-        :param batch_size: int - Number of '.wav' files to load in a batch.
-        :param sample_rate: Sample rate of audio files, must be the same for all files.
-        :param shuffle: Randomly shuffle data after each epoch.
+        :param: path_to_audio: str - Path to root folder of audio files.
+        :param: batch_size: int - Number of '.wav' files to load in a batch.
+        :param: sample_rate: Sample rate of audio files, must be the same for all files.
+        :param: shuffle: Randomly shuffle data after each epoch.
         :return: Tuple[DataGenerator, DataGenerator] - (train_generator, validation_generator)
 
         Returns an audio DataGenerator class from a given path to a root folder that contains the ontology with audio
@@ -122,6 +127,9 @@ class DataGenerator(Sequence):
         label_encoder = LabelEncoder()
         label_encoder.fit(classes)
         labels: np.ndarray = label_encoder.transform([os.path.split(x)[0].split('/')[-1] for x in wav_paths])
+
+        # TODO: Add pitch labels.
+        cls._get_pitch_labels()
 
         return cls(
             wav_paths,

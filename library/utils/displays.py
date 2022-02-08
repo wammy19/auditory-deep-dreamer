@@ -11,9 +11,9 @@ from .constants import SAMPLE_RATE
 
 def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool, sample_rate: int = SAMPLE_RATE) -> None:
     """
-    :param mel_spec: np.ndarray that is returned from librosa.feature.melspectrogram
-    :param is_log_mel: Set to True if you've passed the mel spectrogram through librosa.power_to_db()
-    :param sample_rate: sample rate.
+    :param: mel_spec: np.ndarray that is returned from librosa.feature.melspectrogram
+    :param: is_log_mel: Set to True if you've passed the mel spectrogram through librosa.power_to_db()
+    :param: sample_rate: sample rate.
     :return: None
 
     Displays a mel spectrogram.
@@ -41,7 +41,7 @@ def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool, sample_rate:
 
 def display_image(_image: Union[np.array, Tensor]) -> None:
     """
-    :param _image: Image that's been converted into a numpy array.
+    :param: _image: Image that's been converted into a numpy array.
     :return:
 
     Displays an image that's been converted into a numpy array.
@@ -52,11 +52,11 @@ def display_image(_image: Union[np.array, Tensor]) -> None:
 
 def display_audio_player(signal: np.ndarray, sample_rate: int = SAMPLE_RATE) -> None:
     """
-    :param: signal - Audio sample loaded from librosa.load()
+    :param: signal - Audio sample loaded from librosa.load(). A 1D numpy array.
     :param: sample_rate - (optional).
     :return:
 
-    Displays an audio player.
+    Displays an audio player for playback.
     """
 
     core_display(display.Audio(signal, rate=sample_rate, normalize=False))

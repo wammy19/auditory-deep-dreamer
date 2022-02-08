@@ -7,6 +7,7 @@ from librosa import load
 from librosa.effects import trim
 import numpy as np
 import os
+from os.path import join
 import re
 import soundfile as sf  # https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write
 from typing import List, Generator
@@ -25,12 +26,14 @@ def process_audio(path_to_wavs: str, path_for_saving_processed_audio: str):
     """
 
     inst_class: str = re.findall(r'([^/]+)/?$', path_to_wavs)[0]
-    writing_path: str = os.path.join(path_for_saving_processed_audio, inst_class)
+    writing_path: str = join(path_for_saving_processed_audio, inst_class)
+    writing_path_np: str = join(f'{path_for_saving_processed_audio}_numpy', inst_class)  # For saving np arrays.
 
     os.makedirs(writing_path, exist_ok=True)
+    os.makedirs(writing_path_np, exist_ok=True)
 
     for file in tqdm(os.listdir(path_to_wavs), desc=f'{inst_class}'):  # wav files.
-        path_to_sample: str = os.path.join(path_to_wavs, file)
+        path_to_sample: str = join(path_to_wavs, file)
 
         # Load in audio and process it.
         sample: np.ndarray = load(path_to_sample, consts.SAMPLE_RATE, mono=True)[0]
@@ -40,7 +43,11 @@ def process_audio(path_to_wavs: str, path_for_saving_processed_audio: str):
         # Save audio.
         for i, audio in enumerate(segmented_signal):
             file_for_writing_name: str = f'{os.path.splitext(file)[0]}_segment_{i}.wav'
-            sf.write(os.path.join(writing_path, file_for_writing_name), audio, consts.SAMPLE_RATE)
+            file_for_writing_name_np: str = f'{os.path.splitext(file)[0]}_segment_{i}'
+
+            # Save both audio and serialized numpy array.
+            sf.write(join(writing_path, file_for_writing_name), audio, consts.SAMPLE_RATE)
+            np.save(join(writing_path_np, file_for_writing_name_np), audio.reshape(-1, 1))
 
 
 def generate_paths_to_wav_files(_path_to_dataset: str) -> Generator[str, None, None]:
@@ -58,9 +65,10 @@ def generate_paths_to_wav_files(_path_to_dataset: str) -> Generator[str, None, N
 
 
 def main():
+    # Settings.
     number_of_threads: int = 16
-    path_to_dataset: str = '../../data-sets/philharmonia_dataset'
-    path_for_writing: str = '../../data-sets/processed_philharmonia_dataset'
+    path_to_dataset: str = '../../data-sets/nsynth'
+    path_for_writing: str = '../../data-sets/processed_dataset'  # Will be created if it doesn't exist.
 
     paths_to_wavs: Generator[str, None, None] = generate_paths_to_wav_files(path_to_dataset)
     os.makedirs(path_for_writing, exist_ok=True)

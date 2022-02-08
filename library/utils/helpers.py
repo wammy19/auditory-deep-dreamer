@@ -19,7 +19,7 @@ class Data:
 
 def load_data(path_to_audio: str) -> List[Data]:
     """
-    :param path_to_audio: Path to a directory full of .wav files.
+    :param: path_to_audio: Path to a directory full of .wav files.
     :return:
     """
 
@@ -38,3 +38,21 @@ def load_data(path_to_audio: str) -> List[Data]:
             samples.append(Data(sample, label))
 
     return samples
+
+
+def midi_number_to_note(number: int) -> str:
+    """
+    :param: number: Midi note number in the range of 0-127.
+    :return: str
+
+    A table of notes that can be queried using a midi number.
+    source: https://gist.github.com/devxpy/063968e0a2ef9b6db0bd6af8079dad2a
+    """
+
+    note_in_octave = len(consts.NOTE_TABLE)
+
+    if number > 127 or number < 0:
+        raise ValueError("Number must be in the range of 0-127")
+
+    note: str = consts.NOTE_TABLE[number % note_in_octave]
+    return note
