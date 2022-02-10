@@ -13,13 +13,13 @@ def plot_learning_metrics(
         dots_label: str
 ) -> None:
     """
-    :param history: History returned from keras model tf.Model.fit() method.
-    :param title: Title for the graph.
-    :param x_label: x axis label for the graph.
-    :param y_label: y axis label for the graph.
-    :param metric: 'accuracy' or 'loss'
-    :param line_label: Label for the legend.
-    :param dots_label: Label for the legend.
+    :param: history: History returned from keras model tf.Model.fit() method.
+    :param: title: Title for the graph.
+    :param: x_label: x-axis label for the graph.
+    :param: y_label: y-axis label for the graph.
+    :param: metric: 'accuracy' or 'loss'
+    :param: line_label: Label for the legend.
+    :param: dots_label: Label for the legend.
     :return: None
 
     Plots a matplotlib graph for a keras.callbacks.History object that is tracking 'accuracy' and 'loss' metrics.
@@ -68,7 +68,7 @@ def plot_history(history: History) -> None:
 
 def display_optimal_epoch_and_metrics(_history: History) -> None:
     """
-    :param _history:
+    :param: _history:
     :return: None
 
     Finds the most optimal epoch by finding the epoch at which the validation loss bottoms out.

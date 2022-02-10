@@ -1,5 +1,4 @@
 from concurrent.futures import ProcessPoolExecutor
-from multiprocessing import Process
 import os
 from os.path import join
 from shutil import move
@@ -25,6 +24,23 @@ def create_directories(path_to_dataset: str, ontology: List[str]) -> None:
         os.makedirs(join(path_to_dataset, 'train', instrument), exist_ok=True)
 
 
+def check_if_lists_are_similar(list_1: List[str], list_2: List) -> bool:
+    """
+    :param: list_1:
+    :param: list_2:
+    :return:
+
+    Returns True if the lists are similar. The lists are similar if at least 1 element is shared by the lists.
+    """
+
+    for element_1 in list_1:
+        for element_2 in list_2:
+            if element_1 == element_2:
+                return True
+
+    return False
+
+
 def move_files(path_to_dataset: str, instrument: str) -> None:
     """
     :param: path_to_dataset:
@@ -39,35 +55,48 @@ def move_files(path_to_dataset: str, instrument: str) -> None:
 
     number_of_paths: int = len(instrument_paths)
     test_split_amount: int = number_of_paths // 10  # 10% of entire data set for testing and validation.
+
+    # Splits
     test_split: List[str] = instrument_paths[:test_split_amount].copy()
     validation_split: List[str] = instrument_paths[test_split_amount:test_split_amount * 2].copy()
-    train_split: List[str] = instrument_paths[test_split_amount * 3:].copy()
+    train_split: List[str] = instrument_paths[test_split_amount * 2:].copy()
 
-    print(len(instrument_paths))
-    print(len(test_split) + len(validation_split) + len(train_split))
+    # Run tests to validate data.
+    assert len(test_split) == test_split_amount
+    assert len(validation_split) == test_split_amount
+    assert len(train_split) == number_of_paths - (len(test_split) + len(validation_split))
+    assert number_of_paths == len(test_split) + len(validation_split) + len(train_split)
+    assert test_split != validation_split
 
-    # del instrument_paths
-    #
-    # # Move test data.
-    # for test, validation in zip(test_split, validation_split):
-    #     try:
-    #         move(join(path_to_dataset, instrument, test), join(path_to_dataset, 'test', instrument))
-    #         move(join(path_to_dataset, instrument, validation), join(path_to_dataset, 'validation', instrument))
-    #
-    #     except FileNotFoundError as err:
-    #         print(err)
-    #
-    # # Move training data.
-    # for train in train_split:
-    #     try:
-    #         move(join(path_to_dataset, instrument, train), join(path_to_dataset, 'train', instrument))
-    #
-    #     except FileNotFoundError as err:
-    #         print(err)
+    # Check if any paths are bleeding into the splits.
+    assert check_if_lists_are_similar(test_split, validation_split) is False
+    assert check_if_lists_are_similar(train_split, validation_split) is False
+    assert check_if_lists_are_similar(train_split, test_split) is False
+
+    del instrument_paths
+
+    path_to_sample: str = join(path_to_dataset, instrument)
+
+    # Move test data.
+    for test, validation in zip(test_split, validation_split):
+        try:
+            move(join(path_to_sample, test), join(path_to_dataset, 'test', instrument))
+            move(join(path_to_sample, validation), join(path_to_dataset, 'validation', instrument))
+
+        except FileNotFoundError as err:
+            print(err)
+
+    # Move training data.
+    for train in train_split:
+        try:
+            move(join(path_to_sample, train), join(path_to_dataset, 'train', instrument))
+
+        except FileNotFoundError as err:
+            print(err)
 
 
 def main() -> None:
-    path_to_dataset: str = '../../data-sets/processed_nsynth'
+    path_to_dataset: str = '../../data-sets/processed_dataset'
     ontology: List[str] = sorted(os.listdir(path_to_dataset))
 
     if 'test' in ontology:
@@ -77,8 +106,9 @@ def main() -> None:
 
     create_directories(path_to_dataset, ontology)
 
-    for instrument in ontology:
-        move_files(path_to_dataset, instrument)
+    with ProcessPoolExecutor(max_workers=len(ontology)) as process_executor:
+        for instrument in ontology:
+            process_executor.submit(move_files, path_to_dataset, instrument)
 
 
 if __name__ == '__main__':

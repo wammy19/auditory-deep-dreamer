@@ -110,6 +110,7 @@ class DataGenerator(Sequence):
 
         X: np.ndarray = np.empty((self._batch_size, self._sample_rate, 1), dtype=np.float32)
 
+        # Returns both instrument and pitch labels.
         if self._include_pitch_labels and self._include_pitch_labels:
             for i, (path, instrument_label, pitch_label) in enumerate(zip(wav_paths, instrument_labels, pitch_labels)):
                 X[i,] = load(path, mono=True)[0].reshape(-1, 1)
@@ -118,6 +119,7 @@ class DataGenerator(Sequence):
 
             return X, instrument_y, pitch_y
 
+        # Returns only pitch labels.
         elif self._include_pitch_labels:
             for i, (path, pitch_label) in enumerate(zip(wav_paths, pitch_labels)):
                 X[i,] = load(path, mono=True)[0].reshape(-1, 1)
@@ -125,6 +127,7 @@ class DataGenerator(Sequence):
 
             return X, pitch_y
 
+        # Returns only instrument labels.
         elif self._include_instrument_label:
             for i, (path, instrument_labels) in enumerate(zip(wav_paths, instrument_labels)):
                 X[i,] = load(path, mono=True)[0].reshape(-1, 1)
