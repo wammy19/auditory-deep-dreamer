@@ -7,6 +7,6 @@ jupyter-notebooks/.ipynb_checkpoints/
 **/.pytest_cache
 
 # Data
-data-sets
+datasets
 models
 aim-logs

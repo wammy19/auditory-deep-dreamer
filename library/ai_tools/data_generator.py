@@ -3,6 +3,7 @@ from glob import glob
 import numpy as np
 from librosa import load
 import os
+from pandas import DataFrame
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical, Sequence
 from typing import List, Optional, Tuple, Union
@@ -10,11 +11,6 @@ import utils.constants as consts
 
 
 class DataGenerator(Sequence):
-    """
-    Learning resources:
-    DataGenerator inspired from: https://www.youtube.com/watch?v=OUHU7K_dD30
-    """
-
 
     def __init__(
             self,
@@ -169,6 +165,7 @@ class DataGenerator(Sequence):
         for _path in wav_paths:
             sample: str = os.path.split(_path)[1]
 
+            # Philharmonia orchestra samples are tagged with 'phil'.
             if 'phil' in sample:
                 pre_encode_pitch_labels.append(sample.split('_')[2])
 
@@ -205,11 +202,11 @@ class DataGenerator(Sequence):
     def from_path_to_audio(
             cls,
             path_to_audio: str,
+            include_instrument_label: bool = True,
+            include_pitch_labels: bool = False,
             batch_size: int = 16,
             sample_rate: int = consts.SAMPLE_RATE,
             shuffle: bool = True,
-            include_instrument_label: bool = True,
-            include_pitch_labels: bool = False
     ) -> DataGenerator:
         """
         :param: path_to_audio: str - Path to root folder of audio files.
@@ -238,21 +235,14 @@ class DataGenerator(Sequence):
         wav_paths: List[str] = glob(f'{path_to_audio}/**', recursive=True)
         wav_paths = [x.replace(os.sep, '/') for x in wav_paths if '.wav' in x]
 
-        # Pitch labels.
-        pitch_labels: Optional[np.ndarray] = None
-        n_pitch_classes: Optional[int] = None
+        # Get labels.
+        n_pitch_classes, pitch_labels = cls._get_pitch_labels(wav_paths)  # type: int, np.ndarray
+        n_instrument_classes, instrument_labels = cls._get_instrument_labels(path_to_audio,
+                                                                             wav_paths)  # type: int, np.ndarray
 
-        if include_pitch_labels:
-            n_pitch_classes, pitch_labels = cls._get_pitch_labels(wav_paths)  # type: int, np.ndarray
-
-        # Instrument labels.
-        instrument_labels: Optional[np.ndarray] = None
-        n_instrument_classes: Optional[int] = None
-
-        # Include instrument labels by default.
-        if include_instrument_label or include_pitch_labels is False:
-            n_instrument_classes, instrument_labels = cls._get_instrument_labels(path_to_audio,
-                                                                                 wav_paths)  # type: int, np.ndarray
+        df = DataFrame(
+            {'wav_paths': wav_paths}
+       )
 
         return cls(
             wav_paths,

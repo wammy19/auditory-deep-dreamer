@@ -16,3 +16,4 @@ MEL_WINDOW_LEN: int = 400
 TRIM_DB: int = 45
 
 NOTE_TABLE: List[str] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+SORTED_NOTE_TABLE: List[str] = sorted(NOTE_TABLE)

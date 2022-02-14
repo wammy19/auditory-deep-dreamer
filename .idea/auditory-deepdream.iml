@@ -10,8 +10,9 @@
       <excludeFolder url="file://$MODULE_DIR$/tensorboard-logs" />
       <excludeFolder url="file://$MODULE_DIR$/models" />
       <excludeFolder url="file://$MODULE_DIR$/scripts/.pytest_cache" />
+      <excludeFolder url="file://$MODULE_DIR$/datasets" />
     </content>
-    <orderEntry type="jdk" jdkName="Poetry (auditory-deepdream)" jdkType="Python SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyNamespacePackagesService">

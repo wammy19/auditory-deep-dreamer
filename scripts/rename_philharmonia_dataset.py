@@ -23,7 +23,6 @@ def main():
                 new_sample_name: str = f'phil_{instrument}_{sample_note[0]}_{str(i).zfill(6)}.wav'
 
             new_name_path: str = join(path_to_samples, new_sample_name)
-
             os.rename(path_to_sample, new_name_path)
 
 

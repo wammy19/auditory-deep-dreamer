@@ -34,11 +34,13 @@ def load_data(path_to_audio: str) -> List[Data]:
                 sr=consts.SAMPLE_RATE
             )[0]
 
-            sample = fix_length(sample, consts.SAMPLE_RATE)  # Pad audio with 0's if it's less than a second.
+            sample = fix_length(sample, size=consts.SAMPLE_RATE)  # Pad audio with 0's if it's less than a second.
             samples.append(Data(sample, label))
 
     return samples
 
+
+# --------------------------------------------- Encoders --------------------------------------------- #
 
 def midi_number_to_note(number: int) -> str:
     """

@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (auditory-deepdream)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (auditory-deepdream)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
+  </component>
+  <component name="UnattendedHostPersistenceState">
+    <option name="openedFilesInfos">
+      <list>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="258" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/serialize_labels_and_create_csv.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="24" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/utils/constants.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1198" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/encoders.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="426" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/tests/test_ai_tools.py" />
+        </OpenedFileInfo>
+      </list>
+    </option>
   </component>
 </project>
