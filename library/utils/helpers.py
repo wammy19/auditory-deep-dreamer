@@ -1,10 +1,19 @@
 from dataclasses import dataclass
-from librosa import load
-from librosa.util import fix_length
+from glob import glob
 import numpy as np
 import os
+from os.path import abspath
+from librosa import load
+from librosa.util import fix_length
+import re
 from typing import List
+import yaml
 import utils.constants as consts
+
+
+# Patterns.
+unix_url_substring_pattern: re.Pattern = re.compile(r'([^/]+)(?=/[^/]+/?$)')  # Example: /home/ada/SELECTION/dev/
+note_pattern: re.Pattern = re.compile(r'[A-G*#]')
 
 
 @dataclass
@@ -40,8 +49,6 @@ def load_data(path_to_audio: str) -> List[Data]:
     return samples
 
 
-# --------------------------------------------- Encoders --------------------------------------------- #
-
 def midi_number_to_note(number: int) -> str:
     """
     :param: number: Midi note number in the range of 0-127.
@@ -58,3 +65,28 @@ def midi_number_to_note(number: int) -> str:
 
     note: str = consts.NOTE_TABLE[number % note_in_octave]
     return note
+
+
+def get_paths_to_wav_files(path_to_dataset: str) -> List[str]:
+    """
+    :param: path_to_dataset: Path to a directory containing wav files. Paths to wav files are collected recursively.
+    :return: List of absolute paths to wav files.
+    """
+
+    # Gather paths to each '.wav' file.
+    wav_paths: List[str] = sorted(glob(f'{path_to_dataset}/**', recursive=True))
+    wav_paths = [abspath(file.replace(os.sep, '/')) for file in wav_paths if '.wav' in file]
+
+    return wav_paths
+
+
+def read_yaml_config(path_to_yaml: str = '/home/andrea/dev/uni/auditory-deepdream/config.yml') -> dict:
+    """
+    :param: path_to_yaml: Absolute path to a yml file.
+    :return: dict with all the key pairs contained in the yaml file that is loaded.
+    """
+
+    with open(path_to_yaml, 'r') as file_handler:
+        config: dict = yaml.safe_load(file_handler)
+
+    return config

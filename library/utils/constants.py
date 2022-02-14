@@ -1,7 +1,6 @@
 from typing import List
 
 # Audio settings.
-# General
 SAMPLE_RATE: int = 22_050
 DELTA_TIME: float = 1.0  # Time of audio file in seconds.
 
@@ -12,8 +11,9 @@ NUM_FFT: int = 2_048
 MEL_TO_AUDIO_N_ITERATIONS: int = 32
 MEL_WINDOW_LEN: int = 400
 
-# Pre Processing.
-TRIM_DB: int = 45
-
+# Note Tables.
 NOTE_TABLE: List[str] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 SORTED_NOTE_TABLE: List[str] = sorted(NOTE_TABLE)
+
+# Pre Processing.
+TRIM_DB: int = 45
