@@ -1,11 +1,10 @@
-from ai_tools.encoders import get_instrument_encodings, get_pitch_encodings
+from ai_tools.helpers import get_instrument_encodings, get_pitch_encodings
 import numpy as np
 import os
 from typing import List
 from utils.constants import SORTED_NOTE_TABLE
 from utils.helpers import unix_url_substring_pattern, note_pattern, get_paths_to_wav_files, read_yaml_config
 
-global yaml_config
 yaml_config: dict = read_yaml_config()
 
 
@@ -13,7 +12,7 @@ def test_encoders():
     """
     :return:
 
-    Tests the pitch and instrument one-hot-encoders.
+    Tests the pitch and instrument one-hot-encoders match the correct file.
     """
 
     path_to_dataset: str = yaml_config['path_to_dataset']

@@ -8,8 +8,12 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1204" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/encoders.py" />
+          <option name="caretOffset" value="1428" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/data_generator.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="465" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/data_gen.py" />
         </OpenedFileInfo>
       </list>
     </option>

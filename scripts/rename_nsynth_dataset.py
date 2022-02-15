@@ -4,6 +4,7 @@ import re
 from typing import List
 from utils.helpers import midi_number_to_note
 
+
 def rename_samples(path_to_audio_files, instrument: str) -> None:
     """
     :param path_to_audio_files:

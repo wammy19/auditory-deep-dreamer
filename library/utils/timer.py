@@ -3,9 +3,10 @@ import logging as logger
 from time import perf_counter
 from typing import Callable, Optional
 
+
 class Timer:
     """
-    Timer classed used for benchmarking.
+    Timer class used for benchmarking blocks of code.
 
     Resource: https://www.geeksforgeeks.org/python-how-to-time-the-program/
     """
@@ -59,7 +60,7 @@ class Timer:
         self._elapsed = 0.0
 
 
-    def _is_running(self) -> bool:
+    def is_running(self) -> bool:
         """
         :return:
 
@@ -77,7 +78,7 @@ class Timer:
         Returns total time taken after .stop() has been called.
         """
 
-        if self._is_running():
+        if self.is_running():
             logger.warning('Timer is still running. Call the .stop() method before getting the elapsed time.')
 
         return self._elapsed

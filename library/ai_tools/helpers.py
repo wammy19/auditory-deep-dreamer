@@ -1,14 +1,47 @@
 import numpy as np
+import os
 from os.path import split
+from pandas import DataFrame
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
 from typing import List
 import utils.constants as consts
+from utils.helpers import get_paths_to_wav_files
+
+
+def create_data_frame_from_path(path_to_dataset: str) -> DataFrame:
+    """
+    :param: path_to_audio: Path to root folder of a dataset.
+    :return:
+
+    Creates a data frame from a path to an audio dataset.
+    Example of naming convention audio files must adhere too: "reed_C#_004805_segment_0.wav"
+
+    The column created are:
+    index | path_to_data | instrument_label (one-hot-encoded) | pitch_label (one-hot-encoded)
+    """
+
+    wav_paths: List[str] = get_paths_to_wav_files(path_to_dataset)
+    instrument_classes: List[str] = sorted(os.listdir(path_to_dataset))  # Example: ['string', 'reed']
+
+    # One hot encoded labels.
+    instrument_labels: np.ndarray = get_instrument_encodings(wav_paths, instrument_classes)
+    pitch_labels: np.ndarray = get_pitch_encodings(wav_paths)
+
+    df = DataFrame.from_dict(
+        {
+            'path': wav_paths,
+            'instrument_label': [label for label in instrument_labels],
+            'pitch_label': [label for label in pitch_labels]
+        }
+    )
+
+    return df
 
 
 def get_pitch_encodings(wav_paths: List[str]) -> np.ndarray:
     """
-    :param: wav_paths: Paths to wav_files. Must follow this name convention: "reed_C#_004805_segment_0.wav"
+    :param: wav_paths: Paths to wav_files. Must follow this naming convention: "reed_C#_004805_segment_0.wav"
     :return:
 
     Create labels for each sample's pitch.
