@@ -3,12 +3,12 @@ Concurrently pre-processes audio for training.
 """
 
 from concurrent.futures import ProcessPoolExecutor
+import numpy as np
 from librosa import load
 from librosa.effects import trim
-import numpy as np
 import os
 from os import listdir
-from os.path import join
+from os.path import join, splitext
 import re
 from sklearn.cluster import KMeans
 import soundfile as sf  # https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write
@@ -42,7 +42,7 @@ def process_audio(path: str, file: str, inst_class: str, window_leap_fraction: i
 
     # Save audio.
     for i, audio in enumerate(segmented_signal):
-        file_name: str = f'{os.path.splitext(file)[0]}_segment_{i}.wav'
+        file_name: str = f'{splitext(file)[0]}_segment_{i}.wav'
 
         sf.write(join(path_for_writing, inst_class, file_name), audio, consts.SAMPLE_RATE)
 
