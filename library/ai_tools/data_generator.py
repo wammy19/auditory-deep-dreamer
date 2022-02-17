@@ -109,7 +109,6 @@ class DataGenerator(Sequence):
     def from_path_to_audio(
             cls,
             path_to_audio: str,
-            include_instrument_label: bool = True,
             include_pitch_labels: bool = False,
             batch_size: int = 16,
             sample_rate: int = consts.SAMPLE_RATE,

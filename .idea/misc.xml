@@ -8,12 +8,12 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1428" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/data_generator.py" />
+          <option name="caretOffset" value="695" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/data_gen.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="465" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/data_gen.py" />
+          <option name="caretOffset" value="1776" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/processing_nsynth_dataset.py" />
         </OpenedFileInfo>
       </list>
     </option>
