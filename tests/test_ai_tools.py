@@ -1,4 +1,4 @@
-from ai_tools.helpers import get_instrument_encodings, get_pitch_encodings
+from ai_tools.helpers import get_instrument_encodings, get_pitch_encodings, decode_pitch
 import numpy as np
 import os
 from typing import List
@@ -32,7 +32,7 @@ def test_encoders():
         note: str = ''.join(note_matches)
 
         assert instrument_classes[np.argmax(instrument_label)] == instrument
-        assert SORTED_NOTE_TABLE[np.argmax(pitch_label)] == note
+        assert decode_pitch(pitch_label) == note
 
         assert instrument_label.shape == (len(instrument_classes),)
         assert pitch_label.shape == (len(SORTED_NOTE_TABLE),)

@@ -86,3 +86,15 @@ def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> np.nda
     one_hot_encoded_labels: np.ndarray = to_categorical(labels, num_classes=len(classes))
 
     return one_hot_encoded_labels
+
+
+def decode_pitch(label: np.ndarray) -> str:
+    """
+    :param label:
+    :return:
+    """
+
+    pitch_index: int = int(np.argmax(label))
+    pitch: str = consts.SORTED_NOTE_TABLE[pitch_index]
+
+    return pitch

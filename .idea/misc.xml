@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (auditory-deepdream)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (auditory-deepdream)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
@@ -10,10 +10,6 @@
         <OpenedFileInfo>
           <option name="caretOffset" value="742" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/processing_nsynth_dataset.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="1092" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/data_augmentation.py" />
         </OpenedFileInfo>
       </list>
     </option>

@@ -3,7 +3,7 @@ from librosa import load
 from librosa.effects import time_stretch
 import numpy as np
 import os
-from os.path import join, splitext
+from os.path import join
 import re
 import soundfile as sf  # https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write
 from typing import List
@@ -31,8 +31,13 @@ def main():
         path_to_samples: str = join(path_to_data_to_augment, instrument)
         sample_paths: List[str] = os.listdir(path_to_samples)
 
+        print(f'\nProcessing {instrument}.')
+        print(f'Num Samples: {len(sample_paths)}\n\n')
+
         for sample in sample_paths:
-            with ProcessPoolExecutor(max_workers=50) as process_pool_executor:
+            print(f'Processing: {sample}')
+            
+            with ProcessPoolExecutor(max_workers=16) as process_pool_executor:
                 process_pool_executor.submit(augment_data, path_to_samples, sample, instrument)
 
 
