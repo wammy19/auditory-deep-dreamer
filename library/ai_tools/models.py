@@ -149,8 +149,8 @@ def build_simple_cnn() -> Sequential:
 
 def build_conv2d_example(N_CLASSES=2, sample_rate=consts.SAMPLE_RATE) -> Model:
     """
-    :param N_CLASSES: Number of classes. Example: ['reed', 'string'] = 2
-    :param sample_rate: Sample rate of .wav files.
+    :param: N_CLASSES: Number of classes. Example: ['reed', 'string'] = 2
+    :param: sample_rate: Sample rate of .wav files.
     :return: A keras Sequential model.
 
     Builds a simple Conv2D network as an example.
@@ -198,7 +198,7 @@ def build_conv2d_example(N_CLASSES=2, sample_rate=consts.SAMPLE_RATE) -> Model:
 
     output = Dense(N_CLASSES, activation=softmax, name='softmax')(x)
 
-    model = Model(inputs=i.input, outputs=output, name='2d_convolution')
+    model = Model(inputs=i.mel_spec_layers, outputs=output, name='2d_convolution')
 
     model.compile(optimizer='adam',
                   loss=categorical_crossentropy,

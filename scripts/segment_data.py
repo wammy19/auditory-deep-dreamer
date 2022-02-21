@@ -13,7 +13,7 @@ import re
 from sklearn.cluster import KMeans
 import soundfile as sf  # https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write
 from typing import List
-from utils.audio_processors import segment_signal
+from utils.audio_tools import segment_signal
 import utils.constants as consts
 
 

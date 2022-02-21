@@ -52,12 +52,3 @@ services:
 #            - driver: nvidia
 #              count: 1
 #              capabilities: [ compute, utility ]
-
-#  # Service spins up a tensorboard server.
-#  tensorboard:
-#    image: lspvic/tensorboard-notebook
-#    volumes:
-#      - ./tensorboard-logs:/tensorboard-logs
-#    command: tensorboard --logdir='/tensorboard-logs' --port 8020 --host=0.0.0.0
-#    ports:
-#      - "8020:8020"

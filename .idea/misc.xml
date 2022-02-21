@@ -4,14 +4,4 @@
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
-  <component name="UnattendedHostPersistenceState">
-    <option name="openedFilesInfos">
-      <list>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="742" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/processing_nsynth_dataset.py" />
-        </OpenedFileInfo>
-      </list>
-    </option>
-  </component>
 </project>

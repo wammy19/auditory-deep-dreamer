@@ -1,15 +1,15 @@
+from .constants import SAMPLE_RATE
 import IPython.display as display
-from IPython.core.display import display as core_display
-import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
+import librosa.display
 import PIL.Image
 from tensorflow import Tensor
 from typing import Union
-from .constants import SAMPLE_RATE
 
 
-def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool, sample_rate: int = SAMPLE_RATE) -> None:
+
+def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool = False, sample_rate: int = SAMPLE_RATE) -> None:
     """
     :param: mel_spec: np.ndarray that is returned from librosa.feature.melspectrogram
     :param: is_log_mel: Set to True if you've passed the mel spectrogram through librosa.power_to_db()
@@ -48,18 +48,6 @@ def display_image(_image: Union[np.array, Tensor]) -> None:
     """
 
     display.display(PIL.Image.fromarray(np.array(_image)))
-
-
-def display_audio_player(signal: np.ndarray, sample_rate: int = SAMPLE_RATE) -> None:
-    """
-    :param: signal - Audio sample loaded from librosa.load(). A 1D numpy array.
-    :param: sample_rate - (optional).
-    :return:
-
-    Displays an audio player for playback.
-    """
-
-    core_display(display.Audio(signal, rate=sample_rate, normalize=False))
 
 
 def display_wave_form(audio_file: np.ndarray, sample_rate: int = SAMPLE_RATE):
