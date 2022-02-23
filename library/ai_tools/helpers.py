@@ -12,7 +12,7 @@ import utils.constants as consts
 from utils.helpers import get_paths_to_wav_files
 
 
-def create_data_frame_from_path(path_to_dataset: str, num_samples_of_each_inst: int = 50) -> DataFrame:
+def create_data_frame_from_path(path_to_dataset: str, num_of_each_class: int = 50) -> DataFrame:
     """
     :param: path_to_audio: Path to root folder of a dataset.
     :return:
@@ -24,7 +24,7 @@ def create_data_frame_from_path(path_to_dataset: str, num_samples_of_each_inst: 
     index | path_to_data | instrument_label (one-hot-encoded) | pitch_label (one-hot-encoded)
     """
 
-    wav_paths: List[str] = get_paths_to_wav_files(path_to_dataset)
+    wav_paths: List[str] = get_paths_to_wav_files(path_to_dataset, num_of_each_class)
     instrument_classes: List[str] = sorted(os.listdir(path_to_dataset))  # Example: ['string', 'reed']
 
     shuffle(wav_paths)
@@ -99,8 +99,11 @@ def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> Tuple[
 
 def decode_pitch(label: np.ndarray) -> str:
     """
-    :param label:
+    :param: label: One hot encoded pitch label. Shape must be (12,)
     :return:
+
+    Decodes a one hot encoded vector representing pitch into a string.
+    Example: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  -> "A"
     """
 
     pitch_index: int = int(np.argmax(label))

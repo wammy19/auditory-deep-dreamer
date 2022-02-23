@@ -1,12 +1,17 @@
-from ai_tools.helpers import get_instrument_encodings, get_pitch_encodings, decode_pitch
-import numpy as np
 import os
 from typing import List
+
+import numpy as np
+
+from ai_tools.helpers import decode_pitch, get_instrument_encodings, get_pitch_encodings, create_data_frame_from_path
 from utils.constants import SORTED_NOTE_TABLE
-from utils.helpers import unix_url_substring_pattern, note_pattern, get_paths_to_wav_files, read_yaml_config
+from utils.helpers import get_paths_to_wav_files, note_pattern, read_yaml_config, unix_url_substring_pattern
+
+from pandas import DataFrame
 
 yaml_config: dict = read_yaml_config()
 path_to_dataset: str = yaml_config['path_to_dataset']
+
 
 def test_encoders():
     """
@@ -34,3 +39,18 @@ def test_encoders():
 
         assert instrument_label.shape == (len(instrument_classes),)
         assert pitch_label.shape == (len(SORTED_NOTE_TABLE),)
+
+
+def test_data_frame_creator():
+    """
+    :return:
+    """
+    number_of_each_class: int = 50
+    ontology: List[str] = os.listdir(path_to_dataset)
+    ontology_len: int = len(ontology)
+    df: DataFrame = create_data_frame_from_path(path_to_dataset, num_of_each_class=number_of_each_class)
+
+    assert df['instrument'].count() == number_of_each_class * ontology_len
+
+    for _class in ontology:
+        assert len(df[df['instrument'] == 'bass'].index) == number_of_each_class
