@@ -1,15 +1,18 @@
-import numpy as np
 import os
 from os.path import split
+from random import shuffle
+from typing import List, Tuple
+
+import numpy as np
 from pandas import DataFrame
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
-from typing import List
+
 import utils.constants as consts
 from utils.helpers import get_paths_to_wav_files
 
 
-def create_data_frame_from_path(path_to_dataset: str) -> DataFrame:
+def create_data_frame_from_path(path_to_dataset: str, num_samples_of_each_inst: int = 50) -> DataFrame:
     """
     :param: path_to_audio: Path to root folder of a dataset.
     :return:
@@ -24,25 +27,30 @@ def create_data_frame_from_path(path_to_dataset: str) -> DataFrame:
     wav_paths: List[str] = get_paths_to_wav_files(path_to_dataset)
     instrument_classes: List[str] = sorted(os.listdir(path_to_dataset))  # Example: ['string', 'reed']
 
+    shuffle(wav_paths)
+
     # One hot encoded labels.
-    instrument_labels: np.ndarray = get_instrument_encodings(wav_paths, instrument_classes)
-    pitch_labels: np.ndarray = get_pitch_encodings(wav_paths)
+    encoded_pitch_labels, pitch_labels = get_pitch_encodings(wav_paths)  # type: np.ndarray, List[str]
+    encoded_instrument_labels, instrument_labels = get_instrument_encodings(
+        wav_paths, instrument_classes)  # type: np.ndarray, List[str]
 
     df = DataFrame.from_dict(
         {
             'path': wav_paths,
-            'instrument_label': [label for label in instrument_labels],
-            'pitch_label': [label for label in pitch_labels]
+            'instrument': [label for label in instrument_labels],
+            'pitch': [label for label in pitch_labels],
+            'instrument_label': [label for label in encoded_instrument_labels],
+            'pitch_label': [label for label in encoded_pitch_labels],
         }
     )
 
     return df
 
 
-def get_pitch_encodings(wav_paths: List[str]) -> np.ndarray:
+def get_pitch_encodings(wav_paths: List[str]) -> Tuple[np.ndarray, List[str]]:
     """
     :param: wav_paths: Paths to wav_files. Must follow this naming convention: "reed_C#_004805_segment_0.wav"
-    :return:
+    :return: Returns one hot encoded pitch labels as well as the decoded pitch labels as strings.
 
     Create labels for each sample's pitch.
     """
@@ -67,14 +75,14 @@ def get_pitch_encodings(wav_paths: List[str]) -> np.ndarray:
     labels: np.ndarray = pitch_label_encoder.transform(pre_encode_pitch_labels)
     one_hot_encoded_labels: np.ndarray = to_categorical(labels, num_classes=len(consts.NOTE_TABLE))
 
-    return one_hot_encoded_labels
+    return one_hot_encoded_labels, pre_encode_pitch_labels
 
 
-def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> np.ndarray:
+def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> Tuple[np.ndarray, List[str]]:
     """
     :param: path_to_audio: Path to top level of dataset.
     :param: wav_paths: Path to each .wav file.
-    :return: Number of classes as well as the labels
+    :return: Returns one hot encoded instrument labels, as well as the decoded instrument labels as strings.
 
     Create labels for each wav file corresponding to its instrument.
     """
@@ -82,10 +90,11 @@ def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> np.nda
     # Encode labels.
     label_encoder = LabelEncoder()
     label_encoder.fit(classes)
-    labels: np.ndarray = label_encoder.transform([split(x)[0].split('/')[-1] for x in wav_paths])
-    one_hot_encoded_labels: np.ndarray = to_categorical(labels, num_classes=len(classes))
+    pre_encoded_labels: List[str] = [split(x)[0].split('/')[-1] for x in wav_paths]
+    encoded_labels: np.ndarray = label_encoder.transform(pre_encoded_labels)
+    one_hot_encoded_labels: np.ndarray = to_categorical(encoded_labels, num_classes=len(classes))
 
-    return one_hot_encoded_labels
+    return one_hot_encoded_labels, pre_encoded_labels
 
 
 def decode_pitch(label: np.ndarray) -> str:
