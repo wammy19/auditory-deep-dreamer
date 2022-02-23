@@ -9,4 +9,4 @@ jupyter-notebooks/.ipynb_checkpoints/
 # Data
 datasets
 models
-/.aim/
+.aim
