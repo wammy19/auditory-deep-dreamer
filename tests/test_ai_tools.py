@@ -44,7 +44,10 @@ def test_encoders():
 def test_data_frame_creator():
     """
     :return:
+
+    Tests the data frame creator function.
     """
+
     number_of_each_class: int = 50
     ontology: List[str] = os.listdir(path_to_dataset)
     ontology_len: int = len(ontology)

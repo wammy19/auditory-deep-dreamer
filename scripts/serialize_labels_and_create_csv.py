@@ -10,9 +10,11 @@ index, path_to_data, instrument_label (one-hot-encoded), pitch_label (one-hot-en
 3,/path/to/data/bass/bass_A#_000007_segment_2.wav,[1. 0. 0. 0. 0. 0. 0. 0. 0. 0.],[0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 """
 
-from ai_tools.helpers import create_data_frame_from_path
 from os.path import join
+
 from pandas import DataFrame
+
+from ai_tools.helpers import create_data_frame_from_path
 from utils.helpers import read_yaml_config
 
 

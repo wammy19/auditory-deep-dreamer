@@ -1,14 +1,14 @@
-from concurrent.futures import ProcessPoolExecutor
 import os
+from concurrent.futures import ProcessPoolExecutor
 from os.path import join
+from random import shuffle
 from shutil import move
 from typing import List
-from random import shuffle
 
 
 def create_directories(path_to_dataset: str, ontology: List[str]) -> None:
     """
-    :param: path_to_dataset:
+    :param path_to_dataset:
     :return:
 
     Creates a 'validation', 'test', and 'train' directories in specified path.
@@ -26,8 +26,8 @@ def create_directories(path_to_dataset: str, ontology: List[str]) -> None:
 
 def check_if_lists_are_similar(list_1: List[str], list_2: List) -> bool:
     """
-    :param: list_1:
-    :param: list_2:
+    :param list_1:
+    :param list_2:
     :return:
 
     Returns True if the lists are similar. The lists are similar if at least 1 element is shared by the lists.
@@ -43,8 +43,8 @@ def check_if_lists_are_similar(list_1: List[str], list_2: List) -> bool:
 
 def move_files(path_to_dataset: str, instrument: str) -> None:
     """
-    :param: path_to_dataset:
-    :param: instrument:
+    :param path_to_dataset:
+    :param instrument:
     :return:
 
     Move files from their ontology into a validation, test, train structure.

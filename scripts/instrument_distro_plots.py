@@ -1,11 +1,13 @@
 # Creates a bar plot which informs us of the distribution of samples.
 
+from collections import Counter
+from typing import List
+
+import matplotlib.pyplot as plt
+from pandas import DataFrame
+
 from ai_tools import DataGenerator
 from ai_tools.helpers import decode_pitch
-from collections import Counter
-from pandas import DataFrame
-import matplotlib.pyplot as plt
-from typing import List
 from utils.helpers import unix_url_substring_pattern
 
 

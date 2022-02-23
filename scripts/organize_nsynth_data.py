@@ -5,6 +5,7 @@ Helper script for organizing Google's nSynth dataset into a different file struc
 import os
 import re
 import shutil
+
 from tqdm import tqdm
 
 
@@ -24,7 +25,7 @@ def main():
             os.makedirs(instrument_dir)
 
         shutil.move(os.path.join(path_to_dataset, file), instrument_dir)  # Move file into appropriate folder.
-        
+
 
 if __name__ == '__main__':
     main()

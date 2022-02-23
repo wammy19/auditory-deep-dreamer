@@ -2,12 +2,12 @@
 Check that dependencies are working correctly with conda env.
 """
 
-import librosa
-import tensorflow
 import kapre
+import librosa
 import numpy
-import sklearn
 import scipy
+import sklearn
+import tensorflow
 
 
 def main():

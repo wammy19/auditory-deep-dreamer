@@ -51,7 +51,7 @@ def plot_learning_metrics(
 
 def plot_history(history: History) -> None:
     """
-    :param: history: History returned from keras model tf.Model.fit() method.
+    :param history: History returned from keras model tf.Model.fit() method.
     :return: None
 
     Plots accuracy and loss metrics.
@@ -68,7 +68,7 @@ def plot_history(history: History) -> None:
 
 def display_optimal_epoch_and_metrics(_history: History) -> None:
     """
-    :param: _history:
+    :param _history:
     :return: None
 
     Finds the most optimal epoch by finding the epoch at which the validation loss bottoms out.

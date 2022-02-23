@@ -1,12 +1,13 @@
+from typing import Tuple
+
 from kapre.composed import get_melspectrogram_layer
-import logging
-from tensorflow.keras import Sequential, Model
-from tensorflow.keras.layers import Conv2D, Dense, MaxPooling2D, Flatten, LayerNormalization, Dropout
-from tensorflow.keras.losses import categorical_crossentropy, binary_crossentropy
+from tensorflow.keras import Model, Sequential
 from tensorflow.keras.activations import relu, sigmoid, softmax
+from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, LayerNormalization, MaxPooling2D
+from tensorflow.keras.losses import binary_crossentropy, categorical_crossentropy
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
-from typing import Tuple, Optional, Callable
+
 import utils.constants as consts
 
 
@@ -149,8 +150,8 @@ def build_simple_cnn() -> Sequential:
 
 def build_conv2d_example(N_CLASSES=2, sample_rate=consts.SAMPLE_RATE) -> Model:
     """
-    :param: N_CLASSES: Number of classes. Example: ['reed', 'string'] = 2
-    :param: sample_rate: Sample rate of .wav files.
+    :param N_CLASSES: Number of classes. Example: ['reed', 'string'] = 2
+    :param sample_rate: Sample rate of .wav files.
     :return: A keras Sequential model.
 
     Builds a simple Conv2D network as an example.

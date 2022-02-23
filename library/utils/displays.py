@@ -11,9 +11,9 @@ from typing import Union
 
 def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool = False, sample_rate: int = SAMPLE_RATE) -> None:
     """
-    :param: mel_spec: np.ndarray that is returned from librosa.feature.melspectrogram
-    :param: is_log_mel: Set to True if you've passed the mel spectrogram through librosa.power_to_db()
-    :param: sample_rate: sample rate.
+    :param mel_spec: np.ndarray that is returned from librosa.feature.melspectrogram
+    :param is_log_mel: Set to True if you've passed the mel spectrogram through librosa.power_to_db()
+    :param sample_rate: sample rate.
     :return: None
 
     Displays a mel spectrogram.
@@ -41,7 +41,7 @@ def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool = False, samp
 
 def display_image(_image: Union[np.array, Tensor]) -> None:
     """
-    :param: _image: Image that's been converted into a numpy array.
+    :param _image: Image that's been converted into a numpy array.
     :return:
 
     Displays an image that's been converted into a numpy array.

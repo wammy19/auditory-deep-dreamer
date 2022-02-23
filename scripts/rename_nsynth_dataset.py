@@ -1,7 +1,8 @@
 import os
-from os.path import join
 import re
+from os.path import join
 from typing import List
+
 from utils.helpers import midi_number_to_note
 
 
@@ -24,6 +25,7 @@ def rename_samples(path_to_audio_files, instrument: str) -> None:
         new_name_path: str = join(path_to_audio_files, new_name)
 
         os.rename(path_to_sample, new_name_path)
+
 
 def main():
     path_to_data_set: str = '../../data-sets/nsynth'

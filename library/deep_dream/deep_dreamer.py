@@ -17,7 +17,7 @@ class DeepDreamer(tf.Module):
 
     def __init__(self, layer_names_for_amplification: List[str]):
         """
-        :param layer_names_for_amplification: Name of layers you wish the amplify. Layer name example: 'mixed0'
+        :param layer_names_for_amplification: Name of layers you wish to amplify. Layer name example: 'mixed0'
         layers range from 0 to 10.
         """
 
@@ -25,7 +25,7 @@ class DeepDreamer(tf.Module):
 
         # Resources:
         # Keras Documentation: https://keras.io/api/applications/inceptionv3/
-        # Incite into the models architecture: https://iq.opengenus.org/inception-v3-model-architecture/
+        # Incite into the models' architecture: https://iq.opengenus.org/inception-v3-model-architecture/
         _base_model: Model = tf.keras.applications.InceptionV3(include_top=False, weights='imagenet')
         layers: List[str] = [_base_model.get_layer(name).output for name in layer_names_for_amplification]
 

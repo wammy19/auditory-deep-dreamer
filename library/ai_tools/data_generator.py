@@ -1,12 +1,15 @@
 from __future__ import annotations
-from .helpers import create_data_frame_from_path
+
+import os
+from typing import List, Optional, Tuple, Union
+
 import numpy as np
 from librosa import load
-import os
 from pandas import DataFrame
 from tensorflow.keras.utils import Sequence
-from typing import List, Optional, Union, Tuple
+
 import utils.constants as consts
+from .helpers import create_data_frame_from_path
 
 
 class DataGenerator(Sequence):
@@ -41,7 +44,6 @@ class DataGenerator(Sequence):
 
     # ----------------------------------------------- Virtual functions -----------------------------------------------
 
-
     def __len__(self) -> int:
         """
         :return: int
@@ -55,7 +57,7 @@ class DataGenerator(Sequence):
             index: int
     ) -> Union[Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray, np.ndarray]]:
         """
-        :param: index: int
+        :param index: int
         :return:
         """
 
@@ -73,9 +75,9 @@ class DataGenerator(Sequence):
 
         # Populate arrays with data and labels.
         for i, path in enumerate(wav_paths):
-            X[i, ] = load(path, mono=True)[0].reshape(-1, 1)
-            instrument_y[i, ] = np.array(instrument_labels[i])
-            pitch_y[i, ] = np.array(pitch_labels[i])
+            X[i,] = load(path, mono=True)[0].reshape(-1, 1)
+            instrument_y[i,] = np.array(instrument_labels[i])
+            pitch_y[i,] = np.array(pitch_labels[i])
 
         if self._include_pitch_labels:
             return X, instrument_y, pitch_y
@@ -99,9 +101,12 @@ class DataGenerator(Sequence):
 
     # -----------------------------------------------------------------------------------------------------------------
 
-
     @property
     def get_data_frame(self) -> DataFrame:
+        """
+        :return: Returns stored dataframe.
+        """
+
         return self._df
 
 
@@ -115,12 +120,12 @@ class DataGenerator(Sequence):
             shuffle: bool = True,
     ) -> DataGenerator:
         """
-        :param: path_to_audio: str - Path to root folder of audio files.
-        :param: include_instrument_label: bool - Will generate instrument labels if set to True.
-        :param: include_pitch_labels: bool - Will generate pitch labels if set to True.
-        :param: batch_size: int - Number of '.wav' files to load in a batch.
-        :param: sample_rate: Sample rate of audio files, must be the same for all files.
-        :param: shuffle: Randomly shuffle data after each epoch.
+        :param path_to_audio: str - Path to root folder of audio files.
+        :param include_instrument_label: bool - Will generate instrument labels if set to True.
+        :param include_pitch_labels: bool - Will generate pitch labels if set to True.
+        :param batch_size: int - Number of '.wav' files to load in a batch.
+        :param sample_rate: Sample rate of audio files, must be the same for all files.
+        :param shuffle: Randomly shuffle data after each epoch.
         :return: DataGenerator
 
         Returns an audio DataGenerator class from a given path to a root folder that contains the ontology with audio

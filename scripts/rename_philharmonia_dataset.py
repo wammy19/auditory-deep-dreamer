@@ -1,6 +1,6 @@
 import os
-from os.path import join
 import re
+from os.path import join
 from typing import List
 
 

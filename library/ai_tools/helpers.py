@@ -14,7 +14,7 @@ from utils.helpers import get_paths_to_wav_files
 
 def create_data_frame_from_path(path_to_dataset: str, num_of_each_class: int = 50) -> DataFrame:
     """
-    :param: path_to_audio: Path to root folder of a dataset.
+    :param path_to_audio: Path to root folder of a dataset.
     :return:
 
     Creates a data frame from a path to an audio dataset.
@@ -49,7 +49,7 @@ def create_data_frame_from_path(path_to_dataset: str, num_of_each_class: int = 5
 
 def get_pitch_encodings(wav_paths: List[str]) -> Tuple[np.ndarray, List[str]]:
     """
-    :param: wav_paths: Paths to wav_files. Must follow this naming convention: "reed_C#_004805_segment_0.wav"
+    :param wav_paths: Paths to wav_files. Must follow this naming convention: "reed_C#_004805_segment_0.wav"
     :return: Returns one hot encoded pitch labels as well as the decoded pitch labels as strings.
 
     Create labels for each sample's pitch.
@@ -80,8 +80,8 @@ def get_pitch_encodings(wav_paths: List[str]) -> Tuple[np.ndarray, List[str]]:
 
 def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> Tuple[np.ndarray, List[str]]:
     """
-    :param: path_to_audio: Path to top level of dataset.
-    :param: wav_paths: Path to each .wav file.
+    :param path_to_audio: Path to top level of dataset.
+    :param wav_paths: Path to each .wav file.
     :return: Returns one hot encoded instrument labels, as well as the decoded instrument labels as strings.
 
     Create labels for each wav file corresponding to its instrument.
@@ -99,7 +99,7 @@ def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> Tuple[
 
 def decode_pitch(label: np.ndarray) -> str:
     """
-    :param: label: One hot encoded pitch label. Shape must be (12,)
+    :param label: One hot encoded pitch label. Shape must be (12,)
     :return:
 
     Decodes a one hot encoded vector representing pitch into a string.

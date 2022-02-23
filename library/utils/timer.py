@@ -13,7 +13,7 @@ class Timer:
 
     def __init__(self, func: Callable = perf_counter):
         """
-        :param: func: A callable function that tracks time. Anything from the 'time' module will do.
+        :param func: A callable function that tracks time. Anything from the 'time' module will do.
         """
 
         self._elapsed: float = 0.0
@@ -85,10 +85,19 @@ class Timer:
 
 
     def __enter__(self) -> Timer:
+        """
+        :return:
+        """
+
         self.start()
 
         return self
 
 
     def __exit__(self, *args) -> None:
+        """
+        :param args:
+        :return:
+        """
+
         self.stop()

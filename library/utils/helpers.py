@@ -14,6 +14,7 @@ import utils.constants as consts
 
 # Patterns.
 unix_url_substring_pattern: re.Pattern = re.compile(r'([^/]+)(?=/[^/]+/?$)')  # Example: /home/ada/SELECTION/dev/
+unix_url_end_filename_pattern: re.Pattern = re.compile(r'^.+?(?=\.)')  # Example: /home/ada/audio-files/SELECTION
 note_pattern: re.Pattern = re.compile(r'[A-G*#]')
 
 

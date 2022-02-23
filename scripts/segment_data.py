@@ -2,20 +2,21 @@
 Concurrently pre-processes audio for training.
 """
 
-from concurrent.futures import ProcessPoolExecutor
-import numpy as np
-from librosa import load
-from librosa.effects import trim
 import os
+import re
+from concurrent.futures import ProcessPoolExecutor
 from os import listdir
 from os.path import join, splitext
-import re
-from sklearn.cluster import KMeans
-import soundfile as sf  # https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write
 from typing import List
-from utils.audio_tools import segment_signal
-import utils.constants as consts
 
+import numpy as np
+import soundfile as sf  # https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write
+from librosa import load
+from librosa.effects import trim
+from sklearn.cluster import KMeans
+
+import utils.constants as consts
+from utils.audio_tools import segment_signal
 
 # Settings.
 number_of_threads: int = 16
@@ -26,8 +27,8 @@ num_clusters: int = 4
 
 def process_audio(path: str, file: str, inst_class: str, window_leap_fraction: int):
     """
-    :param: path:
-    :param: file:
+    :param path:
+    :param file:
     :return:
 
     Processes the audio and saves it in a new directory.

@@ -1,11 +1,17 @@
+from os.path import join
+from typing import List
+
 import IPython.display as display
 import numpy as np
+import soundfile as sf
 from IPython.core.display import display as core_display
+from librosa import load
+from librosa.effects import time_stretch
 from librosa.feature.inverse import mel_to_audio
 from librosa.util import fix_length
-from typing import List
-import utils.constants as consts
 
+import utils.constants as consts
+from utils.helpers import unix_url_end_filename_pattern
 
 
 def segment_signal(
@@ -14,9 +20,9 @@ def segment_signal(
         window_leap_fraction: int = 2
 ) -> List[np.ndarray]:
     """
-    :param: audio_signal: np.ndarray of audio returned from librosa.load()
-    :param: sample_rate: Sample rate of audio that has been loaded.
-    :param: window_leap_fraction: Amount the window should move in relation to the sample rate. Default at 2, therefor
+    :param audio_signal: np.ndarray of audio returned from librosa.load()
+    :param sample_rate: Sample rate of audio that has been loaded.
+    :param window_leap_fraction: Amount the window should move in relation to the sample rate. Default at 2, therefor
     window will move at half the sample rate.
     :return: List[np.ndarray] - List of 1 second slices of audio.
 
@@ -47,8 +53,9 @@ def segment_signal(
 
 def create_audio_player(signal: np.ndarray, sample_rate: int = consts.SAMPLE_RATE, normalize: bool = False) -> None:
     """
-    :param: signal - A 1D raw audio signal, or a mel spectrogram.
-    :param: sample_rate - (optional).
+    :param signal: A 1D raw audio signal, or a mel spectrogram.
+    :param sample_rate: Sample rate of signal.
+    :param normalize: Normalize audio. Default is False.
     :return:
 
     Displays an audio player for playback.
@@ -62,3 +69,21 @@ def create_audio_player(signal: np.ndarray, sample_rate: int = consts.SAMPLE_RAT
         )
 
     core_display(display.Audio(signal, rate=sample_rate, normalize=normalize))
+
+
+def time_stretch_signal(path_to_samples: str, sample: str, instrument, path_for_writing: str):
+    """
+    :param path_to_samples:
+    :param sample:
+    :param instrument:
+    :param path_for_writing:
+    :return:
+
+    Creates a time stretches version of a sample.
+    """
+
+    loaded_sample: np.ndarray = load(join(path_to_samples, sample), sr=consts.SAMPLE_RATE, mono=True)[0]
+    stretched_sample: np.ndarray = time_stretch(loaded_sample, rate=0.5)
+    file_name: str = f'{unix_url_end_filename_pattern.findall(sample)[0]}_stretched.wav'
+
+    sf.write(join(path_for_writing, instrument, file_name), stretched_sample, consts.SAMPLE_RATE)
