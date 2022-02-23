@@ -12,6 +12,8 @@
       <excludeFolder url="file://$MODULE_DIR$/scripts/.pytest_cache" />
       <excludeFolder url="file://$MODULE_DIR$/datasets" />
       <excludeFolder url="file://$MODULE_DIR$/.pytest_cache" />
+      <excludeFolder url="file://$MODULE_DIR$/.aim/locks" />
+      <excludeFolder url="file://$MODULE_DIR$/.aim/meta" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -6,4 +6,4 @@ RUN apt-get update
 RUN apt-get install -y sox libsox-fmt-mp3 ffmpeg libsm6 libxext6
 
 # Python
-RUN pip install librosa kapre numpy==1.20
+RUN pip install librosa opencv-python scikit-image pydub kapre sox soundfile numpy==1.19.2 tqdm seaborn pandas aim pyyaml
