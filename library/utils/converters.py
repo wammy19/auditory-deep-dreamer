@@ -43,7 +43,7 @@ def convert_wav_as_log_mel(
     """
 
     encoded_sample: np.ndarray = melspectrogram(
-        sample,
+        y=sample,
         sr=sample_rate,
         n_fft=num_FFT,
         hop_length=mel_hop_len,

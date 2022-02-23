@@ -6,10 +6,10 @@ DELTA_TIME: float = 1.0  # Time of audio file in seconds.
 
 # Mel Spec.
 MEL_HOP_LEN: int = 512
-NUM_MELS: int = 128
+NUM_MELS: int = 300
 NUM_FFT: int = 2_048
 MEL_TO_AUDIO_N_ITERATIONS: int = 32
-MEL_WINDOW_LEN: int = 400
+MEL_WINDOW_LEN: int = 2_000
 
 # Note Tables.
 NOTE_TABLE: List[str] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
