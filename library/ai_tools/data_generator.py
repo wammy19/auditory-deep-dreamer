@@ -5,6 +5,7 @@ from typing import List, Optional, Tuple, Union
 
 import numpy as np
 from librosa import load
+from librosa.feature import melspectrogram
 from pandas import DataFrame
 from tensorflow.keras.utils import Sequence
 
@@ -22,7 +23,6 @@ class DataGenerator(Sequence):
             sample_rate: int = consts.SAMPLE_RATE,
             shuffle: bool = True,
             include_pitch_labels: bool = False
-
     ):
         # Data frame must contain these columns:
         # path | instrument_label (one-hot-encoded) | pitch_label (one-hot-encoded)
@@ -40,6 +40,10 @@ class DataGenerator(Sequence):
 
         # Misc.
         self.on_epoch_end()
+
+        # Learning resources: https://stackoverflow.com/questions/62727244/what-is-the-second-number-in-the-mfccs-array/62733609#62733609
+        y: int = 1 + consts.SAMPLE_RATE // consts.MEL_HOP_LEN
+        self._X_shape: Tuple[int, int, int] = (consts.NUM_MELS, y, 1)
 
 
     # ----------------------------------------------- Virtual functions -----------------------------------------------
@@ -69,15 +73,29 @@ class DataGenerator(Sequence):
         pitch_labels: List[np.ndarray] = [self._df.loc[i]['pitch_label'] for i in indexes]
 
         # Initialize numpy arrays with shape.
-        X: np.ndarray = np.empty((self._batch_size, self._sample_rate, 1), dtype=np.float32)
+        # X: np.ndarray = np.empty((self._batch_size, self._sample_rate, 1), dtype=np.float32)
+        X: List[np.ndarray] = []
         instrument_y: np.ndarray = np.empty((self._batch_size, self._num_instrument_classes), dtype=np.float32)
         pitch_y: np.ndarray = np.empty((self._batch_size, 12), dtype=np.float32)
 
         # Populate arrays with data and labels.
         for i, path in enumerate(wav_paths):
-            X[i,] = load(path, mono=True)[0].reshape(-1, 1)
+            sample: np.ndarray = load(path, mono=True)[0]
+            mel_spectrogram: np.ndarray = melspectrogram(
+                y=sample,
+                sr=consts.SAMPLE_RATE,
+                n_fft=consts.NUM_FFT,
+                hop_length=consts.MEL_HOP_LEN,
+                n_mels=consts.NUM_MELS,
+                win_length=consts.MEL_WINDOW_LEN
+            ).reshape(self._X_shape)
+
+            # X[i,] = mel_spectrogram
+            X.append(mel_spectrogram)
             instrument_y[i,] = np.array(instrument_labels[i])
             pitch_y[i,] = np.array(pitch_labels[i])
+
+        X: np.ndarray = np.stack(X)
 
         if self._include_pitch_labels:
             return X, instrument_y, pitch_y
@@ -121,7 +139,6 @@ class DataGenerator(Sequence):
     ) -> DataGenerator:
         """
         :param path_to_audio: str - Path to root folder of audio files.
-        :param include_instrument_label: bool - Will generate instrument labels if set to True.
         :param include_pitch_labels: bool - Will generate pitch labels if set to True.
         :param batch_size: int - Number of '.wav' files to load in a batch.
         :param sample_rate: Sample rate of audio files, must be the same for all files.

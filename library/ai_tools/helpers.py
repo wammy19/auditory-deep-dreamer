@@ -1,7 +1,7 @@
 import os
 from os.path import split
 from random import shuffle
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 from pandas import DataFrame
@@ -14,7 +14,8 @@ from utils.helpers import get_paths_to_wav_files
 
 def create_data_frame_from_path(path_to_dataset: str, num_of_each_class: int = 50) -> DataFrame:
     """
-    :param path_to_audio: Path to root folder of a dataset.
+    :param path_to_dataset: Path to root folder of a dataset.
+    :param num_of_each_class:
     :return:
 
     Creates a data frame from a path to an audio dataset.
@@ -95,6 +96,24 @@ def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> Tuple[
     one_hot_encoded_labels: np.ndarray = to_categorical(encoded_labels, num_classes=len(classes))
 
     return one_hot_encoded_labels, pre_encoded_labels
+
+
+def decode_instrument(label: np.ndarray, ontology: Optional[List[str]] = None) -> str:
+    """
+    :param label:
+    :param ontology:
+    :return:
+    """
+
+    if ontology is None:
+        ontology = consts.INSTRUMENT_ONTOLOGY
+
+    assert len(ontology) == label.shape[0]
+
+    instrument_index: int = int(np.argmax(label))
+    instrument: str = ontology[instrument_index]
+
+    return instrument
 
 
 def decode_pitch(label: np.ndarray) -> str:

@@ -2,6 +2,5 @@ name: auditory-deep-dream
 
 dependencies:
   - python=3.8
-  - pip=21.1
   - pip:
     - -r requirements.txt

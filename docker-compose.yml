@@ -10,6 +10,7 @@ services:
       - ./media:/media
       - ./models:/models
       - ./config.yml:/config  # Put service configuration in notebook directory so that it can easily be accessed.
+      - ./.aim:/aim
 
       # Mounting my library directory to the PYTHONPATH in the docker container.
       - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
@@ -35,12 +36,16 @@ services:
 #    image: aspit002/audio-deepdream-dev-env
 #    volumes:
 #      - ./src:/src
-#      - ./data-sets:/data-sets
+#      - ../datasets:/datasets
 #      - ./media:/media
-#      - ./pickled-data:/pickled-data
-#      - ./tensorboard-logs:/tensorboard-logs
 #      - ./models:/models
-#      - ./library:/library
+#      - ./config.yml:/config  # Put service configuration in notebook directory so that it can easily be accessed.
+#      - ./.aim:/aim
+#      -
+#      # Mounting my library directory to the PYTHONPATH in the docker container.
+#      - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
+#      - ./library/utils:/usr/local/lib/python3.8/dist-packages/utils
+#      - ./library/ai_tools:/usr/local/lib/python3.8/dist-packages/ai_tools
 #    command: python /src/main.py
 #    deploy:
 #      resources:

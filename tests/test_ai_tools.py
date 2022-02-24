@@ -2,12 +2,11 @@ import os
 from typing import List
 
 import numpy as np
+from pandas import DataFrame
 
-from ai_tools.helpers import decode_pitch, get_instrument_encodings, get_pitch_encodings, create_data_frame_from_path
+from ai_tools.helpers import create_data_frame_from_path, decode_pitch, get_instrument_encodings, get_pitch_encodings
 from utils.constants import SORTED_NOTE_TABLE
 from utils.helpers import get_paths_to_wav_files, note_pattern, read_yaml_config, unix_url_substring_pattern
-
-from pandas import DataFrame
 
 yaml_config: dict = read_yaml_config()
 path_to_dataset: str = yaml_config['path_to_dataset']
