@@ -62,7 +62,7 @@ class DataGenerator(Sequence):
             batch_size: int = 16,
             sample_rate: int = consts.SAMPLE_RATE,
             shuffle: bool = True,
-            num_of_each_class: int = 50
+            number_of_samples_for_each_class: int = 50
     ) -> DataGenerator:
         """
         :param path_to_audio: str - Path to root folder of audio files.
@@ -70,7 +70,7 @@ class DataGenerator(Sequence):
         :param batch_size: int - Number of '.wav' files to load in a batch.
         :param sample_rate: Sample rate of audio files, must be the same for all files.
         :param shuffle: Randomly shuffle data after each epoch.
-        :param num_of_each_class: Number of samples wanted for each instrument.
+        :param number_of_samples_for_each_class: Number of samples wanted for each instrument.
         :return: DataGenerator
 
         Returns an audio DataGenerator class from a given path to a root folder that contains the ontology with audio
@@ -89,8 +89,11 @@ class DataGenerator(Sequence):
                   |____reed_1.wav ...
         """
 
-        df: DataFrame = create_data_frame_from_path(path_to_audio, num_of_each_class=num_of_each_class)
         num_instrument_classes: int = len(os.listdir(path_to_audio))
+        df: DataFrame = create_data_frame_from_path(
+            path_to_audio,
+            number_of_samples_for_each_class=number_of_samples_for_each_class
+        )
 
         return cls(
             df,
@@ -131,7 +134,6 @@ class DataGenerator(Sequence):
         pitch_labels: List[np.ndarray] = [self._df.loc[i]['pitch_label'] for i in indexes]
 
         # Initialize numpy arrays with shape.
-        # X: np.ndarray = np.empty((self._batch_size, self._sample_rate, 1), dtype=np.float32)
         X: List[np.ndarray] = []
         instrument_y: np.ndarray = np.empty((self._batch_size, self._num_instrument_classes), dtype=np.float32)
         pitch_y: np.ndarray = np.empty((self._batch_size, 12), dtype=np.float32)

@@ -52,7 +52,7 @@ def test_data_frame_creator():
     number_of_each_class: int = 50
     ontology: List[str] = os.listdir(PATH_TO_DATASET)
     ontology_len: int = len(ontology)
-    df: DataFrame = create_data_frame_from_path(PATH_TO_DATASET, num_of_each_class=number_of_each_class)
+    df: DataFrame = create_data_frame_from_path(PATH_TO_DATASET, number_of_samples_for_each_class=number_of_each_class)
 
     assert df['instrument'].count() == number_of_each_class * ontology_len
 
@@ -65,15 +65,13 @@ def test_data_generator():
     :return:
     """
 
-    ontology: List[str] = os.listdir(PATH_TO_DATASET)
-    ontology_len: int = len(ontology)
-    number_of_each_class: int = 50
+    number_of_samples_for_each_class: int = 50
     batch_size: int = 10
 
     # False shuffle so that we can appropriately test that the path matches the correct audio.
     data_generator = DataGenerator.from_path_to_audio(
         PATH_TO_DATASET,
-        num_of_each_class=number_of_each_class,
+        number_of_samples_for_each_class=number_of_samples_for_each_class,
         shuffle=False,
         batch_size=batch_size,
         include_pitch_labels=True
@@ -81,7 +79,7 @@ def test_data_generator():
 
     df: DataFrame = data_generator.get_data_frame  # Copy DataFrame that is stored inside the
 
-    for batch_index in range(number_of_each_class // batch_size):
+    for batch_index in range(number_of_samples_for_each_class // batch_size):
         for i in range(batch_size):
             # Get all data from DataGenerator.
             decoded_instrument: str = decode_instrument(data_generator[batch_index][1][i])

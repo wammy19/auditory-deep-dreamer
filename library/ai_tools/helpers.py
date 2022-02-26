@@ -12,10 +12,10 @@ import utils.constants as consts
 from utils.helpers import get_paths_to_wav_files
 
 
-def create_data_frame_from_path(path_to_dataset: str, num_of_each_class: int = 50) -> DataFrame:
+def create_data_frame_from_path(path_to_dataset: str, number_of_samples_for_each_class: int = 50) -> DataFrame:
     """
     :param path_to_dataset: Path to root folder of a dataset.
-    :param num_of_each_class:
+    :param number_of_samples_for_each_class:
     :return:
 
     Creates a data frame from a path to an audio dataset.
@@ -25,7 +25,7 @@ def create_data_frame_from_path(path_to_dataset: str, num_of_each_class: int = 5
     index | path_to_data | instrument_label (one-hot-encoded) | pitch_label (one-hot-encoded)
     """
 
-    wav_paths: List[str] = get_paths_to_wav_files(path_to_dataset, num_of_each_class)
+    wav_paths: List[str] = get_paths_to_wav_files(path_to_dataset, number_of_samples_for_each_class)
     instrument_classes: List[str] = sorted(os.listdir(path_to_dataset))  # Example: ['string', 'reed']
 
     shuffle(wav_paths)
