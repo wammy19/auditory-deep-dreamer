@@ -10,10 +10,18 @@ from pandas import DataFrame
 from tensorflow.keras.utils import Sequence
 
 import utils.constants as consts
-from .helpers import create_data_frame_from_path
+from ai_tools.helpers import create_data_frame_from_path
 
 
 class DataGenerator(Sequence):
+    """
+    Data generator class loads in raw audio and encodes the signal into a mel spectrogram in a set batch size.
+    """
+
+
+    # =================================================================================================================
+    # ---------------------------------------------- Class Constructors -----------------------------------------------
+    # =================================================================================================================
 
     def __init__(
             self,
@@ -46,7 +54,57 @@ class DataGenerator(Sequence):
         self._X_shape: Tuple[int, int, int] = (consts.NUM_MELS, y, 1)
 
 
+    @classmethod
+    def from_path_to_audio(
+            cls,
+            path_to_audio: str,
+            include_pitch_labels: bool = False,
+            batch_size: int = 16,
+            sample_rate: int = consts.SAMPLE_RATE,
+            shuffle: bool = True,
+            num_of_each_class: int = 50
+    ) -> DataGenerator:
+        """
+        :param path_to_audio: str - Path to root folder of audio files.
+        :param include_pitch_labels: bool - Will generate pitch labels if set to True.
+        :param batch_size: int - Number of '.wav' files to load in a batch.
+        :param sample_rate: Sample rate of audio files, must be the same for all files.
+        :param shuffle: Randomly shuffle data after each epoch.
+        :param num_of_each_class: Number of samples wanted for each instrument.
+        :return: DataGenerator
+
+        Returns an audio DataGenerator class from a given path to a root folder that contains the ontology with audio
+        files.
+
+        Example of file structure:
+
+        root
+        |
+        |_________strings
+        |         |
+        |         |____string_1.wav ...
+        |
+        |_________reed
+                  |
+                  |____reed_1.wav ...
+        """
+
+        df: DataFrame = create_data_frame_from_path(path_to_audio, num_of_each_class=num_of_each_class)
+        num_instrument_classes: int = len(os.listdir(path_to_audio))
+
+        return cls(
+            df,
+            batch_size,
+            num_instrument_classes,
+            sample_rate,
+            shuffle,
+            include_pitch_labels
+        )
+
+
+    # =================================================================================================================
     # ----------------------------------------------- Virtual functions -----------------------------------------------
+    # =================================================================================================================
 
     def __len__(self) -> int:
         """
@@ -117,7 +175,9 @@ class DataGenerator(Sequence):
             np.random.shuffle(self._indexes)
 
 
-    # -----------------------------------------------------------------------------------------------------------------
+    # =================================================================================================================
+    # ----------------------------------------------- Getter functions ------------------------------------------------
+    # =================================================================================================================
 
     @property
     def get_data_frame(self) -> DataFrame:
@@ -128,47 +188,10 @@ class DataGenerator(Sequence):
         return self._df
 
 
-    @classmethod
-    def from_path_to_audio(
-            cls,
-            path_to_audio: str,
-            include_pitch_labels: bool = False,
-            batch_size: int = 16,
-            sample_rate: int = consts.SAMPLE_RATE,
-            shuffle: bool = True,
-    ) -> DataGenerator:
+    @property
+    def get_batch_size(self) -> int:
         """
-        :param path_to_audio: str - Path to root folder of audio files.
-        :param include_pitch_labels: bool - Will generate pitch labels if set to True.
-        :param batch_size: int - Number of '.wav' files to load in a batch.
-        :param sample_rate: Sample rate of audio files, must be the same for all files.
-        :param shuffle: Randomly shuffle data after each epoch.
-        :return: DataGenerator
-
-        Returns an audio DataGenerator class from a given path to a root folder that contains the ontology with audio
-        files.
-
-        Example of file structure:
-
-        root
-        |
-        |_________strings
-        |         |
-        |         |____string_1.wav ...
-        |
-        |_________reed
-                  |
-                  |____reed_1.wav ...
+        :return: Returns batch size.
         """
 
-        df: DataFrame = create_data_frame_from_path(path_to_audio)
-        num_instrument_classes: int = len(os.listdir(path_to_audio))
-
-        return cls(
-            df,
-            batch_size,
-            num_instrument_classes,
-            sample_rate,
-            shuffle,
-            include_pitch_labels
-        )
+        return self._batch_size

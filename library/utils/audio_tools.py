@@ -71,9 +71,9 @@ def create_audio_player(signal: np.ndarray, sample_rate: int = consts.SAMPLE_RAT
     core_display(display.Audio(signal, rate=sample_rate, normalize=normalize))
 
 
-def time_stretch_signal(path_to_samples: str, sample: str, instrument, path_for_writing: str):
+def time_stretch_signal(path_to_sample: str, sample: str, instrument, path_for_writing: str):
     """
-    :param path_to_samples:
+    :param path_to_sample:
     :param sample:
     :param instrument:
     :param path_for_writing:
@@ -82,7 +82,7 @@ def time_stretch_signal(path_to_samples: str, sample: str, instrument, path_for_
     Creates a time stretches version of a sample.
     """
 
-    loaded_sample: np.ndarray = load(join(path_to_samples, sample), sr=consts.SAMPLE_RATE, mono=True)[0]
+    loaded_sample: np.ndarray = load(join(path_to_sample, sample), sr=consts.SAMPLE_RATE, mono=True)[0]
     stretched_sample: np.ndarray = time_stretch(loaded_sample, rate=0.5)
     file_name: str = f'{unix_url_end_filename_pattern.findall(sample)[0]}_stretched.wav'
 

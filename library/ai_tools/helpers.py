@@ -125,6 +125,8 @@ def decode_pitch(label: np.ndarray) -> str:
     Example: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  -> "A"
     """
 
+    assert len(label) == len(consts.SORTED_NOTE_TABLE)
+
     pitch_index: int = int(np.argmax(label))
     pitch: str = consts.SORTED_NOTE_TABLE[pitch_index]
 
