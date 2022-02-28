@@ -7,6 +7,7 @@ import soundfile as sf
 from IPython.core.display import display as core_display
 from librosa import load
 from librosa.effects import time_stretch
+from librosa.feature import melspectrogram
 from librosa.feature.inverse import mel_to_audio
 from librosa.util import fix_length
 
@@ -87,3 +88,24 @@ def time_stretch_signal(path_to_sample: str, sample: str, instrument, path_for_w
     file_name: str = f'{unix_url_end_filename_pattern.findall(sample)[0]}_stretched.wav'
 
     sf.write(join(path_for_writing, instrument, file_name), stretched_sample, consts.SAMPLE_RATE)
+
+
+def load_and_convert_audio_into_mel_spectrogram(path_to_data: str) -> np.ndarray:
+    """
+    :param path_to_data - Path to wav file.
+    :return:
+
+    Load an audio file and encode it into a mel spectrogram.
+    """
+
+    sample: np.ndarray = load(path_to_data, mono=True)[0]
+    mel_spectrogram: np.ndarray = melspectrogram(
+        y=sample,
+        sr=consts.SAMPLE_RATE,
+        n_fft=consts.NUM_FFT,
+        hop_length=consts.MEL_HOP_LEN,
+        n_mels=consts.NUM_MELS,
+        win_length=consts.MEL_WINDOW_LEN
+    )
+
+    return mel_spectrogram

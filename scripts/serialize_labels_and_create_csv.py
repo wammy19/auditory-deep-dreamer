@@ -1,32 +1,67 @@
-"""
-Creates a data frame out of the dataset and saves it to a CSV file.
-
-Example of CSV file:
-
-index, path_to_data, instrument_label (one-hot-encoded), pitch_label (one-hot-encoded)
-0,/path/to/data/bass/bass_A#_000006_segment_0.wav,[1. 0. 0. 0. 0. 0. 0. 0. 0. 0.],[0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
-1,/path/to/data/bass/bass_A#_000007_segment_0.wav,[1. 0. 0. 0. 0. 0. 0. 0. 0. 0.],[0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
-2,/path/to/data/bass/bass_A#_000007_segment_1.wav,[1. 0. 0. 0. 0. 0. 0. 0. 0. 0.],[0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
-3,/path/to/data/bass/bass_A#_000007_segment_2.wav,[1. 0. 0. 0. 0. 0. 0. 0. 0. 0.],[0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
-"""
-
+import os
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from os.path import join
+from typing import List, Tuple
 
-from pandas import DataFrame
+import numpy as np
+from tqdm import tqdm
 
-from ai_tools.helpers import create_data_frame_from_path
-from utils.helpers import read_yaml_config
+import utils.constants as consts
+from utils.audio_tools import load_and_convert_audio_into_mel_spectrogram
+
+PATH_TO_DATASET: str = '../../datasets/processed_dataset'
+PATH_TO_SERIALIZED_DATASET: str = '../../datasets/serialized_dataset'
+
+# Learning resources: https://stackoverflow.com/questions/62727244/what-is-the-second-number-in-the-mfccs-array/62733609#62733609
+y: int = 1 + consts.SAMPLE_RATE // consts.MEL_HOP_LEN
+X_shape: Tuple[int, int, int] = (consts.NUM_MELS, y, 1)
+
+
+def serialize_and_save(path_to_samples: str, path_for_saving: str, sample: str) -> None:
+    """
+    :param path_to_samples:
+    :param path_for_saving:
+    :param sample:
+    :return:
+
+    Loads audio as a numpy array and saves the numpy array.
+    """
+
+    path_to_sample: str = join(path_to_samples, sample)
+    mel_spectrogram: np.ndarray = load_and_convert_audio_into_mel_spectrogram(path_to_sample)
+    new_sample_name: str = sample.replace('.wav', '.npy')
+
+    np.save(join(path_for_saving, new_sample_name), mel_spectrogram.reshape(X_shape))
 
 
 def main():
-    yaml_config: dict = read_yaml_config()
+    ontology: List[str] = os.listdir(PATH_TO_DATASET)
 
-    # Config
-    csv_save_path: str = '../datasets'
-    path_to_dataset: str = yaml_config['path_to_dataset']
+    for instrument in ontology:
+        path_to_samples: str = join(PATH_TO_DATASET, instrument)
+        path_for_saving: str = join(PATH_TO_SERIALIZED_DATASET, instrument)
+        samples: List[str] = os.listdir(path_to_samples)
+        num_samples: int = len(samples)
 
-    df: DataFrame = create_data_frame_from_path(path_to_dataset)
-    df.to_csv(join(csv_save_path, 'all-dataset-paths.csv'))
+        os.makedirs(join(PATH_TO_SERIALIZED_DATASET, instrument), exist_ok=True)
+
+        # Progress bar.
+        pbar = tqdm(desc=instrument, total=num_samples)
+        futures: List[Future[None]] = []
+
+        with ThreadPoolExecutor(max_workers=16) as thread_pool_executor:
+            for sample in samples:
+                futures.append(
+                    thread_pool_executor.submit(
+                        serialize_and_save,
+                        path_to_samples,
+                        path_for_saving,
+                        sample
+                    )
+                )
+
+            for _ in as_completed(futures):
+                pbar.update(1)
 
 
 if __name__ == '__main__':

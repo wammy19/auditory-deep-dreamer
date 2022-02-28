@@ -5,14 +5,13 @@ from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
-from librosa import load
-from librosa.feature import melspectrogram
 from pandas import DataFrame
 from tensorflow.keras.utils import Sequence
 
 import utils.constants as consts
 from ai_tools.helpers import create_data_frame_from_path
 from utils import Timer
+from utils.audio_tools import load_and_convert_audio_into_mel_spectrogram
 
 
 class DataGenerator(Sequence):
@@ -52,10 +51,6 @@ class DataGenerator(Sequence):
         # Misc.
         self.on_epoch_end()
         self._thread_pool_executor = ThreadPoolExecutor(max_workers=num_thread_workers)  # Multithreading data loading.
-
-        # Learning resources: https://stackoverflow.com/questions/62727244/what-is-the-second-number-in-the-mfccs-array/62733609#62733609
-        y: int = 1 + consts.SAMPLE_RATE // consts.MEL_HOP_LEN
-        self._X_shape: Tuple[int, int, int] = (consts.NUM_MELS, y, 1)
 
 
     @classmethod
@@ -147,10 +142,10 @@ class DataGenerator(Sequence):
 
         # Concurrently load and encode data.
         for path in wav_paths:
-            futures.append(self._thread_pool_executor.submit(self._load_and_encode_data, path))
+            futures.append(self._thread_pool_executor.submit(load_and_convert_audio_into_mel_spectrogram, path))
 
         for future in as_completed(futures):
-            X.append(future.result())
+            X.append(future.result().reshape(self._X_shape))
 
         print(timer.get_elapsed_time)
 
@@ -199,28 +194,3 @@ class DataGenerator(Sequence):
         """
 
         return self._batch_size
-
-
-    # =================================================================================================================
-    # ----------------------------------------------- Private functions -----------------------------------------------
-    # =================================================================================================================
-
-    def _load_and_encode_data(self, path_to_data: str) -> np.ndarray:
-        """
-        :param path_to_data - Path to wav file.
-        :return:
-
-        Load an audio file and encode it into a mel spectrogram.
-        """
-
-        sample: np.ndarray = load(path_to_data, mono=True)[0]
-        mel_spectrogram: np.ndarray = melspectrogram(
-            y=sample,
-            sr=consts.SAMPLE_RATE,
-            n_fft=consts.NUM_FFT,
-            hop_length=consts.MEL_HOP_LEN,
-            n_mels=consts.NUM_MELS,
-            win_length=consts.MEL_WINDOW_LEN
-        ).reshape(self._X_shape)
-
-        return mel_spectrogram
