@@ -1,5 +1,5 @@
 from __future__ import annotations
-import logging as logger
+
 from time import perf_counter
 from typing import Callable, Optional
 
@@ -11,6 +11,11 @@ class Timer:
     Resource: https://www.geeksforgeeks.org/python-how-to-time-the-program/
     """
 
+
+    # =================================================================================================================
+    # ---------------------------------------------- Class Constructors -----------------------------------------------
+    # =================================================================================================================
+
     def __init__(self, func: Callable = perf_counter):
         """
         :param func: A callable function that tracks time. Anything from the 'time' module will do.
@@ -20,6 +25,10 @@ class Timer:
         self._func = func
         self._start: Optional[Callable] = None
 
+
+    # =================================================================================================================
+    # ---------------------------------------------- Public Functions -------------------------------------------------
+    # =================================================================================================================
 
     def start(self) -> None:
         """
@@ -70,19 +79,28 @@ class Timer:
         return self._start is not None
 
 
+    # =================================================================================================================
+    # ---------------------------------------------- Getter Functions -------------------------------------------------
+    # =================================================================================================================
+
     @property
-    def elapsed(self) -> float:
+    def get_elapsed_time(self) -> float:
         """
         :return:
 
         Returns total time taken after .stop() has been called.
+        Calling this method restarts the timer.
         """
 
-        if self.is_running():
-            logger.warning('Timer is still running. Call the .stop() method before getting the elapsed time.')
+        self.stop()
+        self._start = None
 
         return self._elapsed
 
+
+    # =================================================================================================================
+    # ---------------------------------------------- Dunder Functions -------------------------------------------------
+    # =================================================================================================================
 
     def __enter__(self) -> Timer:
         """

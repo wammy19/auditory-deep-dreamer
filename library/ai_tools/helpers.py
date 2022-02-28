@@ -33,7 +33,9 @@ def create_data_frame_from_path(path_to_dataset: str, number_of_samples_for_each
     # One hot encoded labels.
     encoded_pitch_labels, pitch_labels = get_pitch_encodings(wav_paths)  # type: np.ndarray, List[str]
     encoded_instrument_labels, instrument_labels = get_instrument_encodings(
-        wav_paths, instrument_classes)  # type: np.ndarray, List[str]
+        wav_paths,
+        instrument_classes
+    )  # type: np.ndarray, List[str]
 
     df = DataFrame.from_dict(
         {
@@ -79,10 +81,10 @@ def get_pitch_encodings(wav_paths: List[str]) -> Tuple[np.ndarray, List[str]]:
     return one_hot_encoded_labels, pre_encode_pitch_labels
 
 
-def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> Tuple[np.ndarray, List[str]]:
+def get_instrument_encodings(wav_paths: List[str], ontology: List[str]) -> Tuple[np.ndarray, List[str]]:
     """
-    :param path_to_audio: Path to top level of dataset.
     :param wav_paths: Path to each .wav file.
+    :param ontology: instu
     :return: Returns one hot encoded instrument labels, as well as the decoded instrument labels as strings.
 
     Create labels for each wav file corresponding to its instrument.
@@ -90,10 +92,10 @@ def get_instrument_encodings(wav_paths: List[str], classes: List[str]) -> Tuple[
 
     # Encode labels.
     label_encoder = LabelEncoder()
-    label_encoder.fit(classes)
+    label_encoder.fit(ontology)
     pre_encoded_labels: List[str] = [split(x)[0].split('/')[-1] for x in wav_paths]
     encoded_labels: np.ndarray = label_encoder.transform(pre_encoded_labels)
-    one_hot_encoded_labels: np.ndarray = to_categorical(encoded_labels, num_classes=len(classes))
+    one_hot_encoded_labels: np.ndarray = to_categorical(encoded_labels, num_classes=len(ontology))
 
     return one_hot_encoded_labels, pre_encoded_labels
 

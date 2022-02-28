@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
@@ -11,6 +12,7 @@ from tensorflow.keras.utils import Sequence
 
 import utils.constants as consts
 from ai_tools.helpers import create_data_frame_from_path
+from utils import Timer
 
 
 class DataGenerator(Sequence):
@@ -30,7 +32,8 @@ class DataGenerator(Sequence):
             num_instrument_classes: int = 10,
             sample_rate: int = consts.SAMPLE_RATE,
             shuffle: bool = True,
-            include_pitch_labels: bool = False
+            include_pitch_labels: bool = False,
+            num_thread_workers: int = 8  # 16 Threads.
     ):
         # Data frame must contain these columns:
         # path | instrument_label (one-hot-encoded) | pitch_label (one-hot-encoded)
@@ -48,6 +51,7 @@ class DataGenerator(Sequence):
 
         # Misc.
         self.on_epoch_end()
+        self._thread_pool_executor = ThreadPoolExecutor(max_workers=num_thread_workers)  # Multithreading data loading.
 
         # Learning resources: https://stackoverflow.com/questions/62727244/what-is-the-second-number-in-the-mfccs-array/62733609#62733609
         y: int = 1 + consts.SAMPLE_RATE // consts.MEL_HOP_LEN
@@ -129,33 +133,31 @@ class DataGenerator(Sequence):
         # Gather indices.
         indexes: List[int] = self._indexes[index * self._batch_size:(index + 1) * self._batch_size]
 
+        # Gather data from dataframe.
         wav_paths: List[str] = [self._df.loc[i]['path'] for i in indexes]
         instrument_labels: List[np.ndarray] = [self._df.loc[i]['instrument_label'] for i in indexes]
         pitch_labels: List[np.ndarray] = [self._df.loc[i]['pitch_label'] for i in indexes]
 
-        # Initialize numpy arrays with shape.
+        # Future data.
         X: List[np.ndarray] = []
-        instrument_y: np.ndarray = np.empty((self._batch_size, self._num_instrument_classes), dtype=np.float32)
-        pitch_y: np.ndarray = np.empty((self._batch_size, 12), dtype=np.float32)
+        futures: List[Future[np.ndarray]] = []
 
-        # Populate arrays with data and labels.
-        for i, path in enumerate(wav_paths):
-            sample: np.ndarray = load(path, mono=True)[0]
-            mel_spectrogram: np.ndarray = melspectrogram(
-                y=sample,
-                sr=consts.SAMPLE_RATE,
-                n_fft=consts.NUM_FFT,
-                hop_length=consts.MEL_HOP_LEN,
-                n_mels=consts.NUM_MELS,
-                win_length=consts.MEL_WINDOW_LEN
-            ).reshape(self._X_shape)
+        timer = Timer()
+        timer.start()
 
-            # X[i,] = mel_spectrogram
-            X.append(mel_spectrogram)
-            instrument_y[i,] = np.array(instrument_labels[i])
-            pitch_y[i,] = np.array(pitch_labels[i])
+        # Concurrently load and encode data.
+        for path in wav_paths:
+            futures.append(self._thread_pool_executor.submit(self._load_and_encode_data, path))
 
+        for future in as_completed(futures):
+            X.append(future.result())
+
+        print(timer.get_elapsed_time)
+
+        # Convert into a numpy array.
         X: np.ndarray = np.stack(X)
+        instrument_y: np.ndarray = np.stack(instrument_labels)
+        pitch_y: np.ndarray = np.stack(pitch_labels)
 
         if self._include_pitch_labels:
             return X, instrument_y, pitch_y
@@ -197,3 +199,28 @@ class DataGenerator(Sequence):
         """
 
         return self._batch_size
+
+
+    # =================================================================================================================
+    # ----------------------------------------------- Private functions -----------------------------------------------
+    # =================================================================================================================
+
+    def _load_and_encode_data(self, path_to_data: str) -> np.ndarray:
+        """
+        :param path_to_data - Path to wav file.
+        :return:
+
+        Load an audio file and encode it into a mel spectrogram.
+        """
+
+        sample: np.ndarray = load(path_to_data, mono=True)[0]
+        mel_spectrogram: np.ndarray = melspectrogram(
+            y=sample,
+            sr=consts.SAMPLE_RATE,
+            n_fft=consts.NUM_FFT,
+            hop_length=consts.MEL_HOP_LEN,
+            n_mels=consts.NUM_MELS,
+            win_length=consts.MEL_WINDOW_LEN
+        ).reshape(self._X_shape)
+
+        return mel_spectrogram
