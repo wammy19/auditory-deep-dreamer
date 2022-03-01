@@ -5,6 +5,7 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 from pandas import DataFrame
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
 
@@ -133,3 +134,61 @@ def decode_pitch(label: np.ndarray) -> str:
     pitch: str = consts.SORTED_NOTE_TABLE[pitch_index]
 
     return pitch
+
+
+def split_stratified_into_train_val_test(
+        df_input: DataFrame,
+        stratify_column_name: str = 'instrument',
+        frac_train: float = 0.6,
+        frac_val: float = 0.2,
+        frac_test: float = 0.2,
+        random_state: Optional[int] = None
+) -> Tuple[DataFrame, DataFrame, DataFrame]:
+    """
+    :param df_input: pandas.DataFrame for splitting.
+    :param stratify_column_name: Column name for balancing data.
+    :param frac_train: Percent of data wanted for training. A float ranging from 0-1
+    :param frac_val: Percent of data wanted for validation. A float ranging from 0-1
+    :param frac_test: Percent of data wanted for testing. A float ranging from 0-1
+    :param random_state: Random shuffle for sklearn.model.train_test_split. If None this will be set randomly.
+    :return: Returns 3 DataFrames for testing, validation, and training.
+
+    This function creates 3 DataFrame split up for training, validation, and testing purposes given a
+    give DataFrame as input.
+
+    This function is not my code.
+    Learning resources: https://stackoverflow.com/questions/38250710/how-to-split-data-into-3-sets-train-validation-and-test
+    """
+
+    if (frac_train + frac_val + frac_test) != 1.0:
+        raise ValueError(f'fractions {frac_train}, {frac_val}, {frac_test} do not add up to 1.0')
+
+    if stratify_column_name not in df_input.columns:
+        raise ValueError(f'{stratify_column_name} is not a column in the dataframe')
+
+    X: DataFrame = df_input  # Contains all columns.
+    y: DataFrame = df_input[[stratify_column_name]]  # Dataframe of just the column on which to stratify.
+
+    # Split original dataframe into train and temp dataframes.
+    df_train, df_temp, y_train, y_temp = train_test_split(
+        X,
+        y,
+        stratify=y,
+        test_size=(1.0 - frac_train),
+        random_state=random_state
+    )  # type: DataFrame, DataFrame, DataFrame, DataFrame
+
+    # Split the temp dataframe into val and test dataframes.
+    relative_frac_test = frac_test / (frac_val + frac_test)
+
+    df_val, df_test, y_val, y_test = train_test_split(
+        df_temp,
+        y_temp,
+        stratify=y_temp,
+        test_size=relative_frac_test,
+        random_state=random_state
+    )  # type: DataFrame, DataFrame, DataFrame, DataFrame
+
+    assert len(df_input) == len(df_train) + len(df_val) + len(df_test)
+
+    return df_train, df_val, df_test

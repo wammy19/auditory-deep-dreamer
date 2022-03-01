@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 # Audio settings.
 SAMPLE_RATE: int = 22_050
@@ -31,3 +31,8 @@ SORTED_NOTE_TABLE: List[str] = sorted(NOTE_TABLE)
 
 # Pre Processing.
 TRIM_DB: int = 45
+
+# Input data shape.
+# Learning resources: https://stackoverflow.com/questions/62727244/what-is-the-second-number-in-the-mfccs-array/62733609#62733609
+_y: int = 1 + SAMPLE_RATE // MEL_HOP_LEN
+X_SHAPE: Tuple[int, int, int] = (NUM_MELS, _y, 1)

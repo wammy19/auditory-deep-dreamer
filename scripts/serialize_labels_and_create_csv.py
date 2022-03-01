@@ -1,7 +1,7 @@
 import os
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from os.path import join
-from typing import List, Tuple
+from typing import List
 
 import numpy as np
 from tqdm import tqdm
@@ -11,11 +11,6 @@ from utils.audio_tools import load_and_convert_audio_into_mel_spectrogram
 
 PATH_TO_DATASET: str = '../../datasets/processed_dataset'
 PATH_TO_SERIALIZED_DATASET: str = '../../datasets/serialized_dataset'
-
-# Learning resources: https://stackoverflow.com/questions/62727244/what-is-the-second-number-in-the-mfccs-array/62733609#62733609
-y: int = 1 + consts.SAMPLE_RATE // consts.MEL_HOP_LEN
-X_shape: Tuple[int, int, int] = (consts.NUM_MELS, y, 1)
-
 
 def serialize_and_save(path_to_samples: str, path_for_saving: str, sample: str) -> None:
     """
@@ -31,7 +26,7 @@ def serialize_and_save(path_to_samples: str, path_for_saving: str, sample: str) 
     mel_spectrogram: np.ndarray = load_and_convert_audio_into_mel_spectrogram(path_to_sample)
     new_sample_name: str = sample.replace('.wav', '.npy')
 
-    np.save(join(path_for_saving, new_sample_name), mel_spectrogram.reshape(X_shape))
+    np.save(join(path_for_saving, new_sample_name), mel_spectrogram.reshape(consts.X_SHAPE))
 
 
 def main():
