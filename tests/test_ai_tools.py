@@ -66,11 +66,12 @@ def test_data_generator():
     """
 
     number_of_samples_for_each_class: int = 50
+    path_to_serialized_data: str = '/home/andrea/dev/uni/datasets/serialized_dataset'
     batch_size: int = 50
 
     # False shuffle so that we can appropriately test that the path matches the correct audio.
     data_generator = DataGenerator.from_path_to_audio(
-        PATH_TO_DATASET,
+        path_to_serialized_data,
         number_of_samples_for_each_class=number_of_samples_for_each_class,
         shuffle=False,
         batch_size=batch_size,

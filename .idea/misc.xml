@@ -4,4 +4,22 @@
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
+  <component name="UnattendedHostPersistenceState">
+    <option name="openedFilesInfos">
+      <list>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="633" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/helpers.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="887" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/playground_script.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="2283" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/data_generator.py" />
+        </OpenedFileInfo>
+      </list>
+    </option>
+  </component>
 </project>

@@ -84,7 +84,7 @@ def get_pitch_encodings(wav_paths: List[str]) -> Tuple[np.ndarray, List[str]]:
 def get_instrument_encodings(wav_paths: List[str], ontology: List[str]) -> Tuple[np.ndarray, List[str]]:
     """
     :param wav_paths: Path to each .wav file.
-    :param ontology: instu
+    :param ontology: List of instruments. Example: ['reed', 'string', 'keyboards']
     :return: Returns one hot encoded instrument labels, as well as the decoded instrument labels as strings.
 
     Create labels for each wav file corresponding to its instrument.

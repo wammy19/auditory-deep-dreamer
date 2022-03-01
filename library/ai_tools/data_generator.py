@@ -11,7 +11,6 @@ from tensorflow.keras.utils import Sequence
 import utils.constants as consts
 from ai_tools.helpers import create_data_frame_from_path
 from utils import Timer
-from utils.audio_tools import load_and_convert_audio_into_mel_spectrogram
 
 
 class DataGenerator(Sequence):
@@ -125,6 +124,9 @@ class DataGenerator(Sequence):
         :return:
         """
 
+        timer = Timer()
+        timer.start()
+
         # Gather indices.
         indexes: List[int] = self._indexes[index * self._batch_size:(index + 1) * self._batch_size]
 
@@ -137,22 +139,19 @@ class DataGenerator(Sequence):
         X: List[np.ndarray] = []
         futures: List[Future[np.ndarray]] = []
 
-        timer = Timer()
-        timer.start()
-
         # Concurrently load and encode data.
         for path in wav_paths:
-            futures.append(self._thread_pool_executor.submit(load_and_convert_audio_into_mel_spectrogram, path))
+            futures.append(self._thread_pool_executor.submit(self._load_mel_spectrogram, path))
 
         for future in as_completed(futures):
-            X.append(future.result().reshape(self._X_shape))
-
-        print(timer.get_elapsed_time)
+            X.append(future.result())
 
         # Convert into a numpy array.
         X: np.ndarray = np.stack(X)
         instrument_y: np.ndarray = np.stack(instrument_labels)
         pitch_y: np.ndarray = np.stack(pitch_labels)
+
+        print(timer.get_elapsed_time)
 
         if self._include_pitch_labels:
             return X, instrument_y, pitch_y
@@ -194,3 +193,16 @@ class DataGenerator(Sequence):
         """
 
         return self._batch_size
+
+
+    # =================================================================================================================
+    # ----------------------------------------------- Private functions ------------------------------------------------
+    # =================================================================================================================
+
+    @staticmethod
+    def _load_mel_spectrogram(path) -> np.ndarray:
+        """
+        :return:
+        """
+
+        return np.load(path)
