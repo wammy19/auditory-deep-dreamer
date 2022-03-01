@@ -7,4 +7,5 @@ path_to_csv: '/home/andrea/dev/uni/auditory-deepdream/datasets/all_data_set_path
 # Docker paths.
 #path_to_dataset: '/datasets/processed_dataset'
 #path_to_split_dataset: '/datasets/processed_dataset_split'
+#path_to_serialized_dataset: '/datasets/serialized_dataset'
 #path_to_csv: '/datasets/all_data_set_paths.csv'

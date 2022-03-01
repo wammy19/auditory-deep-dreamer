@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from concurrent.futures import Future, ThreadPoolExecutor, as_completed
+from concurrent.futures import Future, ProcessPoolExecutor, as_completed
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
@@ -10,7 +10,6 @@ from tensorflow.keras.utils import Sequence
 
 import utils.constants as consts
 from ai_tools.helpers import create_data_frame_from_path
-from utils import Timer
 
 
 class DataGenerator(Sequence):
@@ -41,15 +40,17 @@ class DataGenerator(Sequence):
         self._sample_rate = sample_rate
         self._batch_size = batch_size
         self._shuffle = shuffle
-        self._indexes: Optional[np.array] = None  # Gets defined in '.on_epoch_end()'
 
         # Labels.
+        self._indexes: Optional[np.array] = None  # Gets defined in 'self.on_epoch_end()'
         self._include_pitch_labels = include_pitch_labels
         self._num_instrument_classes = num_instrument_classes
 
-        # Misc.
+        # Multi process pool for data loading.
+        self._process_pool_executor = ProcessPoolExecutor(max_workers=num_thread_workers)
+
+        # Function calls.
         self.on_epoch_end()
-        self._thread_pool_executor = ThreadPoolExecutor(max_workers=num_thread_workers)  # Multithreading data loading.
 
 
     @classmethod
@@ -60,7 +61,8 @@ class DataGenerator(Sequence):
             batch_size: int = 16,
             sample_rate: int = consts.SAMPLE_RATE,
             shuffle: bool = True,
-            number_of_samples_for_each_class: int = 50
+            number_of_samples_for_each_class: int = 50,
+            num_thread_workers: int = 8
     ) -> DataGenerator:
         """
         :param path_to_audio: str - Path to root folder of audio files.
@@ -69,6 +71,7 @@ class DataGenerator(Sequence):
         :param sample_rate: Sample rate of audio files, must be the same for all files.
         :param shuffle: Randomly shuffle data after each epoch.
         :param number_of_samples_for_each_class: Number of samples wanted for each instrument.
+        :param num_thread_workers: Number of multi-threading workers for loading in data.
         :return: DataGenerator
 
         Returns an audio DataGenerator class from a given path to a root folder that contains the ontology with audio
@@ -99,7 +102,8 @@ class DataGenerator(Sequence):
             num_instrument_classes,
             sample_rate,
             shuffle,
-            include_pitch_labels
+            include_pitch_labels,
+            num_thread_workers
         )
 
 
@@ -124,16 +128,13 @@ class DataGenerator(Sequence):
         :return:
         """
 
-        timer = Timer()
-        timer.start()
-
         # Gather indices.
         indexes: List[int] = self._indexes[index * self._batch_size:(index + 1) * self._batch_size]
 
         # Gather data from dataframe.
         wav_paths: List[str] = [self._df.loc[i]['path'] for i in indexes]
-        instrument_labels: List[np.ndarray] = [self._df.loc[i]['instrument_label'] for i in indexes]
-        pitch_labels: List[np.ndarray] = [self._df.loc[i]['pitch_label'] for i in indexes]
+        instrument_y: np.ndarray = np.array([self._df.loc[i]['instrument_label'] for i in indexes])
+        pitch_y: np.ndarray = np.array([self._df.loc[i]['pitch_label'] for i in indexes])
 
         # Future data.
         X: List[np.ndarray] = []
@@ -141,17 +142,13 @@ class DataGenerator(Sequence):
 
         # Concurrently load and encode data.
         for path in wav_paths:
-            futures.append(self._thread_pool_executor.submit(self._load_mel_spectrogram, path))
+            futures.append(self._process_pool_executor.submit(self._load_mel_spectrogram, path))
 
         for future in as_completed(futures):
             X.append(future.result())
 
         # Convert into a numpy array.
         X: np.ndarray = np.stack(X)
-        instrument_y: np.ndarray = np.stack(instrument_labels)
-        pitch_y: np.ndarray = np.stack(pitch_labels)
-
-        print(timer.get_elapsed_time)
 
         if self._include_pitch_labels:
             return X, instrument_y, pitch_y
