@@ -2,58 +2,57 @@ version: '3.7'
 
 services:
   # Service for starting up a jupyter server.
-  jupyter:
-    image: aspit002/audio-deepdream-dev-env-jupyter
-    volumes:
-      - ./jupyter-notebooks:/notebook
-      - ../datasets:/datasets
-      - ./media:/media
-      - ./models:/models
-      - ./config.yml:/config  # Put service configuration in notebook directory so that it can easily be accessed.
-      - ./.aim:/aim
-
-      # Mounting my library directory to the PYTHONPATH in the docker container.
-      - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
-      - ./library/utils:/usr/local/lib/python3.8/dist-packages/utils
-      - ./library/ai_tools:/usr/local/lib/python3.8/dist-packages/ai_tools
-    command: jupyter notebook /notebook --port=8888 --ip=0.0.0.0 --allow-root
-    ports:
-      - "8888:8888"
-      - "6006:6006"
-    deploy:
-      resources:
-        limits:
-          cpus: 6
-          memory: 20gb
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [ compute, utility ]
-
-  # Service which will run ./src/main.py and terminate.
-#  script-runner:
-#    image: aspit002/audio-deepdream-dev-env
+#  jupyter:
+#    image: aspit002/audio-deepdream-dev-env-jupyter
 #    volumes:
-#      - ./src:/src
+#      - ./jupyter-notebooks:/notebook
 #      - ../datasets:/datasets
 #      - ./media:/media
 #      - ./models:/models
 #      - ./config.yml:/config  # Put service configuration in notebook directory so that it can easily be accessed.
 #      - ./.aim:/aim
-#      -
+#
+#      - ../datasets:/mnt/datasets
+#      - ./media:/mnt/media
+#
 #      # Mounting my library directory to the PYTHONPATH in the docker container.
 #      - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
 #      - ./library/utils:/usr/local/lib/python3.8/dist-packages/utils
 #      - ./library/ai_tools:/usr/local/lib/python3.8/dist-packages/ai_tools
-#    command: python /src/main.py
+#    ports:
+#      - "8888:8888"
+#      - "6006:6006"
 #    deploy:
 #      resources:
 #        limits:
-#          cpus: 4
+#          cpus: 6
 #          memory: 20gb
 #        reservations:
 #          devices:
 #            - driver: nvidia
 #              count: 1
 #              capabilities: [ compute, utility ]
+
+  # Service which will run ./src/main.py and terminate.
+  script-runner:
+    image: aspit002/audio-deepdream-dev-env
+    volumes:
+      - ../datasets:/mnt/datasets
+      - ./models:/mnt/models
+      - ./aim-logs:/mnt/aim-logs
+      - ./model_settings.csv:/mnt/model_settings.csv
+
+      # Mounting my library directory to the PYTHONPATH in the docker container.
+      - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
+      - ./library/utils:/usr/local/lib/python3.8/dist-packages/utils
+      - ./library/ai_tools:/usr/local/lib/python3.8/dist-packages/ai_tools
+    deploy:
+      resources:
+        limits:
+          cpus: 4
+          memory: 20gb
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ compute, utility ]

@@ -2,8 +2,19 @@
 # Source: https://hub.docker.com/r/tensorflow/tensorflow/
 FROM tensorflow/tensorflow:latest-gpu
 
+WORKDIR service .
+
+# Install dependencies.
 RUN apt-get update
 RUN apt-get install -y sox libsox-fmt-mp3 ffmpeg libsm6 libxext6
 
-# Python
-RUN pip install librosa kapre numpy==1.20
+# Install python packages.
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy src directory.
+COPY src .
+COPY config.yml ..
+
+# Run script.
+CMD python main.py

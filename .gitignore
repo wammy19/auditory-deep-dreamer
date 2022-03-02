@@ -10,3 +10,5 @@ jupyter-notebooks/.ipynb_checkpoints/
 datasets
 models
 .aim
+aim-logs
+*.csv

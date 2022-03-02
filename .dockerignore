@@ -4,6 +4,9 @@
 
 # DIR
 data-sets
+aim-logs
+docker-files
+library
 journal
 media
 models
@@ -11,9 +14,13 @@ pickled-data
 scripts
 tensorboard-logs
 venv
+tests
 
 # Misc
 LICENSE
 *.md
 
-
+# Python
+.pytest_cache
+poetry.lock
+pyproject.toml

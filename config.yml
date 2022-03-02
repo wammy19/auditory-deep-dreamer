@@ -1,11 +1,11 @@
 # Local.
-path_to_dataset: '/home/andrea/dev/uni/datasets/processed_dataset'
-path_to_split_dataset: '/home/andrea/dev/uni/datasets/processed_dataset_split'
-path_to_serialized_dataset: '/home/andrea/dev/uni/datasets/serialized_dataset'
-path_to_csv: '/home/andrea/dev/uni/auditory-deepdream/datasets/all_data_set_paths.csv'
+#path_to_dataset: '/home/andrea/dev/uni/datasets/processed_dataset'
+#path_to_split_dataset: '/home/andrea/dev/uni/datasets/processed_dataset_split'
+#path_to_serialized_dataset: '/home/andrea/dev/uni/datasets/serialized_dataset'
+#path_to_csv: '/home/andrea/dev/uni/auditory-deepdream/datasets/all_data_set_paths.csv'
 
 # Docker paths.
-#path_to_dataset: '/datasets/processed_dataset'
-#path_to_split_dataset: '/datasets/processed_dataset_split'
-#path_to_serialized_dataset: '/datasets/serialized_dataset'
-#path_to_csv: '/datasets/all_data_set_paths.csv'
+dataset_path: '/mnt/datasets/serialized_dataset'
+aim_logs_path: '/mnt/aim-logs'
+model_checkpoint_path: '/mnt/model-checkpoints'
+model_settings_path: '/mnt/model_settings.csv'

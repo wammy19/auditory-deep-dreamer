@@ -95,18 +95,19 @@ def build_conv2d_example(N_CLASSES: int = 10, input_shape: Tuple[int, int, int] 
     x = Conv2D(64, kernel_size=(3, 3), activation=relu, padding='same', name='conv2d_relu_7')(x)
     x = MaxPooling2D(pool_size=(2, 2), padding='same', name='max_pool_2d_7')(x)
 
-    # Block 7
+    # Block 8
     x = Conv2D(64, kernel_size=(3, 3), activation=relu, padding='same', name='conv2d_relu_8')(x)
     x = MaxPooling2D(pool_size=(2, 2), padding='same', name='max_pool_2d_8')(x)
 
-    # Block 7
+    # Block 9
     x = Conv2D(64, kernel_size=(3, 3), activation=relu, padding='same', name='conv2d_relu_9')(x)
     x = MaxPooling2D(pool_size=(2, 2), padding='same', name='max_pool_2d_9')(x)
 
-    # Block 7
+    # Block 10
     x = Conv2D(64, kernel_size=(3, 3), activation=relu, padding='same', name='conv2d_relu_10')(x)
     x = MaxPooling2D(pool_size=(2, 2), padding='same', name='max_pool_2d_10')(x)
 
+    # Block 11
     x = Conv2D(32, kernel_size=(3, 3), activation=relu, padding='same', name='conv2d_relu_11')(x)
     x = Flatten(name='flatten')(x)
 
