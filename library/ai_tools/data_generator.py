@@ -33,8 +33,8 @@ class DataGenerator(Sequence):
             num_thread_workers: int = 8  # 16 Threads.
     ):
         # Data frame must contain these columns:
-        # path | instrument_label (one-hot-encoded) | pitch_label (one-hot-encoded)
-        self._df = data_frame
+        # path | instrument | pitch | instrument_label (one-hot-encoded) | pitch_label (one-hot-encoded)
+        self._df = data_frame.reset_index(drop=True)  # Ensure indexes are ordered to begin with.
 
         # Settings.
         self._sample_rate = sample_rate
@@ -86,7 +86,7 @@ class DataGenerator(Sequence):
         |         |____string_1.wav ...
         |
         |_________reed
-                  |
+                  |11
                   |____reed_1.wav ...
         """
 

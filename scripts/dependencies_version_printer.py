@@ -2,6 +2,8 @@
 Check that dependencies are working correctly with conda env.
 """
 
+import time
+
 import kapre
 import librosa
 import numpy
@@ -17,6 +19,8 @@ def main():
     print(f'numpy {numpy.__version__}')
     print(f'sklearn {sklearn.__version__}')
     print(f'scipy {scipy.__version__}')
+
+    time.sleep(2)
 
 
 if __name__ == '__main__':

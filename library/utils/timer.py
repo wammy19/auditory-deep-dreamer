@@ -119,3 +119,29 @@ class Timer:
         """
 
         self.stop()
+
+
+    # =================================================================================================================
+    # ---------------------------------------------- Decorator Functions ----------------------------------------------
+    # =================================================================================================================
+
+    @staticmethod
+    def time_func(func: Callable) -> Callable:
+        """
+        :param func: Any callable function for timing.
+        :return:
+
+        This function is intended to be used as a decorator function for timing functions.
+        """
+
+
+        def wrapper(*args, **kwargs) -> None:
+            timer = Timer()
+            timer.start()
+
+            func(*args, **kwargs)
+
+            print(f'Time took for {func.__name__}: {round(timer.get_elapsed_time, 5)} seconds.')
+
+
+        return wrapper
