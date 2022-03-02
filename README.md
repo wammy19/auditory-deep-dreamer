@@ -22,11 +22,11 @@ Requirements for GPU:
 
 Build docker image for developer environment utilizing jupyter-notebook:
 
-`docker build -f ./docker-files/Dockerfile.jupyter --rm -t aspit002/audio-deepdream-dev-env-jupyter ./docker-files`
+`docker build -f ./docker-files/Dockerfile.jupyter --rm -t aspit002/audio-deepdream-dev-env-jupyter .`
 
 Build docker image for running `./src/main.py`:
 
-`docker build -f ./docker-files/Dockerfile.py_runner --rm -t aspit002/audio-deepdream-dev-env ./docker-files`
+`docker build -f ./docker-files/Dockerfile.py_runner --rm -t aspit002/audio-deepdream-dev-env .`
 
 Before spinning up the containers, have a look at the docker-compose.yml file. If your machine doesn't have an Nvidia
 GPU, you will need to comment out the devices being passed into the container. Also set the memory for the container
