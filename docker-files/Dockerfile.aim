@@ -1,0 +1,9 @@
+# Source: https://github.com/aimhubio/aim/blob/main/docker/Dockerfile
+FROM python:3.9.10-slim
+
+ARG AIM_VERSION
+RUN pip install aim
+
+WORKDIR aim
+
+CMD aim up --force-init --host 0.0.0.0 --port 43800

@@ -38,8 +38,8 @@ services:
     image: aspit002/audio-deepdream-dev-env
     volumes:
       - ../datasets:/mnt/datasets
-      - ./models:/mnt/models
-      - ./aim-logs:/mnt/aim-logs
+      - ./models:/mnt/model-checkpoints
+      - ./aim:/mnt/aim
       - ./model_settings.csv:/mnt/model_settings.csv
 
       # Mounting my library directory to the PYTHONPATH in the docker container.
@@ -56,3 +56,10 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [ compute, utility ]
+
+  aim:
+    image: aspit002/aim-logs
+    volumes:
+      - ./aim:/aim
+    ports:
+      - "43800:43800"

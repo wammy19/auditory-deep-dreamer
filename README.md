@@ -20,13 +20,9 @@ Requirements for GPU:
 - [Nvidia Drivers](https://phoenixnap.com/kb/install-nvidia-drivers-ubuntu)
 - [Cuda Tool Kit](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html)
 
-Build docker image for developer environment utilizing jupyter-notebook:
+Build docker images:
 
-`docker build -f ./docker-files/Dockerfile.jupyter --rm -t aspit002/audio-deepdream-dev-env-jupyter .`
-
-Build docker image for running `./src/main.py`:
-
-`docker build -f ./docker-files/Dockerfile.py_runner --rm -t aspit002/audio-deepdream-dev-env .`
+`chmod +x build_docker_images.sh && ./build_docker_images.sh`
 
 Before spinning up the containers, have a look at the docker-compose.yml file. If your machine doesn't have an Nvidia
 GPU, you will need to comment out the devices being passed into the container. Also set the memory for the container

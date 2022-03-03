@@ -15,7 +15,7 @@ from ai_tools.helpers import create_data_frame_from_path, split_stratified_into_
 def main():
     df: DataFrame = create_data_frame_from_path(
         sett.dataset_path,
-        number_of_samples_for_each_class=10_000
+        number_of_samples_for_each_class=5_000
     )
 
     df_train, df_val, df_test = split_stratified_into_train_val_test(df)  # type: DataFrame, DataFrame, DataFrame
@@ -27,7 +27,7 @@ def main():
 
     num_epochs: int = 100
 
-    for i in range(5):
+    for i in range(10):
         # Create model.
         model_name: str = f'model_{i}'
         model_manager = ModelManager(
@@ -43,7 +43,7 @@ def main():
         aim_callback = AimCallback(repo=sett.aim_logs_path, experiment=model_name)
         early_stopping = EarlyStopping(monitor='val_loss', patience=5, verbose=False)
         checkpoint = ModelCheckpoint(
-            join(join(sett.model_checkpoint_path, model_name), 'epoch-{epoch:02d}-val_loss-{val_loss:.4f}.pb'),
+            join(join(sett.model_checkpoint_path, model_name), 'epoch-{epoch:02d}.pb'),
             monitor='val_accuracy',
             verbose=False,
             save_weights_only=False,
