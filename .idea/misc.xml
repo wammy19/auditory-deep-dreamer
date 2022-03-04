@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (auditory-deepdream)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (auditory-deepdream)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
@@ -12,12 +12,16 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/helpers.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="887" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/playground_script.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
           <option name="caretOffset" value="2283" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/data_generator.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="304" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_manager.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1536" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
         </OpenedFileInfo>
       </list>
     </option>

@@ -27,13 +27,19 @@ def main():
 
     num_epochs: int = 100
 
-    for i in range(10):
+    for i in range(100):
         # Create model.
         model_name: str = f'model_{i}'
         model_manager = ModelManager(
             model_name=model_name,
-            num_conv_blocks=randint(5, 12),
-            conv_drop_out=choice([True, False])
+            num_conv_block=randint(1, 9),
+            num_filters=choice([8, 16, 32, 64, 128]),
+            dense_layer_size=choice([8, 16, 32, 64, 128]),
+            num_dense_layers=randint(0, 5),
+            use_separable_conv_layer=choice([False, True]),
+            use_regularization=choice([False, True]),
+            use_dropout_dense_layers=choice([False, True]),
+            use_dropout_conv_blocks=choice([False, True]),
         )
 
         model_manager.save_model_settings_to_csv(sett.model_settings_path)
