@@ -19,8 +19,9 @@ tests
 # Misc
 LICENSE
 *.md
+model_settings.csv
 
 # Python
 .pytest_cache
 poetry.lock
-pyproject.toml
+pyproject.toml/model_settings.csv

@@ -1,0 +1,9 @@
+model_ID,num_conv_block,num_filters,num_dense_layers,dense_layer_size,use_separable_conv_layer,use_regularization,use_dropout_dense_layers,use_dropout_conv_blocks,dense_dropout_amount,conv_dropout_amount,regularization_amount,num_classes,input_shape
+0,1,16,0,32,False,False,False,False,0.5,0.1,0.001,10,"(300, 44, 1)"
+0,1,128,0,128,False,False,True,True,0.5,0.1,0.001,10,"(300, 44, 1)"
+0,5,32,0,16,False,False,False,True,0.5,0.1,0.001,10,"(300, 44, 1)"
+0,4,64,5,128,False,True,False,False,0.5,0.1,0.001,10,"(300, 44, 1)"
+0,6,16,0,32,False,True,False,False,0.5,0.1,0.001,10,"(300, 44, 1)"
+0,2,16,5,16,False,False,True,False,0.5,0.1,0.001,10,"(300, 44, 1)"
+0,9,16,5,32,True,False,False,True,0.5,0.1,0.001,10,"(300, 44, 1)"
+0,1,16,2,8,True,False,False,True,0.5,0.1,0.001,10,"(300, 44, 1)"

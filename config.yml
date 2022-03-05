@@ -1,5 +1,5 @@
 # Local.
-#path_to_dataset: '/home/andrea/dev/uni/datasets/processed_dataset'
+#path_to_dataset: '/home/andrea/dev/uni/datasets/serialized_dataset'
 #path_to_split_dataset: '/home/andrea/dev/uni/datasets/processed_dataset_split'
 #path_to_serialized_dataset: '/home/andrea/dev/uni/datasets/serialized_dataset'
 #path_to_csv: '/home/andrea/dev/uni/auditory-deepdream/datasets/all_data_set_paths.csv'
@@ -8,4 +8,4 @@
 dataset_path: '/mnt/datasets/serialized_dataset'
 aim_logs_path: '/mnt/aim'
 model_checkpoint_path: '/mnt/model-checkpoints'
-model_settings_path: '/mnt/model_settings.csv'
+model_config_csv_log_path: '/mnt/model_settings.csv'

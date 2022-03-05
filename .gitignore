@@ -11,4 +11,3 @@ datasets
 models
 .aim
 aim-logs
-*.csv
