@@ -1,12 +1,11 @@
 from typing import Tuple
 
 from kapre.composed import get_melspectrogram_layer
-from tensorflow.keras import Input, Model, Sequential
-from tensorflow.keras.activations import relu, sigmoid, softmax
-from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, LayerNormalization, MaxPooling2D
-from tensorflow.keras.losses import binary_crossentropy, categorical_crossentropy
+from tensorflow.keras import Sequential
+from tensorflow.keras.activations import relu, sigmoid
+from tensorflow.keras.layers import Conv2D, Dense, Flatten, MaxPooling2D
+from tensorflow.keras.losses import binary_crossentropy
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.regularizers import l2
 
 import utils.constants as consts
 
@@ -52,5 +51,3 @@ def build_simple_cnn() -> Sequential:
     )
 
     return model
-
-

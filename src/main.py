@@ -20,6 +20,8 @@ def main():
 
     df_train, df_val, df_test = split_stratified_into_train_val_test(df)  # type: DataFrame, DataFrame, DataFrame
 
+    df_test.to_csv(f'{sett.logs_path}/test_data.csv')  # Save the test set for later evaluation.
+
     # Create Generators.
     batch_size: int = 32
     train_data_generator: DataGenerator = DataGenerator(df_train, batch_size=batch_size)

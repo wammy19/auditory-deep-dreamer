@@ -9,8 +9,8 @@ services:
       - ../datasets:/datasets
       - ./media:/media
       - ./models:/models
-      - ./config.yml:/config  # Put service configuration in notebook directory so that it can easily be accessed.
-      - ./.aim:/aim
+      - ./logs/aim:/mnt/aim
+      - ./logs/model_settings.csv:/mnt/model_settings.csv
 
       - ../datasets:/mnt/datasets
       - ./media:/mnt/media
@@ -39,8 +39,9 @@ services:
     volumes:
       - ../datasets:/mnt/datasets
       - ./models:/mnt/model-checkpoints
-      - ./aim:/mnt/aim
-      - ./model_settings.csv:/mnt/model_settings.csv
+      - ./logs:/mnt/logs
+      - ./logs/aim:/mnt/aim
+      - ./logs/model_settings.csv:/mnt/model_settings.csv
 
       # Mounting my library directory to the PYTHONPATH in the docker container.
       - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
@@ -60,6 +61,6 @@ services:
   aim:
     image: aspit002/aim-logs
     volumes:
-      - ./aim:/aim
+      - ./logs/aim:/aim
     ports:
       - "43800:43800"

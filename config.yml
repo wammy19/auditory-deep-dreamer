@@ -6,6 +6,8 @@
 
 # Docker paths.
 dataset_path: '/mnt/datasets/serialized_dataset'
+logs_path: '/mnt/logs'
 aim_logs_path: '/mnt/aim'
 model_checkpoint_path: '/mnt/model-checkpoints'
 model_config_csv_log_path: '/mnt/model_settings.csv'
+

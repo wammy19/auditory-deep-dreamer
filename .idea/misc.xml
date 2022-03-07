@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (auditory-deepdream)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (auditory-deepdream)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
@@ -8,28 +8,8 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="366" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/config.yml" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="1143" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_manager.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="690" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_builders.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="1185" />
+          <option name="caretOffset" value="652" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/models.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/helpers.py" />
         </OpenedFileInfo>
       </list>
     </option>

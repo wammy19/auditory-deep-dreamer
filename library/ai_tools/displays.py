@@ -2,6 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tensorflow.keras.callbacks import History
 
+from tensorflow.keras.models import Model, load_model
+import os
+from os.path import join
+from typing import List
+
 
 def plot_learning_metrics(
         history: History,
@@ -87,3 +92,40 @@ def display_optimal_epoch_and_metrics(_history: History) -> None:
     print(f'\nOptimal Epoch: {optimal_epoch + 1}')
     print(f'Training Loss: {loss:.5f}        |  Training Accuracy: {acc:.5f}')
     print(f'Validation Loss: {val_loss:.5f}  |  Validation Accuracy: {val_acc:.5f}\n')
+
+
+def evaluate_model_and_display_results(
+        model_name: str,
+        test_data: np.ndarray,
+        test_labels: np.ndarray,
+        display_confusion_matrix: bool = True,
+        root_directory: str = '/mnt/model-checkpoints',
+) -> None:
+    """
+    :param _model_name:
+    :param test_data:
+    :param test_labels:
+    :param root_directory:
+    :param display_confusion_matrix: If true a confusion matrix is displayed.
+    :return:
+
+    Evaluates the model with the test data and displays the results neatly along with a confusion matrix of the
+    predictions.
+
+    This function is intended to be called in another python process.
+    """
+
+    # Get path to desired model.
+    path_to_model: str = join(root_directory, model_name)
+    best_model: str = sorted(os.listdir(path_to_model))[-1]
+
+    print(best_model)
+
+    # # Load model.
+    # model: Model = load_model(join(path_to_model, best_model))
+    #
+    # # Test model.
+    # results: List[float] = model.evaluate(test_data, test_labels)
+    #
+    # print(f'Loss:     {round(results[0], 4) * 100:.2f}%')
+    # print(f'Accuracy: {round(results[1], 4) * 100:.2f}%')
