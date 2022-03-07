@@ -1,6 +1,6 @@
 import os
 from csv import DictWriter
-from os.path import join
+from os.path import exists, join
 from typing import Dict, List, Optional, Tuple, Union
 
 from aim.keras import AimCallback
@@ -12,7 +12,6 @@ from tensorflow.keras.layers import BatchNormalization, Conv2D, Dense, Dropout, 
 from tensorflow.keras.losses import categorical_crossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.regularizers import l2
-from tensorflow.python.keras.models import Model
 
 from ai_tools import DataGenerator
 from utils.constants import X_SHAPE
@@ -20,13 +19,15 @@ from utils.constants import X_SHAPE
 
 class ModelManager:
     """
-    A data structure that holds the settings for creating a model.
+    Creates, trains, and evaluates. Logs are kept of the models created as well as their performance. The best
+    performing model epochs are saved.
     """
 
 
     # =================================================================================================================
     # ---------------------------------------------- Class Constructors -----------------------------------------------
     # =================================================================================================================
+
     def __init__(
             self,
             path_to_csv_logs: str = './model_settings.csv',
@@ -34,7 +35,7 @@ class ModelManager:
             aim_logs_dir: str = './aim',
             training_batch_size: int = 32,
             num_training_epochs: int = 200,
-            model: Optional[Model] = None,
+            model: Model = None
     ):
         """
         :param path_to_csv_logs:
@@ -50,8 +51,10 @@ class ModelManager:
         self._model_checkpoint_dir: str = model_checkpoint_dir
         self._aim_logs_dir: str = aim_logs_dir
 
+        self._verify_log_dirs_and_files_exist()
+
         # Initialize model ID.
-        self._model_ID: int = len(os.listdir(self._model_checkpoint_dir))
+        self._model_ID: int = len(os.listdir(model_checkpoint_dir))
 
         # Training settings.
         self.num_epochs: int = num_training_epochs
@@ -94,7 +97,6 @@ class ModelManager:
         :param num_classes: Number of classes. Example: ['reed', 'string', 'guitar'] = 3
         :param input_shape: Input shape of the data not including batch size.
         :return: A tensorflow.keras.models.Model object ready for training.
-
         Constructs a Convolutional Neural Network.
         """
 
@@ -187,30 +189,29 @@ class ModelManager:
 
         self.current_model = model
         self._save_model_settings_to_csv(model_settings)  # Save the variables that constructed this model.
-        self._model_ID += 1  # Increment model ID for the next model.
 
         return model
 
 
-    def train_and_evaluate_model(
+    def train_and_optimize_model(
             self,
             train_generator: DataGenerator,
             validation_generator: DataGenerator,
-            model: Optional[Model] = None,
+            epochs: int = 100,
+            early_stopping_patience: int = 5
     ) -> History:
         """
-        :param model: A tensorflow.keras.models.Model ready for training.
         :param train_generator: A DataGenerator holding the training dataset.
         :param validation_generator: A DataGenerator holding the validation dataset.
+        :param epochs: Number of epochs to train for, Early stopping is also in place.
+        :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
+        is no improvement.
         :return:
         """
 
-        if model is None:
-            model = self.current_model
-
         # Callbacks.
-        aim_callback = AimCallback(repo=self._aim_logs_dir, experiment='model_test')
-        early_stopping = EarlyStopping(monitor='val_loss', patience=5, verbose=False)
+        aim_callback = AimCallback(repo=self._aim_logs_dir, experiment=f'model_{self._model_ID}')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=early_stopping_patience, verbose=False)
         checkpoint = ModelCheckpoint(
             join(join(self._model_checkpoint_dir, f'model_{self._model_ID}'), 'epoch-{epoch:02d}.pb'),
             monitor='val_accuracy',
@@ -221,10 +222,10 @@ class ModelManager:
         )
 
         # Train model.
-        history: History = model.fit(
+        history: History = self._current_model.fit(
             train_generator,
             steps_per_epoch=len(train_generator.get_data_frame.index) // self._batch_size,
-            epochs=self.num_epochs,
+            epochs=epochs,
             validation_data=validation_generator,
             validation_steps=len(validation_generator.get_data_frame.index) // self._batch_size,
             batch_size=self._batch_size,
@@ -234,6 +235,8 @@ class ModelManager:
                 checkpoint
             ]
         )
+
+        self._model_ID += 1  # Increment model ID for the next model.
 
         return history
 
@@ -266,6 +269,29 @@ class ModelManager:
                 dict_writer.writeheader()
 
             dict_writer.writerow(new_model_config)
+
+
+    # =================================================================================================================
+    # ----------------------------------------------- Private functions -----------------------------------------------
+    # =================================================================================================================
+
+    def _verify_log_dirs_and_files_exist(self) -> None:
+        """
+        :return: None
+
+        Creates log directories and files if they don't exist.
+        """
+
+        # Create files and directories if they don't exist.
+        if exists(self._path_to_csv_logs) is False:
+            with open(self._path_to_csv_logs):
+                pass
+
+        if exists(self._model_checkpoint_dir) is False:
+            os.makedirs(self._model_checkpoint_dir)
+
+        if exists(self._aim_logs_dir) is False:
+            os.makedirs(self._aim_logs_dir)
 
 
     # =================================================================================================================
