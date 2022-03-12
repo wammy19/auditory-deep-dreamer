@@ -12,7 +12,7 @@ from tensorflow.keras.callbacks import EarlyStopping, History, ModelCheckpoint
 from tensorflow.keras.layers import BatchNormalization, Conv2D, Dense, Dropout, Flatten, LayerNormalization, \
     MaxPooling2D, SeparableConv2D, SpatialDropout2D
 from tensorflow.keras.losses import categorical_crossentropy
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.regularizers import l2
 
 from ai_tools import DataGenerator
@@ -289,6 +289,25 @@ class ModelManager:
             else:
                 print(f'Got history for last model train. model_{self._model_ID}')
                 return self.current_history
+
+
+    def load_model_at_best_epoch(self, model_id: int) -> Union[Model, None]:
+        """
+        :param model_id:
+        :return:
+        """
+
+        try:
+            path_to_model: str = join(self._model_checkpoint_dir, f'model_{model_id}')
+            best_epoch: str = sorted(os.listdir(path_to_model))[-1]
+            model: Model = load_model(join(path_to_model, best_epoch))
+
+            return model
+
+        except ValueError:
+            print('Model ID provided does not correspond to any models saved.')
+
+            return None
 
 
     # =================================================================================================================
