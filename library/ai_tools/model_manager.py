@@ -1,4 +1,6 @@
+import math
 import os
+import pickle
 from csv import DictWriter
 from os.path import exists, join
 from typing import Dict, List, Optional, Tuple, Union
@@ -30,9 +32,10 @@ class ModelManager:
 
     def __init__(
             self,
-            path_to_csv_logs: str = './model_settings.csv',
+            path_to_csv_logs: Optional[str] = None,
             model_checkpoint_dir: str = './models',
             aim_logs_dir: str = './aim',
+            history_log_dir: str = './logs/model_histories',
             training_batch_size: int = 32,
             num_training_epochs: int = 200,
             model: Model = None
@@ -47,14 +50,16 @@ class ModelManager:
         """
 
         # Logs paths.
-        self._path_to_csv_logs: str = path_to_csv_logs
+        self._path_to_csv_logs: Optional[str] = path_to_csv_logs
         self._model_checkpoint_dir: str = model_checkpoint_dir
         self._aim_logs_dir: str = aim_logs_dir
+        self._history_log_dir: str = history_log_dir
 
         self._verify_log_dirs_and_files_exist()
 
         # Initialize model ID.
         self._model_ID: int = len(os.listdir(model_checkpoint_dir))
+        self.current_history: Optional[History] = None
 
         # Training settings.
         self.num_epochs: int = num_training_epochs
@@ -102,6 +107,9 @@ class ModelManager:
 
         model_settings: Dict[str, any] = locals()  # Store model settings.
         input_layer = Input(shape=input_shape)
+
+        num_conv_block = math.floor(num_conv_block)
+        num_filters = math.floor(num_filters)
 
         x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
 
@@ -197,12 +205,14 @@ class ModelManager:
             self,
             train_generator: DataGenerator,
             validation_generator: DataGenerator,
+            test_generator: DataGenerator,
             epochs: int = 100,
-            early_stopping_patience: int = 5
-    ) -> History:
+            early_stopping_patience: int = 5,
+    ) -> None:
         """
         :param train_generator: A DataGenerator holding the training dataset.
         :param validation_generator: A DataGenerator holding the validation dataset.
+        :param test_generator: A DataGenerator holding the test dataset.
         :param epochs: Number of epochs to train for, Early stopping is also in place.
         :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
         is no improvement.
@@ -222,13 +232,14 @@ class ModelManager:
         )
 
         # Train model.
-        history: History = self._current_model.fit(
+        self.current_history: History = self._current_model.fit(
             train_generator,
             steps_per_epoch=len(train_generator.get_data_frame.index) // self._batch_size,
             epochs=epochs,
             validation_data=validation_generator,
             validation_steps=len(validation_generator.get_data_frame.index) // self._batch_size,
             batch_size=self._batch_size,
+            verbose=False,
             callbacks=[
                 aim_callback,
                 early_stopping,
@@ -236,9 +247,48 @@ class ModelManager:
             ]
         )
 
+        # accuracy: float = self._current_model.evaluate(test_generator)
+
+        self._save_model_history(self.current_history)
         self._model_ID += 1  # Increment model ID for the next model.
 
-        return history
+        # return accuracy
+
+
+    def get_model_history(self, model_id: Optional[int] = None) -> Union[History, None]:
+        """
+        :param model_id: Model ID number of which you wish to get the training history of.
+        :return:
+
+        Returns the history of a previously trained model if the model ID is provided, otherwise returns the current
+        history stored.
+        """
+
+        if model_id is not None:  # Return History with a provided model_id.
+            try:
+                with open(join(self._history_log_dir, f'model_{model_id}'), 'rb') as file_handler:
+                    history: History = pickle.load(file_handler)
+
+                    print(f'Got history for model_{model_id}')
+
+                    return history
+
+            except FileNotFoundError:
+                print("Model ID provided doesn't exist. Please check logs directory for existing logs.")
+
+        else:  # Return History of the current model loaded.
+
+            if self.current_history is None:
+                print(
+                    'There is currently no history stored. '
+                    'Build and train a model before trying to get the current History.'
+                )
+
+                return None
+
+            else:
+                print(f'Got history for last model train. model_{self._model_ID}')
+                return self.current_history
 
 
     # =================================================================================================================
@@ -261,19 +311,28 @@ class ModelManager:
         for key, value in new_model_config.items():  # Gather column headers.
             csv_headers.append(key)
 
-        with open(self._path_to_csv_logs, 'a', newline='') as file_handler:
-            dict_writer = DictWriter(file_handler, fieldnames=csv_headers)
+        if self._path_to_csv_logs is not None:
+            with open(self._path_to_csv_logs, 'a', newline='') as file_handler:
+                dict_writer = DictWriter(file_handler, fieldnames=csv_headers)
 
-            # Write column headers if the file is new.
-            if os.stat(self._path_to_csv_logs).st_size == 0:
-                dict_writer.writeheader()
+                # Write column headers if the file is new.
+                if os.stat(self._path_to_csv_logs).st_size == 0:
+                    dict_writer.writeheader()
 
-            dict_writer.writerow(new_model_config)
+                dict_writer.writerow(new_model_config)
 
 
-    # =================================================================================================================
-    # ----------------------------------------------- Private functions -----------------------------------------------
-    # =================================================================================================================
+    def _save_model_history(self, history: History) -> None:
+        """
+        :param history: A tensorflow.keras.callbacks.History object.
+        :return:
+
+        Pickles the model history object for later plotting.
+        """
+
+        with open(join(self._history_log_dir, f'model_{self._model_ID}'), 'wb') as file_handler:
+            pickle.dump(history, file_handler)
+
 
     def _verify_log_dirs_and_files_exist(self) -> None:
         """
@@ -282,8 +341,7 @@ class ModelManager:
         Creates log directories and files if they don't exist.
         """
 
-        # Create files and directories if they don't exist.
-        if exists(self._path_to_csv_logs) is False:
+        if self._path_to_csv_logs is not None and exists(self._path_to_csv_logs) is False:
             with open(self._path_to_csv_logs):
                 pass
 
@@ -292,6 +350,9 @@ class ModelManager:
 
         if exists(self._aim_logs_dir) is False:
             os.makedirs(self._aim_logs_dir)
+
+        if exists(self._history_log_dir) is False:
+            os.makedirs(self._history_log_dir)
 
 
     # =================================================================================================================

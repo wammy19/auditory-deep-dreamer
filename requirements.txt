@@ -17,6 +17,7 @@ attrs==21.4.0; python_version >= "3.7" and python_full_version < "3.0.0" or pyth
 audioread==2.1.9; python_version >= "3.6"
 backcall==0.2.0; python_version >= "3.8"
 base58==2.0.1; python_version >= "3.5" and python_full_version >= "3.6.0"
+bayesian-optimization==1.2.0
 black==22.1.0; python_full_version >= "3.6.2" and python_version >= "3.8"
 bleach==4.1.0; python_version >= "3.7"
 cachetools==5.0.0; python_version >= "3.7" and python_version < "4.0" and python_full_version >= "3.6.0" and (python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.6")

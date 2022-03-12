@@ -5,15 +5,12 @@ services:
   jupyter:
     image: aspit002/audio-deepdream-dev-env-jupyter
     volumes:
-      - ./jupyter-notebooks:/notebook
-      - ../datasets:/datasets
-      - ./media:/media
-      - ./models:/models
-      - ./logs/aim:/mnt/aim
-      - ./logs/model_settings.csv:/mnt/model_settings.csv
-
       - ../datasets:/mnt/datasets
-      - ./media:/mnt/media
+      - ./models:/mnt/model-checkpoints
+      - ./logs:/mnt/logs
+      - ./logs/aim:/mnt/aim
+      - ./logs/model_histories:/mnt/model_histories
+      - ./logs/model_settings.csv:/mnt/model_settings.csv
 
       # Mounting my library directory to the PYTHONPATH in the docker container.
       - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
@@ -41,6 +38,7 @@ services:
       - ./models:/mnt/model-checkpoints
       - ./logs:/mnt/logs
       - ./logs/aim:/mnt/aim
+      - ./logs/model_histories:/mnt/model_histories
       - ./logs/model_settings.csv:/mnt/model_settings.csv
 
       # Mounting my library directory to the PYTHONPATH in the docker container.

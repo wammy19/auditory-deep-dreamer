@@ -2,6 +2,8 @@
 # Source: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/dockerfiles/gpu-jupyter.Dockerfile
 FROM tensorflow/tensorflow:latest-gpu-jupyter
 
+WORKDIR service .
+
 # Install dependencies.
 RUN apt-get update
 RUN apt-get install -y sox libsox-fmt-mp3 ffmpeg libsm6 libxext6
@@ -10,4 +12,6 @@ RUN apt-get install -y sox libsox-fmt-mp3 ffmpeg libsm6 libxext6
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-CMD jupyter notebook /notebook --port=8888 --ip=0.0.0.0 --allow-root
+COPY ./jupyter-notebooks .
+
+CMD jupyter notebook . --port=8888 --ip=0.0.0.0 --allow-root

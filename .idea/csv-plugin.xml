@@ -17,7 +17,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/model_settings.csv">
+        <entry key="/logs/train_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/logs/val_data.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
