@@ -201,21 +201,21 @@ class ModelManager:
         return model
 
 
-    def train_and_optimize_model(
+    def train_model(
             self,
             train_generator: DataGenerator,
             validation_generator: DataGenerator,
-            test_generator: DataGenerator,
             epochs: int = 100,
             early_stopping_patience: int = 5,
+            update_current_model_id: bool = False
     ) -> None:
         """
         :param train_generator: A DataGenerator holding the training dataset.
         :param validation_generator: A DataGenerator holding the validation dataset.
-        :param test_generator: A DataGenerator holding the test dataset.
         :param epochs: Number of epochs to train for, Early stopping is also in place.
         :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
         is no improvement.
+        :param update_current_model_id:
         :return:
         """
 
@@ -247,12 +247,86 @@ class ModelManager:
             ]
         )
 
-        # accuracy: float = self._current_model.evaluate(test_generator)
-
         self._save_model_history(self.current_history)
-        self._model_ID += 1  # Increment model ID for the next model.
 
-        # return accuracy
+        if update_current_model_id:
+            self._model_ID += 1  # Increment model ID for the next model.
+
+
+    def search_for_best_model(
+            self,
+            train_generator: DataGenerator,
+            validation_generator: DataGenerator,
+            test_generator: DataGenerator,
+            num_conv_block: int = 1,
+            num_filters: int = 16,
+            num_dense_layers: int = 0,
+            dense_layer_size: int = 32,
+            use_separable_conv_layer: bool = False,
+            use_regularization: bool = False,
+            use_dropout_dense_layers: bool = False,
+            use_dropout_conv_blocks: bool = False,
+            dense_dropout_amount: float = 0.5,
+            conv_dropout_amount: float = 0.1,
+            regularization_amount: float = 0.001,
+            num_classes: int = 10,
+            input_shape: Tuple[int, int, int] = X_SHAPE,
+            epochs: int = 100,
+            early_stopping_patience: int = 5,
+    ) -> float:
+        """
+        :param train_generator:
+        :param validation_generator:
+        :param test_generator:
+        :param num_conv_block:
+        :param num_filters:
+        :param num_dense_layers:
+        :param dense_layer_size:
+        :param use_separable_conv_layer:
+        :param use_regularization:
+        :param use_dropout_dense_layers:
+        :param use_dropout_conv_blocks:
+        :param dense_dropout_amount:
+        :param conv_dropout_amount:
+        :param regularization_amount:
+        :param num_classes:
+        :param input_shape:
+        :param epochs:
+        :param early_stopping_patience:
+        :return:
+        """
+
+        self.build_model(
+            num_conv_block,
+            num_filters,
+            num_dense_layers,
+            dense_layer_size,
+            use_separable_conv_layer,
+            use_regularization,
+            use_dropout_dense_layers,
+            use_dropout_conv_blocks,
+            dense_dropout_amount,
+            conv_dropout_amount,
+            regularization_amount,
+            num_classes,
+            input_shape,
+        )
+
+        self.train_model(
+            train_generator,
+            validation_generator,
+            epochs=epochs,
+            early_stopping_patience=early_stopping_patience
+        )
+
+        model: Model = self.load_model_at_best_epoch(self._model_ID)
+        accuracy: float = model.evaluate(test_generator)[1]
+
+        self._model_ID += 1
+
+        print(f'Accuracy: {accuracy}')
+
+        return accuracy
 
 
     def get_model_history(self, model_id: Optional[int] = None) -> Union[History, None]:
