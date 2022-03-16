@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (auditory-deepdream)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (auditory-deepdream)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
@@ -10,6 +10,14 @@
         <OpenedFileInfo>
           <option name="caretOffset" value="0" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/build_docker_images.sh" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="682" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="3587" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_manager.py" />
         </OpenedFileInfo>
       </list>
     </option>

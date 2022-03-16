@@ -33,6 +33,9 @@ class ModelManager:
 
     def __init__(
             self,
+            train_data_generator: DataGenerator,
+            validation_data_generator: DataGenerator,
+            test_data_generator: DataGenerator,
             path_to_logs: str = './logs',
             model_checkpoint_dir: str = './models',
             training_batch_size: int = 32,
@@ -58,6 +61,11 @@ class ModelManager:
 
         self._verify_log_dirs_and_files_exist()
 
+        # Datasets.
+        self.train_data_generator: DataGenerator = train_data_generator
+        self.validation_data_generator: DataGenerator = validation_data_generator
+        self.test_data_generator: DataGenerator = test_data_generator
+
         # Initialize model ID.
         self._model_ID: int = len(os.listdir(model_checkpoint_dir))
         self.current_history: Optional[History] = None
@@ -77,14 +85,14 @@ class ModelManager:
 
     def build_model(
             self,
-            num_conv_block: int = 1,
-            num_filters: int = 16,
-            num_dense_layers: int = 0,
-            dense_layer_size: int = 32,
+            num_conv_block: int = 10,
+            num_filters: int = 64,
+            num_dense_layers: int = 10,
+            dense_layer_size: int = 64,
             use_separable_conv_layer: bool = False,
-            use_regularization: bool = False,
-            use_dropout_dense_layers: bool = False,
-            use_dropout_conv_blocks: bool = False,
+            use_regularization: bool = True,
+            use_dropout_dense_layers: bool = True,
+            use_dropout_conv_blocks: bool = True,
             dense_dropout_amount: float = 0.5,
             conv_dropout_amount: float = 0.1,
             regularization_amount: float = 0.001,
@@ -208,15 +216,11 @@ class ModelManager:
 
     def train_model(
             self,
-            train_generator: DataGenerator,
-            validation_generator: DataGenerator,
             epochs: int = 100,
             early_stopping_patience: int = 5,
             update_current_model_id: bool = False
     ) -> None:
         """
-        :param train_generator: A DataGenerator holding the training dataset.
-        :param validation_generator: A DataGenerator holding the validation dataset.
         :param epochs: Number of epochs to train for, Early stopping is also in place.
         :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
         is no improvement.
@@ -238,11 +242,11 @@ class ModelManager:
 
         # Train model.
         self.current_history: History = self._current_model.fit(
-            train_generator,
-            steps_per_epoch=len(train_generator.get_data_frame.index) // self._batch_size,
+            self.train_data_generator,
+            steps_per_epoch=len(self.train_data_generator.get_data_frame.index) // self._batch_size,
             epochs=epochs,
-            validation_data=validation_generator,
-            validation_steps=len(validation_generator.get_data_frame.index) // self._batch_size,
+            validation_data=self.validation_data_generator,
+            validation_steps=len(self.validation_data_generator.get_data_frame.index) // self._batch_size,
             batch_size=self._batch_size,
             verbose=False,
             callbacks=[
@@ -260,9 +264,6 @@ class ModelManager:
 
     def search_for_best_model(
             self,
-            train_generator: DataGenerator,
-            validation_generator: DataGenerator,
-            test_generator: DataGenerator,
             num_conv_block: int = 1,
             num_filters: int = 16,
             num_dense_layers: int = 0,
@@ -280,9 +281,6 @@ class ModelManager:
             early_stopping_patience: int = 5,
     ) -> float:
         """
-        :param train_generator:
-        :param validation_generator:
-        :param test_generator:
         :param num_conv_block:
         :param num_filters:
         :param num_dense_layers:
@@ -318,21 +316,19 @@ class ModelManager:
         )
 
         self.train_model(
-            train_generator,
-            validation_generator,
             epochs=epochs,
             early_stopping_patience=early_stopping_patience
         )
 
         # Load best model at best epoch for evaluation. None will be returned if the name can't be found in the logs.
         model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
-        results: List[float] = model.evaluate(test_generator)
+        results: List[float] = model.evaluate(self.test_data_generator)
 
         self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
 
         self._model_ID += 1
 
-        return results[1]
+        return results[1]  # Return model accuracy.
 
 
     def get_model_history(self, model_id: Optional[int] = None) -> Union[History, None]:
