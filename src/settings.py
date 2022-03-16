@@ -11,6 +11,7 @@ dataset_path: str = service_config['dataset_path']
 aim_logs_path: str = service_config['aim_logs_path']
 model_checkpoint_path: str = service_config['model_checkpoint_path']
 model_config_csv_log_path: str = service_config['model_config_csv_log_path']
+model_evaluation_csv_log_path: str = service_config['model_evaluation_csv_log_path']
 logs_path: str = service_config['logs_path']
 model_histories: str = service_config['model_histories']
 

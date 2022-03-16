@@ -33,9 +33,8 @@ def main():
     test_data_generator: DataGenerator = DataGenerator(df_test, batch_size=batch_size)
 
     model_manager = ModelManager(
-        path_to_csv_logs=sett.model_config_csv_log_path,
+        path_to_logs=sett.logs_path,
         model_checkpoint_dir=sett.model_checkpoint_path,
-        aim_logs_dir=sett.aim_logs_path
     )
 
     # Train models using random search.

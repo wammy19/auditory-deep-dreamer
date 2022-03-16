@@ -1,6 +1,7 @@
 import math
 import os
 import pickle
+import re
 from csv import DictWriter
 from os.path import exists, join
 from typing import Dict, List, Optional, Tuple, Union
@@ -32,28 +33,28 @@ class ModelManager:
 
     def __init__(
             self,
-            path_to_csv_logs: Optional[str] = None,
+            path_to_logs: str = './logs',
             model_checkpoint_dir: str = './models',
-            aim_logs_dir: str = './aim',
-            history_log_dir: str = './logs/model_histories',
             training_batch_size: int = 32,
             num_training_epochs: int = 200,
             model: Model = None
     ):
         """
-        :param path_to_csv_logs:
+        :param path_to_logs:
         :param model_checkpoint_dir:
-        :param aim_logs_dir:
         :param training_batch_size:
         :param num_training_epochs:
         :param model:
         """
 
         # Logs paths.
-        self._path_to_csv_logs: Optional[str] = path_to_csv_logs
+        self._path_to_model_config_csv_logs: str = join(path_to_logs, 'model_settings.csv')
+        self._path_to_model_evaluation_logs: str = join(path_to_logs, 'model_evaluation.csv')
+        self._aim_logs_dir: str = join(path_to_logs, 'aim')
+        self._history_log_dir: str = join(path_to_logs, 'model_histories')
+
+        # Path for saving models.
         self._model_checkpoint_dir: str = model_checkpoint_dir
-        self._aim_logs_dir: str = aim_logs_dir
-        self._history_log_dir: str = history_log_dir
 
         self._verify_log_dirs_and_files_exist()
 
@@ -65,6 +66,9 @@ class ModelManager:
         self.num_epochs: int = num_training_epochs
         self._batch_size: int = training_batch_size
         self._current_model: Optional[Model] = model
+
+        # Patterns
+        self._epoch_from_model_logs_patter: re.Pattern = re.compile(r'\d+')
 
 
     # =================================================================================================================
@@ -142,7 +146,8 @@ class ModelManager:
 
             x = MaxPooling2D(pool_size=(2, 2), padding='same', name=f'pooling_{block_num}')(x)
 
-            # Batch normalization is added for each block as suggested in "Deep Learning with Python" by Francois Chollet.
+            # Batch normalization is added for each block as suggested in "Deep Learning with Python"
+            # by Francois Chollet.
             # "BatchNormalization is used liberally in many of the advanced convent architectures." [8]
             x = BatchNormalization(name=f'batch_norm_{block_num}')(x)
 
@@ -319,14 +324,15 @@ class ModelManager:
             early_stopping_patience=early_stopping_patience
         )
 
-        model: Model = self.load_model_at_best_epoch(self._model_ID)
-        accuracy: float = model.evaluate(test_generator)[1]
+        # Load best model at best epoch for evaluation. None will be returned if the name can't be found in the logs.
+        model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
+        results: List[float] = model.evaluate(test_generator)
+
+        self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
 
         self._model_ID += 1
 
-        print(f'Accuracy: {accuracy}')
-
-        return accuracy
+        return results[1]
 
 
     def get_model_history(self, model_id: Optional[int] = None) -> Union[History, None]:
@@ -365,7 +371,7 @@ class ModelManager:
                 return self.current_history
 
 
-    def load_model_at_best_epoch(self, model_id: int) -> Union[Model, None]:
+    def load_model_at_best_epoch(self, model_id: int) -> Tuple[Union[Model, None], Union[str, None]]:
         """
         :param model_id:
         :return:
@@ -373,15 +379,17 @@ class ModelManager:
 
         try:
             path_to_model: str = join(self._model_checkpoint_dir, f'model_{model_id}')
-            best_epoch: str = sorted(os.listdir(path_to_model))[-1]
-            model: Model = load_model(join(path_to_model, best_epoch))
+            best_epoch_file_name: str = sorted(os.listdir(path_to_model))[-1]
 
-            return model
+            model: Model = load_model(join(path_to_model, best_epoch_file_name))
+            epoch: str = self._epoch_from_model_logs_patter.findall(best_epoch_file_name)[0]
+
+            return model, epoch
 
         except ValueError:
             print('Model ID provided does not correspond to any models saved.')
 
-            return None
+            return None, None
 
 
     # =================================================================================================================
@@ -390,6 +398,7 @@ class ModelManager:
 
     def _save_model_settings_to_csv(self, model_config: Dict[str, any]) -> None:
         """
+        :param model_config: A dict containing the parameter to constructing a model, and it's value.
         :return:
 
         Appends the model settings to a csv file.
@@ -404,15 +413,51 @@ class ModelManager:
         for key, value in new_model_config.items():  # Gather column headers.
             csv_headers.append(key)
 
-        if self._path_to_csv_logs is not None:
-            with open(self._path_to_csv_logs, 'a', newline='') as file_handler:
-                dict_writer = DictWriter(file_handler, fieldnames=csv_headers)
+        with open(self._path_to_model_config_csv_logs, 'a', newline='') as file_handler:
+            dict_writer = DictWriter(file_handler, fieldnames=csv_headers)
 
-                # Write column headers if the file is new.
-                if os.stat(self._path_to_csv_logs).st_size == 0:
-                    dict_writer.writeheader()
+            # Write column headers if the file is new.
+            if os.stat(self._path_to_model_config_csv_logs).st_size == 0:
+                dict_writer.writeheader()
 
-                dict_writer.writerow(new_model_config)
+            dict_writer.writerow(new_model_config)
+
+
+    def _save_model_evaluation_to_csv(
+            self,
+            model_id: int,
+            model_loss: float,
+            model_accuracy: float,
+            epoch: str
+    ) -> None:
+        """
+        :param model_id: Model id number.
+        :param model_loss:
+        :param model_accuracy:
+        :param epoch: Epoch the results were measured at.
+        :return:
+        """
+
+        evaluation_res: Dict[str, any] = {
+            'model_ID': model_id,
+            'loss': model_loss,
+            'accuracy': model_accuracy,
+            'epoch': epoch
+        }
+
+        csv_headers: List[str] = []
+
+        for key, value in evaluation_res.items():  # Gather column headers.
+            csv_headers.append(key)
+
+        with open(self._path_to_model_evaluation_logs, 'a', newline='') as file_handler:
+            dict_writer = DictWriter(file_handler, fieldnames=csv_headers)
+
+            # Write column headers if the file is new.
+            if os.stat(self._path_to_model_evaluation_logs).st_size == 0:
+                dict_writer.writeheader()
+
+            dict_writer.writerow(evaluation_res)
 
 
     def _save_model_history(self, history: History) -> None:
@@ -434,9 +479,11 @@ class ModelManager:
         Creates log directories and files if they don't exist.
         """
 
-        if self._path_to_csv_logs is not None and exists(self._path_to_csv_logs) is False:
-            with open(self._path_to_csv_logs):
-                pass
+        if exists(self._path_to_model_config_csv_logs) is False:
+            open(self._path_to_model_config_csv_logs, 'x')
+
+        if exists(self._path_to_model_evaluation_logs) is False:
+            open(self._path_to_model_evaluation_logs, 'x')
 
         if exists(self._model_checkpoint_dir) is False:
             os.makedirs(self._model_checkpoint_dir)

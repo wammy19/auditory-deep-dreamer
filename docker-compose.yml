@@ -11,6 +11,7 @@ services:
       - ./logs/aim:/mnt/aim
       - ./logs/model_histories:/mnt/model_histories
       - ./logs/model_settings.csv:/mnt/model_settings.csv
+      - ./logs/model_evaluation.csv:/mnt/model_evaluation.csv
 
       # Mounting my library directory to the PYTHONPATH in the docker container.
       - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
@@ -37,9 +38,10 @@ services:
       - ../datasets:/mnt/datasets
       - ./models:/mnt/model-checkpoints
       - ./logs:/mnt/logs
-      - ./logs/aim:/mnt/aim
-      - ./logs/model_histories:/mnt/model_histories
-      - ./logs/model_settings.csv:/mnt/model_settings.csv
+#      - ./logs/aim:/mnt/aim
+#      - ./logs/model_histories:/mnt/model_histories
+#      - ./logs/model_settings.csv:/mnt/model_settings.csv
+#      - ./logs/model_evaluation.csv:/mnt/model_evaluation.csv
 
       # Mounting my library directory to the PYTHONPATH in the docker container.
       - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
