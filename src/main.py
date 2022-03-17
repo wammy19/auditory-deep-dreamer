@@ -1,8 +1,6 @@
 from os.path import join
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
-
 from bayes_opt import BayesianOptimization
 from pandas import DataFrame
 import tensorflow as tf
@@ -17,6 +15,7 @@ def main():
     :return:
     """
 
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Only log errors.
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
     # Create dataset dataframe and split it into train, validation, and test.
@@ -46,7 +45,13 @@ def main():
         model_checkpoint_dir=sett.model_checkpoint_path,
     )
 
-    p_bounds: dict = {'conv_dropout_amount': (0, 1), 'regularization_amount': (0, 0.2)}
+    p_bounds: dict = {
+        'conv_dropout_amount': (0, 1),
+        'regularization_amount': (0, 1),
+        'dense_dropout_amount': (0, 1),
+        'num_conv_block': (5, 23),
+        'num_filters': (32, 512)
+    }
 
     optimizer = BayesianOptimization(
         f=model_manager.search_for_best_model,
