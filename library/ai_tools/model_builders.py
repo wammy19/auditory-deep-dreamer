@@ -230,3 +230,123 @@ def dynamic_conv2d_model(
     )
 
     return model
+
+
+def vgg_like_model(
+        dropout_amount: float = 0.1,
+        learning_rate: float = 0.001,
+        input_shape: Tuple[int, int, int] = X_SHAPE,
+        num_classes: int = 10
+) -> Model:
+    """
+    :param dropout_amount:
+    :param learning_rate:
+    :param input_shape:
+    :param num_classes:
+    :return:
+    """
+
+    input_layer = Input(shape=input_shape)
+
+    x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
+
+    kernel_size: int = 3
+
+    # Conv block 1
+    x = Conv2D(
+        64,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        64,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        128,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        128,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        256,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        256,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        512,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        512,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Flatten()(x)
+
+    Dense(128, activation=relu)(x)
+
+    # Final softmax layer
+    output = Dense(num_classes, activation=softmax, name='soft_max_output')(x)
+
+    # Create model.
+    model = Model(inputs=input_layer, outputs=output)
+
+    model.compile(
+        optimizer=Adam(learning_rate=learning_rate),
+        loss=categorical_crossentropy,
+        metrics=['accuracy']
+    )
+
+    return model

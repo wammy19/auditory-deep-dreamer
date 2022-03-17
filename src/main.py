@@ -1,16 +1,14 @@
-from os.path import join
 import os
-from random import choice, randint
+from os.path import join
 
+import tensorflow as tf
 from bayes_opt import BayesianOptimization
 from pandas import DataFrame
-import tensorflow as tf
 
 import settings as sett
 from ai_tools import DataGenerator, ModelManager
 from ai_tools.helpers import create_data_frame_from_path, split_stratified_into_train_val_test
-
-from ai_tools.model_builders import dynamic_conv2d_model
+from ai_tools.model_builders import vgg_like_model
 
 
 def main():
@@ -41,6 +39,7 @@ def main():
     test_data_generator: DataGenerator = DataGenerator(df_test, batch_size=batch_size)
 
     model_manager = ModelManager(
+        vgg_like_model,
         train_data_generator,
         validation_data_generator,
         test_data_generator,

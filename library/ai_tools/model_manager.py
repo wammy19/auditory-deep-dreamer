@@ -1,23 +1,15 @@
 import os
-import os
 import pickle
 import re
 from csv import DictWriter
 from os.path import exists, join
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from aim.keras import AimCallback
-from tensorflow.keras import Input
-from tensorflow.keras.activations import relu, softmax
 from tensorflow.keras.callbacks import EarlyStopping, History, ModelCheckpoint
-from tensorflow.keras.layers import BatchNormalization, Conv2D, Dense, Flatten, LayerNormalization, MaxPooling2D, \
-    SpatialDropout2D
-from tensorflow.keras.losses import categorical_crossentropy
 from tensorflow.keras.models import Model, load_model
-from tensorflow.keras.optimizers import Adam
 
 from ai_tools import DataGenerator
-from utils.constants import X_SHAPE
 
 
 class ModelManager:
@@ -33,6 +25,7 @@ class ModelManager:
 
     def __init__(
             self,
+            model_builder_func: Callable,
             train_data_generator: DataGenerator,
             validation_data_generator: DataGenerator,
             test_data_generator: DataGenerator,
@@ -51,15 +44,18 @@ class ModelManager:
         """
 
         # Logs paths.
-        self._path_to_model_config_csv_logs: str = join(path_to_logs, 'model_settings.csv')
         self._path_to_model_evaluation_logs: str = join(path_to_logs, 'model_evaluation.csv')
         self._aim_logs_dir: str = join(path_to_logs, 'aim')
         self._history_log_dir: str = join(path_to_logs, 'model_histories')
+        self._path_to_logs: str = path_to_logs
 
         # Path for saving models.
         self._model_checkpoint_dir: str = model_checkpoint_dir
 
         self._verify_log_dirs_and_files_exist()
+
+        # Model building.
+        self.model_builder: Callable = model_builder_func
 
         # Datasets.
         self.train_data_generator: DataGenerator = train_data_generator
@@ -82,124 +78,6 @@ class ModelManager:
     # =================================================================================================================
     # ----------------------------------------------- Public functions ------------------------------------------------
     # =================================================================================================================
-
-    def build_model(
-            self,
-            dropout_amount: float = 0.1,
-            learning_rate: float = 0.001,
-            input_shape: Tuple[int, int, int] = X_SHAPE,
-            num_classes: int = 10
-    ) -> Model:
-
-        model_settings: Dict[str, any] = locals()  # Store model settings.
-        input_layer = Input(shape=input_shape)
-
-        x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
-
-        kernel_size: int = 3
-
-        # Conv block 1
-        x = Conv2D(
-            64,
-            kernel_size=(kernel_size, kernel_size),
-            activation=relu,
-            padding='same',
-        )(x)
-        x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
-        x = BatchNormalization()(x)
-        x = SpatialDropout2D(dropout_amount)(x)
-
-        x = Conv2D(
-            64,
-            kernel_size=(kernel_size, kernel_size),
-            activation=relu,
-            padding='same',
-        )(x)
-        x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
-        x = BatchNormalization()(x)
-        x = SpatialDropout2D(dropout_amount)(x)
-
-        x = Conv2D(
-            128,
-            kernel_size=(kernel_size, kernel_size),
-            activation=relu,
-            padding='same',
-        )(x)
-        x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
-        x = BatchNormalization()(x)
-        x = SpatialDropout2D(dropout_amount)(x)
-
-        x = Conv2D(
-            128,
-            kernel_size=(kernel_size, kernel_size),
-            activation=relu,
-            padding='same',
-        )(x)
-        x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
-        x = BatchNormalization()(x)
-        x = SpatialDropout2D(dropout_amount)(x)
-
-        x = Conv2D(
-            256,
-            kernel_size=(kernel_size, kernel_size),
-            activation=relu,
-            padding='same',
-        )(x)
-        x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
-        x = BatchNormalization()(x)
-        x = SpatialDropout2D(dropout_amount)(x)
-
-        x = Conv2D(
-            256,
-            kernel_size=(kernel_size, kernel_size),
-            activation=relu,
-            padding='same',
-        )(x)
-        x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
-        x = BatchNormalization()(x)
-        x = SpatialDropout2D(dropout_amount)(x)
-
-        x = Conv2D(
-            512,
-            kernel_size=(kernel_size, kernel_size),
-            activation=relu,
-            padding='same',
-        )(x)
-        x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
-        x = BatchNormalization()(x)
-        x = SpatialDropout2D(dropout_amount)(x)
-
-        x = Conv2D(
-            512,
-            kernel_size=(kernel_size, kernel_size),
-            activation=relu,
-            padding='same',
-        )(x)
-        x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
-        x = BatchNormalization()(x)
-        x = SpatialDropout2D(dropout_amount)(x)
-
-        x = Flatten()(x)
-
-        Dense(128, activation=relu)(x)
-
-        # Final softmax layer
-        output = Dense(num_classes, activation=softmax, name='soft_max_output')(x)
-
-        # Create model.
-        model = Model(inputs=input_layer, outputs=output)
-
-        model.compile(
-            optimizer=Adam(learning_rate=learning_rate),
-            loss=categorical_crossentropy,
-            metrics=['accuracy']
-        )
-
-        self.current_model = model
-        self._save_model_settings_to_csv(model_settings)  # Save the variables that constructed this model.
-
-        return model
-
 
     def train_model(
             self,
@@ -251,7 +129,7 @@ class ModelManager:
 
     def search_for_best_model(self, epochs: int = 100, early_stopping_patience: int = 5, **kwargs) -> float:
 
-        self.build_model(**kwargs)
+        self.current_model = self._build_model(**kwargs)
 
         self.train_model(
             epochs=epochs,
@@ -330,7 +208,19 @@ class ModelManager:
     # ----------------------------------------------- Private functions -----------------------------------------------
     # =================================================================================================================
 
-    def _save_model_settings_to_csv(self, model_config: Dict[str, any]) -> None:
+    def _build_model(self, **kwargs) -> Model:
+        """
+        :param kwargs:
+        :return:
+        """
+
+        self._save_model_settings_to_csv(self.model_builder.__name__, kwargs)
+        model: Model = self.model_builder(**kwargs)
+
+        return model
+
+
+    def _save_model_settings_to_csv(self, model_name: str, model_config: Dict[str, any]) -> None:
         """
         :param model_config: A dict containing the parameter to constructing a model, and it's value.
         :return:
@@ -338,7 +228,6 @@ class ModelManager:
         Appends the model settings to a csv file.
         """
 
-        model_config.pop('self')
         new_model_config: Dict[str, any] = {'model_ID': self._model_ID}
         new_model_config.update(model_config)
 
@@ -347,11 +236,13 @@ class ModelManager:
         for key, value in new_model_config.items():  # Gather column headers.
             csv_headers.append(key)
 
-        with open(self._path_to_model_config_csv_logs, 'a', newline='') as file_handler:
+        path_to_csv: str = join(self._path_to_logs, f'{model_name}.csv')
+
+        with open(path_to_csv, 'a', newline='') as file_handler:
             dict_writer = DictWriter(file_handler, fieldnames=csv_headers)
 
             # Write column headers if the file is new.
-            if os.stat(self._path_to_model_config_csv_logs).st_size == 0:
+            if os.stat(path_to_csv).st_size == 0:
                 dict_writer.writeheader()
 
             dict_writer.writerow(new_model_config)
@@ -412,9 +303,6 @@ class ModelManager:
 
         Creates log directories and files if they don't exist.
         """
-
-        if exists(self._path_to_model_config_csv_logs) is False:
-            open(self._path_to_model_config_csv_logs, 'x')
 
         if exists(self._path_to_model_evaluation_logs) is False:
             open(self._path_to_model_evaluation_logs, 'x')
