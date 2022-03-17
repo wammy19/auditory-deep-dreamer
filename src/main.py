@@ -1,5 +1,6 @@
 from os.path import join
 import os
+from random import choice, randint
 
 from bayes_opt import BayesianOptimization
 from pandas import DataFrame
@@ -8,6 +9,8 @@ import tensorflow as tf
 import settings as sett
 from ai_tools import DataGenerator, ModelManager
 from ai_tools.helpers import create_data_frame_from_path, split_stratified_into_train_val_test
+
+from ai_tools.model_builders import dynamic_conv2d_model
 
 
 def main():
@@ -46,11 +49,8 @@ def main():
     )
 
     p_bounds: dict = {
-        'conv_dropout_amount': (0, 1),
-        'regularization_amount': (0, 1),
-        'dense_dropout_amount': (0, 1),
-        'num_conv_block': (5, 23),
-        'num_filters': (32, 512)
+        'dropout_amount': (0, 0.6),
+        'learning_rate': (0, 0.01)
     }
 
     optimizer = BayesianOptimization(

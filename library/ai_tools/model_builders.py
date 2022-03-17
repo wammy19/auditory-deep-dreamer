@@ -3,13 +3,15 @@ from typing import Tuple
 from kapre.composed import get_melspectrogram_layer
 from tensorflow.keras import Input, Sequential
 from tensorflow.keras.activations import relu, sigmoid, softmax
-from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, LayerNormalization, MaxPooling2D
+from tensorflow.keras.layers import BatchNormalization, Conv2D, Dense, Dropout, Flatten, LayerNormalization, \
+    MaxPooling2D, SeparableConv2D, SpatialDropout2D
 from tensorflow.keras.losses import binary_crossentropy, categorical_crossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
 
 import utils.constants as consts
+from utils.constants import X_SHAPE
 
 
 def build_simple_cnn() -> Sequential:
@@ -93,6 +95,133 @@ def build_conv2d_example(N_CLASSES: int = 10, input_shape: Tuple[int, int, int] 
 
     output = Dense(N_CLASSES, activation=softmax, name='softmax')(x)
     model = Model(inputs=input_layer, outputs=output, name='2d_convolution')
+
+    model.compile(
+        optimizer='adam',
+        loss=categorical_crossentropy,
+        metrics=['accuracy']
+    )
+
+    return model
+
+
+def dynamic_conv2d_model(
+        num_conv_block: int,
+        num_filters: int,
+        num_dense_layers: int,
+        dense_layer_size: int,
+        use_separable_conv_layer: bool,
+        use_regularization: bool,
+        use_dropout_dense_layers: bool,
+        use_dropout_conv_blocks: bool,
+        dense_dropout_amount: float,
+        conv_dropout_amount: float,
+        regularization_amount: float,
+        num_classes: int,
+        input_shape: Tuple[int, int, int] = X_SHAPE,
+) -> Model:
+    """
+    :param num_conv_block: Number of Conv2D layers, this includes max pooling after each Conv2D layer.
+    :param num_filters:
+    :param num_dense_layers:
+    :param dense_layer_size:
+    :param use_separable_conv_layer:
+    :param use_regularization:
+    :param use_dropout_dense_layers:
+    :param use_dropout_conv_blocks:
+    :param dense_dropout_amount:
+    :param conv_dropout_amount:
+    :param regularization_amount:
+    :param num_classes: Number of classes. Example: ['reed', 'string', 'guitar'] = 3
+    :param input_shape: Input shape of the data not including batch size.
+    :return: A tensorflow.keras.models.Model object ready for training.
+    Constructs a Convolutional Neural Network.
+    """
+
+    print(type(num_conv_block))
+    print(num_conv_block)
+    print('\n\n')
+
+    input_layer = Input(shape=input_shape)
+
+    x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
+
+    # Set kernel size for conv layer. This will decrease over every layer if there are more than 3 blocks.
+    if num_conv_block >= 3:
+        kernel_size = 7
+    else:
+        kernel_size = 3
+
+    # Conv blocks.
+    for block_num in range(num_conv_block):
+
+        if use_separable_conv_layer:
+            x = SeparableConv2D(
+                num_filters,
+                kernel_size=(kernel_size, kernel_size),
+                activation=relu,
+                padding='same',
+                name=f'conv_block_{block_num}'
+            )(x)
+
+        else:
+            x = Conv2D(
+                num_filters,
+                kernel_size=(kernel_size, kernel_size),
+                activation=relu,
+                padding='same',
+                name=f'conv_block_{block_num}'
+            )(x)
+
+        x = MaxPooling2D(pool_size=(2, 2), padding='same', name=f'pooling_{block_num}')(x)
+
+        # Batch normalization is added for each block as suggested in "Deep Learning with Python"
+        # by Francois Chollet.
+        # "BatchNormalization is used liberally in many of the advanced convent architectures." [8]
+        x = BatchNormalization(name=f'batch_norm_{block_num}')(x)
+
+        # Add dropout.
+        if use_dropout_conv_blocks:
+            x = SpatialDropout2D(conv_dropout_amount, name=f'conv_dropout{block_num}')(x)
+
+        # Decrease kernel size. Pattern:
+        # Layer 1 kernel size = 7
+        # Layer 2 kernel size = 5
+        # Layer 3 and greater kernel size = 3
+        if num_conv_block >= 3:
+            if block_num == 1:
+                kernel_size = 5
+
+            elif block_num > 2:
+                kernel_size = 3
+
+    x = Flatten(name='flatten')(x)
+
+    # Dense layers.
+    for dense_layer_num in range(num_dense_layers):
+        if use_regularization:
+            x = Dense(
+                dense_layer_size,
+                activation=relu,
+                activity_regularizer=l2(regularization_amount),
+                name=f'dense_{dense_layer_num}'
+            )(x)
+
+        else:
+            x = Dense(
+                dense_layer_size,
+                activation=relu,
+                name=f'dense_{dense_layer_num}'
+            )(x)
+
+        if use_dropout_dense_layers:
+            x = Dropout(dense_dropout_amount, name=f'dense_dropout_{dense_layer_num}')(x)
+
+    # Final softmax layer
+    output = Dense(num_classes, activation=softmax, name='soft_max_output')(x)
+
+    # Create model.
+    model = Model(inputs=input_layer, outputs=output)
 
     model.compile(
         optimizer='adam',
