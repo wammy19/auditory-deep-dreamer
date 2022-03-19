@@ -48,9 +48,12 @@ class ModelManager:
         self._aim_logs_dir: str = join(path_to_logs, 'aim')
         self._history_log_dir: str = join(path_to_logs, 'model_histories')
         self._path_to_logs: str = path_to_logs
-
-        # Path for saving models.
         self._model_checkpoint_dir: str = model_checkpoint_dir
+
+        # Logs.
+        self._current_history: Union[History, None] = None
+        self._current_model_settings: Union[Dict[str, any], None] = None
+        self._current_model_builder: Union[str, None] = None
 
         self._verify_log_dirs_and_files_exist()
 
@@ -64,7 +67,6 @@ class ModelManager:
 
         # Initialize model ID.
         self._model_ID: int = len(os.listdir(model_checkpoint_dir))
-        self.current_history: Optional[History] = None
 
         # Training settings.
         self.num_epochs: int = num_training_epochs
@@ -79,59 +81,12 @@ class ModelManager:
     # ----------------------------------------------- Public functions ------------------------------------------------
     # =================================================================================================================
 
-    def train_model(
-            self,
-            epochs: int = 100,
-            early_stopping_patience: int = 5,
-            update_current_model_id: bool = False
-    ) -> None:
-        """
-        :param epochs: Number of epochs to train for, Early stopping is also in place.
-        :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
-        is no improvement.
-        :param update_current_model_id:
-        :return:
-        """
-
-        # Callbacks.
-        aim_callback = AimCallback(repo=self._aim_logs_dir, experiment=f'model_{self._model_ID}')
-        early_stopping = EarlyStopping(monitor='val_loss', patience=early_stopping_patience, verbose=False)
-        checkpoint = ModelCheckpoint(
-            join(join(self._model_checkpoint_dir, f'model_{self._model_ID}'), 'epoch-{epoch:02d}.pb'),
-            monitor='val_accuracy',
-            verbose=False,
-            save_weights_only=False,
-            save_best_only=True,
-            mode='max',
-        )
-
-        # Train model.
-        self.current_history: History = self._current_model.fit(
-            self.train_data_generator,
-            steps_per_epoch=len(self.train_data_generator.get_data_frame.index) // self._batch_size,
-            epochs=epochs,
-            validation_data=self.validation_data_generator,
-            validation_steps=len(self.validation_data_generator.get_data_frame.index) // self._batch_size,
-            batch_size=self._batch_size,
-            verbose=False,
-            callbacks=[
-                aim_callback,
-                early_stopping,
-                checkpoint
-            ]
-        )
-
-        self._save_model_history(self.current_history)
-
-        if update_current_model_id:
-            self._model_ID += 1  # Increment model ID for the next model.
-
-
     def search_for_best_model(self, epochs: int = 100, early_stopping_patience: int = 5, **kwargs) -> float:
 
         self.current_model = self._build_model(**kwargs)
 
-        self.train_model(
+        self._train_model(
+            self.current_model,
             epochs=epochs,
             early_stopping_patience=early_stopping_patience
         )
@@ -140,6 +95,9 @@ class ModelManager:
         model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
         results: List[float] = model.evaluate(self.test_data_generator)
 
+        # Log model settings, evaluation and training history.
+        self._save_model_history(self._current_history)
+        self._save_model_settings_to_csv(self._current_model_builder, self._current_model_settings)
         self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
 
         self._model_ID += 1
@@ -170,7 +128,7 @@ class ModelManager:
 
         else:  # Return History of the current model loaded.
 
-            if self.current_history is None:
+            if self._current_history is None:
                 print(
                     'There is currently no history stored. '
                     'Build and train a model before trying to get the current History.'
@@ -180,7 +138,7 @@ class ModelManager:
 
             else:
                 print(f'Got history for last model train. model_{self._model_ID}')
-                return self.current_history
+                return self._current_history
 
 
     def load_model_at_best_epoch(self, model_id: int) -> Tuple[Union[Model, None], Union[str, None]]:
@@ -214,10 +172,61 @@ class ModelManager:
         :return:
         """
 
-        self._save_model_settings_to_csv(self.model_builder.__name__, kwargs)
+        # Store settings of model for later logging.
+        self._current_model_builder = self.model_builder.__name__
+        self._current_model_settings = kwargs
+
         model: Model = self.model_builder(**kwargs)
 
         return model
+
+
+    def _train_model(
+            self,
+            model: Model,
+            epochs: int = 100,
+            early_stopping_patience: int = 5,
+            update_current_model_id: bool = False
+    ) -> None:
+        """
+        :param model: A compiled model ready for training.
+        :param epochs: Number of epochs to train for, Early stopping is also in place.
+        :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
+        is no improvement.
+        :param update_current_model_id:
+        :return:
+        """
+
+        # Callbacks.
+        aim_callback = AimCallback(repo=self._aim_logs_dir, experiment=f'model_{self._model_ID}')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=early_stopping_patience, verbose=False)
+        checkpoint = ModelCheckpoint(
+            join(join(self._model_checkpoint_dir, f'model_{self._model_ID}'), 'epoch-{epoch:02d}.pb'),
+            monitor='val_accuracy',
+            verbose=False,
+            save_weights_only=False,
+            save_best_only=True,
+            mode='max',
+        )
+
+        # Train model.
+        self._current_history: History = model.fit(
+            self.train_data_generator,
+            steps_per_epoch=len(self.train_data_generator.get_data_frame.index) // self._batch_size,
+            epochs=epochs,
+            validation_data=self.validation_data_generator,
+            validation_steps=len(self.validation_data_generator.get_data_frame.index) // self._batch_size,
+            batch_size=self._batch_size,
+            verbose=False,
+            callbacks=[
+                aim_callback,
+                early_stopping,
+                checkpoint
+            ]
+        )
+
+        if update_current_model_id:
+            self._model_ID += 1  # Increment model ID for the next model.
 
 
     def _save_model_settings_to_csv(self, model_name: str, model_config: Dict[str, any]) -> None:

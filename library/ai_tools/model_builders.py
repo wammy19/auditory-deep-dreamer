@@ -294,6 +294,66 @@ def vgg_like_model(
     x = SpatialDropout2D(dropout_amount)(x)
 
     x = Conv2D(
+        128,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        128,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        128,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        128,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        256,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
+        256,
+        kernel_size=(kernel_size, kernel_size),
+        activation=relu,
+        padding='same',
+    )(x)
+    x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+    x = BatchNormalization()(x)
+    x = SpatialDropout2D(dropout_amount)(x)
+
+    x = Conv2D(
         256,
         kernel_size=(kernel_size, kernel_size),
         activation=relu,

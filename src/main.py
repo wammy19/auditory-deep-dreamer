@@ -22,7 +22,7 @@ def main():
     # Create dataset dataframe and split it into train, validation, and test.
     df: DataFrame = create_data_frame_from_path(
         sett.dataset_path,
-        number_of_samples_for_each_class=10_000
+        number_of_samples_for_each_class=150_000
     )
 
     df_train, df_val, df_test = split_stratified_into_train_val_test(df)  # type: DataFrame, DataFrame, DataFrame
@@ -49,9 +49,10 @@ def main():
 
     p_bounds: dict = {
         'dropout_amount': (0, 0.6),
-        'learning_rate': (0, 0.01)
+        'learning_rate': (0, 0.1)
     }
 
+    # Create optimizer object.
     optimizer = BayesianOptimization(
         f=model_manager.search_for_best_model,
         pbounds=p_bounds,
