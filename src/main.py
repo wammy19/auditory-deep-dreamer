@@ -2,7 +2,7 @@ import os
 from os.path import join
 
 import tensorflow as tf
-from bayes_opt import BayesianOptimization
+from bayes_opt import BayesianOptimization, SequentialDomainReductionTransformer
 from pandas import DataFrame
 
 import settings as sett
@@ -48,15 +48,24 @@ def main():
     )
 
     p_bounds: dict = {
+        'num_first_conv_blocks': (1, 20),
+        'num_second_conv_blocks': (1, 20),
+        'num_third_conv_blocks': (1, 20),
+        'num_fourth_conv_blocks': (1, 20),
         'dropout_amount': (0, 0.6),
         'learning_rate': (0, 0.1)
     }
+
+    # Reduces the bounds declared above during optimization to quickly diverge towards optimal points.
+    # Resources: https://github.com/fmfn/BayesianOptimization/blob/master/examples/domain_reduction.ipynb
+    bounds_transformer = SequentialDomainReductionTransformer()
 
     # Create optimizer object.
     optimizer = BayesianOptimization(
         f=model_manager.search_for_best_model,
         pbounds=p_bounds,
         random_state=1,
+        bounds_transformer=bounds_transformer
     )
 
     optimizer.maximize(
