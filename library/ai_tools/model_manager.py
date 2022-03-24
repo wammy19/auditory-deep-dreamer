@@ -47,6 +47,7 @@ class ModelManager:
         self._path_to_model_evaluation_logs: str = join(path_to_logs, 'model_evaluation.csv')
         self._aim_logs_dir: str = join(path_to_logs, 'aim')
         self._history_log_dir: str = join(path_to_logs, 'model_histories')
+        self._model_summary_dir: str = join(path_to_logs, 'model_summaries')
         self._path_to_logs: str = path_to_logs
         self._model_checkpoint_dir: str = model_checkpoint_dir
 
@@ -83,13 +84,10 @@ class ModelManager:
 
     def search_for_best_model(self, epochs: int = 100, early_stopping_patience: int = 5, **kwargs) -> float:
 
-        self.current_model = self._build_model(**kwargs)
+        self._build_model(**kwargs)
+        self._train_model(self.current_model, epochs, early_stopping_patience)
 
-        self._train_model(
-            self.current_model,
-            epochs=epochs,
-            early_stopping_patience=early_stopping_patience
-        )
+        self.current_model.summary()  # TODO: Currently printing summary for debugging, remove this later.
 
         # Load best model at best epoch for evaluation. None will be returned if the name can't be found in the logs.
         model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
@@ -97,6 +95,7 @@ class ModelManager:
 
         # Log model settings, evaluation and training history.
         self._save_model_history(self._current_history)
+        self._save_model_summary(model)
         self._save_model_settings_to_csv(self._current_model_builder, self._current_model_settings)
         self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
 
@@ -114,7 +113,7 @@ class ModelManager:
         history stored.
         """
 
-        if model_id is not None:  # Return History with a provided model_id.
+        if model_id:  # Return History with a provided model_id.
             try:
                 with open(join(self._history_log_dir, f'model_{model_id}'), 'rb') as file_handler:
                     history: History = pickle.load(file_handler)
@@ -125,20 +124,18 @@ class ModelManager:
 
             except FileNotFoundError:
                 print("Model ID provided doesn't exist. Please check logs directory for existing logs.")
-
-        else:  # Return History of the current model loaded.
-
-            if self._current_history is None:
-                print(
-                    'There is currently no history stored. '
-                    'Build and train a model before trying to get the current History.'
-                )
-
                 return None
 
-            else:
-                print(f'Got history for last model train. model_{self._model_ID}')
-                return self._current_history
+        if self._current_history is None:
+            print(
+                'There is currently no history stored. '
+                'Build and train a model before trying to get the current History.'
+            )
+
+            return None
+
+        print(f'Got history for last model trained. Model ID: model_{self._model_ID}')
+        return self._current_history
 
 
     def load_model_at_best_epoch(self, model_id: int) -> Tuple[Union[Model, None], Union[str, None]]:
@@ -162,23 +159,35 @@ class ModelManager:
             return None, None
 
 
+    def print_model_summary(self) -> None:
+        """
+        :return:s
+        """
+
+        if self._current_model is not None:
+            print(self._current_model.summary())
+
+        else:
+            print("Can't print model summary as no model has been loaded.")
+
+
     # =================================================================================================================
     # ----------------------------------------------- Private functions -----------------------------------------------
     # =================================================================================================================
 
-    def _build_model(self, **kwargs) -> Model:
+    def _build_model(self, **kwargs) -> None:
         """
         :param kwargs:
         :return:
         """
 
+        model: Model = self.model_builder(**kwargs)
+
         # Store settings of model for later logging.
         self._current_model_builder = self.model_builder.__name__
         self._current_model_settings = kwargs
 
-        model: Model = self.model_builder(**kwargs)
-
-        return model
+        self.current_model = model
 
 
     def _train_model(
@@ -217,7 +226,7 @@ class ModelManager:
             validation_data=self.validation_data_generator,
             validation_steps=len(self.validation_data_generator.get_data_frame.index) // self._batch_size,
             batch_size=self._batch_size,
-            verbose=False,
+            verbose=True,
             callbacks=[
                 aim_callback,
                 early_stopping,
@@ -302,8 +311,24 @@ class ModelManager:
         Pickles the model history object for later plotting.
         """
 
-        with open(join(self._history_log_dir, f'model_{self._model_ID}'), 'wb') as file_handler:
+        path_to_write: str = join(self._history_log_dir, f'model_{self._model_ID}')
+
+        with open(path_to_write, 'wb') as file_handler:
             pickle.dump(history, file_handler)
+
+
+    def _save_model_summary(self, model: Model) -> None:
+        """
+        :param model: A tensorflow.keras.model.Model object.
+        :return:
+
+        Logs the models summary to a file.
+        """
+
+        path_to_write: str = join(self._model_summary_dir, f'model_{self._model_ID}.txt')
+
+        with open(path_to_write, 'w') as file_handler:
+            model.summary(print_fn=lambda x: file_handler.write(f'{x}\n'))
 
 
     def _verify_log_dirs_and_files_exist(self) -> None:
@@ -315,6 +340,9 @@ class ModelManager:
 
         if exists(self._path_to_model_evaluation_logs) is False:
             open(self._path_to_model_evaluation_logs, 'x')
+
+        if exists(self._model_summary_dir) is False:
+            os.makedirs(self._model_summary_dir)
 
         if exists(self._model_checkpoint_dir) is False:
             os.makedirs(self._model_checkpoint_dir)

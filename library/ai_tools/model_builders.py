@@ -1,4 +1,3 @@
-import math
 from typing import Tuple
 
 from kapre.composed import get_melspectrogram_layer
@@ -262,31 +261,25 @@ def vgg_like_model(
     kernel_size: int = 3
     pool_size: Tuple[int, int] = (2, 2)
 
-    for _ in range(math.floor(num_first_conv_blocks)):
-        x = Conv2D(64, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
+    for _ in range(int(num_first_conv_blocks)):
         x = Conv2D(64, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
         x = MaxPooling2D(pool_size=pool_size, padding='same')(x)
         x = BatchNormalization()(x)
         x = SpatialDropout2D(dropout_amount)(x)
 
-    for _ in range(math.floor(num_second_conv_blocks)):
-        x = Conv2D(128, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
+    for _ in range(int(num_second_conv_blocks)):
         x = Conv2D(128, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
         x = MaxPooling2D(pool_size=pool_size, padding='same')(x)
         x = BatchNormalization()(x)
         x = SpatialDropout2D(dropout_amount)(x)
 
-    for _ in range(math.floor(num_third_conv_blocks)):
-        x = Conv2D(256, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
-        x = Conv2D(256, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
+    for _ in range(int(num_third_conv_blocks)):
         x = Conv2D(256, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
         x = MaxPooling2D(pool_size=pool_size, padding='same')(x)
         x = BatchNormalization()(x)
         x = SpatialDropout2D(dropout_amount)(x)
 
-    for _ in range(math.floor(num_fourth_conv_blocks)):
-        x = Conv2D(512, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
-        x = Conv2D(512, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
+    for _ in range(int(num_fourth_conv_blocks)):
         x = Conv2D(512, kernel_size=(kernel_size, kernel_size), activation=relu, padding='same')(x)
         x = MaxPooling2D(pool_size=pool_size, padding='same')(x)
         x = BatchNormalization()(x)

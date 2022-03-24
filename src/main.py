@@ -16,13 +16,18 @@ def main():
     :return:
     """
 
+    # Misc settings.
+    num_of_samples_per_instrument: int = 155_000  # 160_000 is max.
+    the_meaning_of_life: int = 42  # Random seed.
+    batch_size: int = 32
+
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Only log errors.
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
     # Create dataset dataframe and split it into train, validation, and test.
     df: DataFrame = create_data_frame_from_path(
         sett.dataset_path,
-        number_of_samples_for_each_class=150_000
+        number_of_samples_for_each_class=num_of_samples_per_instrument
     )
 
     df_train, df_val, df_test = split_stratified_into_train_val_test(df)  # type: DataFrame, DataFrame, DataFrame
@@ -33,7 +38,6 @@ def main():
     df_test.to_csv(join(sett.logs_path, 'test_data.csv'))
 
     # Create Generators.
-    batch_size: int = 32
     train_data_generator: DataGenerator = DataGenerator(df_train, batch_size=batch_size)
     validation_data_generator: DataGenerator = DataGenerator(df_val, batch_size=batch_size)
     test_data_generator: DataGenerator = DataGenerator(df_test, batch_size=batch_size)
@@ -48,12 +52,8 @@ def main():
     )
 
     p_bounds: dict = {
-        'num_first_conv_blocks': (1, 20),
-        'num_second_conv_blocks': (1, 20),
-        'num_third_conv_blocks': (1, 20),
-        'num_fourth_conv_blocks': (1, 20),
         'dropout_amount': (0, 0.6),
-        'learning_rate': (0, 0.1)
+        'learning_rate': (0, 0.01)
     }
 
     # Reduces the bounds declared above during optimization to quickly diverge towards optimal points.
@@ -64,13 +64,13 @@ def main():
     optimizer = BayesianOptimization(
         f=model_manager.search_for_best_model,
         pbounds=p_bounds,
-        random_state=1,
-        bounds_transformer=bounds_transformer
+        random_state=the_meaning_of_life,
+        bounds_transformer=bounds_transformer,
     )
 
     optimizer.maximize(
         init_points=2,
-        n_iter=25,
+        n_iter=10,
     )
 
 
