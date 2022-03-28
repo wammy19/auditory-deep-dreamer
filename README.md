@@ -1,5 +1,7 @@
 # **Auditory DeepDream**
 
+[Audio examples using InceptionV3 model](https://soundcloud.com/user-151681972/sets/inceptiov3-deep-dream-audio-examples?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing)
+
 ### Downloading datasets
 
 Small data set (≈4.6gb):
