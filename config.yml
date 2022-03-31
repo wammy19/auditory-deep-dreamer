@@ -1,5 +1,5 @@
 # Local.
-#dataset_path: '/home/andrea/dev/uni/datasets/serialized_dataset'
+#path_to_dataset: '/home/andrea/dev/uni/datasets/serialized_dataset'
 #aim_logs_path: '../aim'
 #model_checkpoint_path: '../models'
 #model_config_csv_log_path: '../model_settings.csv'

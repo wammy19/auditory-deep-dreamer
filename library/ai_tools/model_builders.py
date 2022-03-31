@@ -1,10 +1,11 @@
+from math import floor
 from typing import Tuple
 
 from kapre.composed import get_melspectrogram_layer
 from tensorflow.keras import Input, Sequential
 from tensorflow.keras.activations import relu, sigmoid, softmax
 from tensorflow.keras.layers import BatchNormalization, Conv2D, Dense, Dropout, Flatten, LayerNormalization, \
-    MaxPooling2D, SeparableConv2D, SpatialDropout2D
+    MaxPooling2D, SpatialDropout2D
 from tensorflow.keras.losses import binary_crossentropy, categorical_crossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
@@ -106,29 +107,19 @@ def build_conv2d_example(N_CLASSES: int = 10, input_shape: Tuple[int, int, int] 
 
 
 def dynamic_conv2d_model(
-        num_conv_block: int,
-        num_filters: int,
-        num_dense_layers: int,
-        dense_layer_size: int,
-        use_separable_conv_layer: bool,
-        use_regularization: bool,
-        use_dropout_dense_layers: bool,
-        use_dropout_conv_blocks: bool,
+        num_conv_block: float,
         dense_dropout_amount: float,
         conv_dropout_amount: float,
         regularization_amount: float,
-        num_classes: int,
+        num_dense_layers: int = 1,
+        dense_layer_size: float = 64,
+        num_classes: int = 10,
         input_shape: Tuple[int, int, int] = X_SHAPE,
 ) -> Model:
     """
     :param num_conv_block: Number of Conv2D layers, this includes max pooling after each Conv2D layer.
-    :param num_filters:
     :param num_dense_layers:
     :param dense_layer_size:
-    :param use_separable_conv_layer:
-    :param use_regularization:
-    :param use_dropout_dense_layers:
-    :param use_dropout_conv_blocks:
     :param dense_dropout_amount:
     :param conv_dropout_amount:
     :param regularization_amount:
@@ -138,10 +129,7 @@ def dynamic_conv2d_model(
     Constructs a Convolutional Neural Network.
     """
 
-    print(type(num_conv_block))
-    print(num_conv_block)
-    print('\n\n')
-
+    num_conv_block: int = int(floor(num_conv_block))
     input_layer = Input(shape=input_shape)
 
     x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
@@ -152,37 +140,25 @@ def dynamic_conv2d_model(
     else:
         kernel_size = 3
 
+    if num_conv_block % 2 != 0:
+        num_conv_block += 1
+
+    # num_filters: int = 128
+
     # Conv blocks.
     for block_num in range(num_conv_block):
 
-        if use_separable_conv_layer:
-            x = SeparableConv2D(
-                num_filters,
-                kernel_size=(kernel_size, kernel_size),
-                activation=relu,
-                padding='same',
-                name=f'conv_block_{block_num}'
-            )(x)
-
-        else:
-            x = Conv2D(
-                num_filters,
-                kernel_size=(kernel_size, kernel_size),
-                activation=relu,
-                padding='same',
-                name=f'conv_block_{block_num}'
-            )(x)
+        x = Conv2D(
+            64,
+            kernel_size=(kernel_size, kernel_size),
+            activation=relu,
+            padding='same',
+            name=f'conv_block_{block_num}'
+        )(x)
 
         x = MaxPooling2D(pool_size=(2, 2), padding='same', name=f'pooling_{block_num}')(x)
-
-        # Batch normalization is added for each block as suggested in "Deep Learning with Python"
-        # by Francois Chollet.
-        # "BatchNormalization is used liberally in many of the advanced convent architectures." [8]
         x = BatchNormalization(name=f'batch_norm_{block_num}')(x)
-
-        # Add dropout.
-        if use_dropout_conv_blocks:
-            x = SpatialDropout2D(conv_dropout_amount, name=f'conv_dropout{block_num}')(x)
+        x = SpatialDropout2D(conv_dropout_amount, name=f'conv_dropout{block_num}')(x)
 
         # Decrease kernel size. Pattern:
         # Layer 1 kernel size = 7
@@ -199,23 +175,14 @@ def dynamic_conv2d_model(
 
     # Dense layers.
     for dense_layer_num in range(num_dense_layers):
-        if use_regularization:
-            x = Dense(
-                dense_layer_size,
-                activation=relu,
-                activity_regularizer=l2(regularization_amount),
-                name=f'dense_{dense_layer_num}'
-            )(x)
+        x = Dense(
+            dense_layer_size,
+            activation=relu,
+            activity_regularizer=l2(regularization_amount),
+            name=f'dense_{dense_layer_num}'
+        )(x)
 
-        else:
-            x = Dense(
-                dense_layer_size,
-                activation=relu,
-                name=f'dense_{dense_layer_num}'
-            )(x)
-
-        if use_dropout_dense_layers:
-            x = Dropout(dense_dropout_amount, name=f'dense_dropout_{dense_layer_num}')(x)
+        x = Dropout(dense_dropout_amount, name=f'dense_dropout_{dense_layer_num}')(x)
 
     # Final softmax layer
     output = Dense(num_classes, activation=softmax, name='soft_max_output')(x)
@@ -236,7 +203,7 @@ def vgg_like_model(
         num_first_conv_blocks: float = 1.0,
         num_second_conv_blocks: float = 1.0,
         num_third_conv_blocks: float = 1.0,
-        num_fourth_conv_blocks: float = 1.0,
+        num_fourth_conv_blocks: float = 2.0,
         dropout_amount: float = 0.1,
         learning_rate: float = 0.001,
         input_shape: Tuple[int, int, int] = X_SHAPE,

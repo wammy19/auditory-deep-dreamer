@@ -128,6 +128,15 @@ class DeepDreamer(tf.Module):
 
         return result
 
+    def getLayerName(self):
+        """
+
+        :return:
+        """
+
+        for layer in self.model.layers:
+            print(layer.name)
+
 
     def _calculate_loss(self, _image: Tensor) -> Tensor:
         """

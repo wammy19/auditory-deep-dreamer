@@ -8,7 +8,7 @@ from pandas import DataFrame
 import settings as sett
 from ai_tools import DataGenerator, ModelManager
 from ai_tools.helpers import create_data_frame_from_path, split_stratified_into_train_val_test
-from ai_tools.model_builders import vgg_like_model
+from ai_tools.model_builders import vgg_like_model, dynamic_conv2d_model
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
     """
 
     # Misc settings.
-    num_of_samples_per_instrument: int = 155_000  # 160_000 is max.
+    num_of_samples_per_instrument: int = 20_000  # 160_000 is max.
     the_meaning_of_life: int = 42  # Random seed.
     batch_size: int = 32
 
@@ -43,7 +43,7 @@ def main():
     test_data_generator: DataGenerator = DataGenerator(df_test, batch_size=batch_size)
 
     model_manager = ModelManager(
-        vgg_like_model,
+        dynamic_conv2d_model,
         train_data_generator,
         validation_data_generator,
         test_data_generator,
@@ -51,9 +51,12 @@ def main():
         model_checkpoint_dir=sett.model_checkpoint_path,
     )
 
+    # Parameters from model build function to optimize.
     p_bounds: dict = {
-        'dropout_amount': (0, 0.6),
-        'learning_rate': (0, 0.01)
+        'num_conv_block': (3, 10),
+        'dense_dropout_amount': (0, 0.4),
+        'conv_dropout_amount': (0, 0.3),
+        'regularization_amount': (0, 0.01),
     }
 
     # Reduces the bounds declared above during optimization to quickly diverge towards optimal points.

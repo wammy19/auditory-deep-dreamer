@@ -15,6 +15,7 @@ tensorboard-logs
 venv
 tests
 logs
+runs
 
 # Misc
 LICENSE

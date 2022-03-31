@@ -17,6 +17,7 @@ services:
       - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
       - ./library/utils:/usr/local/lib/python3.8/dist-packages/utils
       - ./library/ai_tools:/usr/local/lib/python3.8/dist-packages/ai_tools
+      - ./long-audio:/mnt/long-audio
     ports:
       - "8888:8888"
       - "6006:6006"
@@ -57,6 +58,9 @@ services:
   aim:
     image: aspit002/aim-logs
     volumes:
-      - ./logs/aim:/aim
+#      - ./logs/aim:/aim
+#      - ./runs/run_1:/aim
+      - ./runs/run_2:/aim
+#      - ./runs/run_3:/aim
     ports:
       - "43800:43800"

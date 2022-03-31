@@ -8,8 +8,28 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="11310" />
+          <option name="caretOffset" value="4374" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_manager.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/data_generator.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="524" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="698" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/deep_dream/deep_dreamer.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1900" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/docker-compose.yml" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="4071" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_builders.py" />
         </OpenedFileInfo>
       </list>
     </option>
