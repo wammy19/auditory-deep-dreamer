@@ -59,8 +59,8 @@ services:
     image: aspit002/aim-logs
     volumes:
 #      - ./logs/aim:/aim
-#      - ./runs/run_1:/aim
-      - ./runs/run_2:/aim
-#      - ./runs/run_3:/aim
+#      - ./runs/run_1/aim:/aim
+      - ./runs/run_2/aim:/aim
+#      - ./runs/run_3/aim:/aim
     ports:
       - "43800:43800"

@@ -84,10 +84,8 @@ class ModelManager:
 
     def search_for_best_model(self, epochs: int = 100, early_stopping_patience: int = 5, **kwargs) -> float:
 
-        self._build_model(**kwargs)
+        self.current_model: Model = self._build_model(**kwargs)
         self._train_model(self.current_model, epochs, early_stopping_patience)
-
-        self.current_model.summary()  # TODO: Currently printing summary for debugging, remove this later.
 
         # Load best model at best epoch for evaluation. None will be returned if the name can't be found in the logs.
         model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
@@ -175,7 +173,7 @@ class ModelManager:
     # ----------------------------------------------- Private functions -----------------------------------------------
     # =================================================================================================================
 
-    def _build_model(self, **kwargs) -> None:
+    def _build_model(self, **kwargs) -> Model:
         """
         :param kwargs:
         :return:
@@ -187,7 +185,7 @@ class ModelManager:
         self._current_model_builder = self.model_builder.__name__
         self._current_model_settings = kwargs
 
-        self.current_model = model
+        return model
 
 
     def _train_model(

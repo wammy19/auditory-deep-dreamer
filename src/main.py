@@ -21,7 +21,8 @@ def main():
     the_meaning_of_life: int = 42  # Random seed.
     batch_size: int = 32
 
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Only log errors.
+    # Only log errors.
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
     # Create dataset dataframe and split it into train, validation, and test.
