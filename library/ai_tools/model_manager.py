@@ -14,6 +14,14 @@ from tensorflow.keras.models import Model, load_model
 from ai_tools import DataGenerator
 
 
+class MissingModelBuilderError(Exception):
+    pass
+
+
+class NoModelTrainedError(Exception):
+    pass
+
+
 class ModelManager:
     """
     Creates, trains, and evaluates. Logs are kept of the models created as well as their performance. The best
@@ -27,10 +35,10 @@ class ModelManager:
 
     def __init__(
             self,
-            model_builder_func: Callable,
-            train_data_generator: DataGenerator,
-            validation_data_generator: DataGenerator,
-            test_data_generator: DataGenerator,
+            model_builder_func: Optional[Callable] = None,
+            train_data_generator: Optional[DataGenerator] = None,
+            validation_data_generator: Optional[DataGenerator] = None,
+            test_data_generator: Optional[DataGenerator] = None,
             path_to_logs: str = './logs',
             model_checkpoint_dir: str = './models',
             training_batch_size: int = 32,
@@ -88,10 +96,6 @@ class ModelManager:
         model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
         results: List[float] = model.evaluate(self.test_data_generator)
 
-        # Log model settings, evaluation and training history.
-        self._save_model_history(self._current_history)
-        self._save_model_summary(model)
-        self._save_model_settings_to_csv(self._current_model_builder, self._current_model_settings)
         self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
 
         self._model_ID += 1
@@ -99,7 +103,7 @@ class ModelManager:
         return results[1]  # Return model accuracy.
 
 
-    def get_model_history(self, model_id: Optional[int] = None) -> Union[History, None]:
+    def get_model_history(self, model_id: Optional[int] = None) -> History:
         """
         :param model_id: Model ID number of which you wish to get the training history of.
         :return:
@@ -119,21 +123,39 @@ class ModelManager:
 
             except FileNotFoundError:
                 print("Model ID provided doesn't exist. Please check logs directory for existing logs.")
-                return None
 
         if self._current_history is None:
-            print(
+            raise NoModelTrainedError(
                 'There is currently no history stored. '
                 'Build and train a model before trying to get the current History.'
             )
 
-            return None
-
         print(f'Got history for last model trained. Model ID: model_{self._model_ID}')
+
         return self._current_history
 
 
-    def load_model_at_best_epoch(self, model_id: int) -> Tuple[Union[Model, None], Union[str, None]]:
+    def load_model(self, model_id: int, epoch: int = 1) -> Model:
+        """
+        :param model_id: model
+        :param epoch: Epoch checkpoint to load.
+        :return:
+        """
+
+        try:
+
+            path_to_model: str = join(self._model_checkpoint_dir, f'model_{str(model_id)}')
+            model: Model = load_model(join(path_to_model, f'epoch-{str(epoch).rjust(2, "0")}.pd'))
+
+            self.current_model = model
+
+            return model
+
+        except ValueError:
+            print('Model ID provided does not correspond to any models saved.')
+
+
+    def load_model_at_best_epoch(self, model_id: int) -> Tuple[Model, str]:
         """
         :param model_id:
         :return:
@@ -151,8 +173,6 @@ class ModelManager:
         except ValueError:
             print('Model ID provided does not correspond to any models saved.')
 
-            return None, None
-
 
     def print_model_summary(self) -> None:
         """
@@ -166,11 +186,21 @@ class ModelManager:
             print("Can't print model summary as no model has been loaded.")
 
 
-    def build_model(self, **kwargs) -> Model:
+    def build_model(self, model_builder: Optional[Callable] = None, **kwargs) -> Model:
         """
+        :param model_builder:
         :param kwargs:
         :return:
         """
+
+        if model_builder:
+            self.model_builder = model_builder
+
+        elif self.model_builder is None:
+            raise MissingModelBuilderError(
+                'Missing a callable function for building a model. This can be set when creating a ModelManager, or'
+                'passed in with the ModelManager.build_model() as the first argument.'
+            )
 
         model: Model = self.model_builder(**kwargs)
 
@@ -224,6 +254,11 @@ class ModelManager:
                 checkpoint
             ]
         )
+
+        # Log model settings, evaluation and training history.
+        self._save_model_history(self._current_history)
+        self._save_model_summary(model)
+        self._save_model_settings_to_csv(self._current_model_builder, self._current_model_settings)
 
         if update_current_model_id:
             self._model_ID += 1  # Increment model ID for the next model.

@@ -5,13 +5,13 @@ from tensorflow.keras.models import Model
 
 import settings as sett
 from ai_tools import DataGenerator, ModelManager
-from ai_tools.model_builders import bayesian_optimization_test_model, vgg_like_model
+from ai_tools.model_builders import bayesian_optimization_test_model
 
 
 def main() -> None:
     the_meaning_of_life: int = 42  # Random seed.
     training_batch_size: int = 32
-    num_samples_per_instrument: int = 2_000
+    num_samples_per_instrument: int = 500
 
     # Create data generators.
     train_data, val_data, test_data = DataGenerator.create_train_val_test_data_generators(
@@ -32,7 +32,7 @@ def main() -> None:
         training_batch_size
     )
 
-    model: Model = model_manager.build_model()
+    model: Model = model_manager.build_model(max_units=2_000)
     model_manager.train_model(model)
 
     # # Parameters from model build function to optimize.

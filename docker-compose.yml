@@ -9,9 +9,6 @@ services:
       - ./models:/mnt/model-checkpoints
       - ./logs:/mnt/logs
       - ./logs/aim:/mnt/aim
-      - ./logs/model_histories:/mnt/model_histories
-      - ./logs/model_settings.csv:/mnt/model_settings.csv
-      - ./logs/model_evaluation.csv:/mnt/model_evaluation.csv
 
       # Mounting my library directory to the PYTHONPATH in the docker container.
       - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream
@@ -58,9 +55,9 @@ services:
   aim:
     image: aspit002/aim-logs
     volumes:
-#      - ./logs/aim:/aim
+      - ./logs/aim:/aim
 #      - ./runs/run_1/aim:/aim
-      - ./runs/run_2/aim:/aim
+#      - ./runs/run_2/aim:/aim
 #      - ./runs/run_3/aim:/aim
     ports:
       - "43800:43800"

@@ -135,12 +135,17 @@ def bayesian_optimization_test_model(
             kernel_size=(3, 3),
             activation=relu,
             padding='same',
+            # kernel_regularizer=l2(0.001)
         )(x)
+
+        x = SpatialDropout2D(0.2)(x)
 
         layer += 1
         neuronCount *= neuronShrink
 
     x = Flatten(name='flatten')(x)
+
+    Dense(64, activation=softmax)(x)
 
     # Final softmax layer
     output = Dense(num_classes, activation=softmax)(x)
