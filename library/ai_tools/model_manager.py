@@ -145,7 +145,7 @@ class ModelManager:
         try:
 
             path_to_model: str = join(self._model_checkpoint_dir, f'model_{str(model_id)}')
-            model: Model = load_model(join(path_to_model, f'epoch-{str(epoch).rjust(2, "0")}.pd'))
+            model: Model = load_model(join(path_to_model, f'epoch-{str(epoch).rjust(2, "0")}.pb'))
 
             self.current_model = model
 
