@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pickle
 import re
@@ -32,14 +34,12 @@ class ModelManager:
             path_to_logs: str = './logs',
             model_checkpoint_dir: str = './models',
             training_batch_size: int = 32,
-            num_training_epochs: int = 200,
             model: Model = None
     ):
         """
         :param path_to_logs:
         :param model_checkpoint_dir:
         :param training_batch_size:
-        :param num_training_epochs:
         :param model:
         """
 
@@ -68,13 +68,10 @@ class ModelManager:
 
         # Initialize model ID.
         self._model_ID: int = len(os.listdir(model_checkpoint_dir))
-
-        # Training settings.
-        self.num_epochs: int = num_training_epochs
         self._batch_size: int = training_batch_size
         self._current_model: Optional[Model] = model
 
-        # Patterns
+        # Regex Patterns
         self._epoch_from_model_logs_patter: re.Pattern = re.compile(r'\d+')
 
 
@@ -84,8 +81,8 @@ class ModelManager:
 
     def search_for_best_model(self, epochs: int = 100, early_stopping_patience: int = 5, **kwargs) -> float:
 
-        self.current_model: Model = self._build_model(**kwargs)
-        self._train_model(self.current_model, epochs, early_stopping_patience)
+        self.current_model: Model = self.build_model(**kwargs)
+        self.train_model(self.current_model, epochs, early_stopping_patience)
 
         # Load best model at best epoch for evaluation. None will be returned if the name can't be found in the logs.
         model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
@@ -169,11 +166,7 @@ class ModelManager:
             print("Can't print model summary as no model has been loaded.")
 
 
-    # =================================================================================================================
-    # ----------------------------------------------- Private functions -----------------------------------------------
-    # =================================================================================================================
-
-    def _build_model(self, **kwargs) -> Model:
+    def build_model(self, **kwargs) -> Model:
         """
         :param kwargs:
         :return:
@@ -188,19 +181,19 @@ class ModelManager:
         return model
 
 
-    def _train_model(
+    def train_model(
             self,
             model: Model,
             epochs: int = 100,
             early_stopping_patience: int = 5,
             update_current_model_id: bool = False
-    ) -> None:
+    ) -> History:
         """
         :param model: A compiled model ready for training.
         :param epochs: Number of epochs to train for, Early stopping is also in place.
         :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
         is no improvement.
-        :param update_current_model_id:
+        :param update_current_model_id: Useful if you want to overwrite models being trained.
         :return:
         """
 
@@ -235,6 +228,12 @@ class ModelManager:
         if update_current_model_id:
             self._model_ID += 1  # Increment model ID for the next model.
 
+        return self._current_history
+
+
+    # =================================================================================================================
+    # ----------------------------------------------- Private functions -----------------------------------------------
+    # =================================================================================================================
 
     def _save_model_settings_to_csv(self, model_name: str, model_config: Dict[str, any]) -> None:
         """

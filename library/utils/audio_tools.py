@@ -62,7 +62,15 @@ def create_audio_player(signal: np.ndarray, sample_rate: int = consts.SAMPLE_RAT
     Displays an audio player for playback.
     """
 
-    if len(signal.shape) > 1:  # If signal is a Mel spectrogram.
+    if len(signal.shape) > 2:
+        try:
+            signal = signal.reshape(consts.NUM_MELS, -1)
+
+        except ValueError as err:
+            print('Signal must be either 1, 2 or 3 dimensional to be converted back into audio.')
+            print(err)
+
+    if 1 < len(signal.shape) < 3:  # If signal is a Mel spectrogram.
         signal: np.ndarray = mel_to_audio(
             signal,
             sr=consts.SAMPLE_RATE,

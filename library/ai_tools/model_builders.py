@@ -1,4 +1,3 @@
-from math import floor
 from typing import Tuple
 
 from kapre.composed import get_melspectrogram_layer
@@ -106,32 +105,83 @@ def build_conv2d_example(N_CLASSES: int = 10, input_shape: Tuple[int, int, int] 
     return model
 
 
-def dynamic_conv2d_model(
-        num_conv_block: float,
-        dense_dropout_amount: float,
-        conv_dropout_amount: float,
-        regularization_amount: float,
-        num_dense_layers: int = 1,
-        dense_layer_size: float = 64,
-        num_classes: int = 10,
+def bayesian_optimization_test_model(
+        neuronPct: float = 0.1,
+        neuronShrink: float = 0.25,
         input_shape: Tuple[int, int, int] = X_SHAPE,
+        num_classes: int = 10,
+        max_units: int = 5_000
 ) -> Model:
     """
-    :param num_conv_block: Number of Conv2D layers, this includes max pooling after each Conv2D layer.
-    :param num_dense_layers:
-    :param dense_layer_size:
-    :param dense_dropout_amount:
-    :param conv_dropout_amount:
-    :param regularization_amount:
-    :param num_classes: Number of classes. Example: ['reed', 'string', 'guitar'] = 3
-    :param input_shape: Input shape of the data not including batch size.
-    :return: A tensorflow.keras.models.Model object ready for training.
-    Constructs a Convolutional Neural Network.
+    :param neuronPct:
+    :param neuronShrink:
+    :param input_shape:
+    :param num_classes:
+    :param max_units:
+    :return:
+
+    Returns a compiled tensorflow.keras.models.Model ready for fitting.
     """
 
-    num_conv_block: int = int(floor(num_conv_block))
+    neuronCount = int(neuronPct * max_units)
+    layer: int = 0
+
+    input_layer = Input(shape=input_shape)
+    x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
+
+    while neuronCount > 25 and layer < 10:
+        x = Conv2D(
+            neuronCount,
+            kernel_size=(3, 3),
+            activation=relu,
+            padding='same',
+        )(x)
+
+        layer += 1
+        neuronCount *= neuronShrink
+
+    x = Flatten(name='flatten')(x)
+
+    # Final softmax layer
+    output = Dense(num_classes, activation=softmax)(x)
+
+    # Create model.
+    _model = Model(inputs=input_layer, outputs=output)
+
+    _model.compile(
+        optimizer=Adam(),
+        loss=categorical_crossentropy,
+        metrics=['accuracy']
+    )
+
+    return _model
+
+
+def build_conv2d_model(
+        num_conv_block: int = 5,
+        num_filters: int = 32,
+        conv_dropout_amount: float = 0.1,
+        num_dense_layers: int = 1,
+        dense_layer_units: float = 32,
+        dense_dropout_amount: float = 0.1,
+        input_shape: Tuple[int, int, int] = X_SHAPE,
+        num_classes: int = 10
+) -> Model:
+    """
+    :param num_conv_block:
+    :param num_filters:
+    :param conv_dropout_amount:
+    :param num_dense_layers:
+    :param dense_layer_units:
+    :param dense_dropout_amount:
+    :param input_shape:
+    :param num_classes:
+    :return:
+    """
+
     input_layer = Input(shape=input_shape)
 
+    # Normalize data.
     x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
 
     # Set kernel size for conv layer. This will decrease over every layer if there are more than 3 blocks.
@@ -140,16 +190,11 @@ def dynamic_conv2d_model(
     else:
         kernel_size = 3
 
-    if num_conv_block % 2 != 0:
-        num_conv_block += 1
-
-    # num_filters: int = 128
-
     # Conv blocks.
     for block_num in range(num_conv_block):
 
         x = Conv2D(
-            64,
+            num_filters,
             kernel_size=(kernel_size, kernel_size),
             activation=relu,
             padding='same',
@@ -157,8 +202,12 @@ def dynamic_conv2d_model(
         )(x)
 
         x = MaxPooling2D(pool_size=(2, 2), padding='same', name=f'pooling_{block_num}')(x)
+
+        # "BatchNormalization is used liberally in many of the advanced convent architectures."
         x = BatchNormalization(name=f'batch_norm_{block_num}')(x)
-        x = SpatialDropout2D(conv_dropout_amount, name=f'conv_dropout{block_num}')(x)
+
+        # Add dropout.
+        x = Dropout(conv_dropout_amount, name=f'conv_dropout{block_num}')(x)
 
         # Decrease kernel size. Pattern:
         # Layer 1 kernel size = 7
@@ -176,9 +225,8 @@ def dynamic_conv2d_model(
     # Dense layers.
     for dense_layer_num in range(num_dense_layers):
         x = Dense(
-            dense_layer_size,
+            dense_layer_units,
             activation=relu,
-            activity_regularizer=l2(regularization_amount),
             name=f'dense_{dense_layer_num}'
         )(x)
 
@@ -188,15 +236,15 @@ def dynamic_conv2d_model(
     output = Dense(num_classes, activation=softmax, name='soft_max_output')(x)
 
     # Create model.
-    model = Model(inputs=input_layer, outputs=output)
+    _model = Model(inputs=input_layer, outputs=output)
 
-    model.compile(
+    _model.compile(
         optimizer='adam',
         loss=categorical_crossentropy,
         metrics=['accuracy']
     )
 
-    return model
+    return _model
 
 
 def vgg_like_model(

@@ -1,82 +1,69 @@
 import os
-from os.path import join
 
 import tensorflow as tf
-from bayes_opt import BayesianOptimization, SequentialDomainReductionTransformer
-from pandas import DataFrame
+from tensorflow.keras.models import Model
 
 import settings as sett
 from ai_tools import DataGenerator, ModelManager
-from ai_tools.helpers import create_data_frame_from_path, split_stratified_into_train_val_test
-from ai_tools.model_builders import vgg_like_model, dynamic_conv2d_model
+from ai_tools.model_builders import bayesian_optimization_test_model, vgg_like_model
 
 
-def main():
-    """
-    :return:
-    """
-
-    # Misc settings.
-    num_of_samples_per_instrument: int = 20_000  # 160_000 is max.
+def main() -> None:
     the_meaning_of_life: int = 42  # Random seed.
-    batch_size: int = 32
+    training_batch_size: int = 32
+    num_samples_per_instrument: int = 2_000
 
+    # Create data generators.
+    train_data, val_data, test_data = DataGenerator.create_train_val_test_data_generators(
+        sett.dataset_path,
+        num_samples_per_instrument,
+        sett.logs_path,
+        training_batch_size
+    )
+
+    # Set up model manager.
+    model_manager = ModelManager(
+        bayesian_optimization_test_model,
+        train_data,
+        val_data,
+        test_data,
+        sett.logs_path,
+        sett.model_checkpoint_path,
+        training_batch_size
+    )
+
+    model: Model = model_manager.build_model()
+    model_manager.train_model(model)
+
+    # # Parameters from model build function to optimize.
+    # p_bounds: dict = {
+    #     'num_conv_block': (3, 10),
+    #     'dense_dropout_amount': (0, 0.4),
+    #     'conv_dropout_amount': (0, 0.3),
+    #     'regularization_amount': (0, 0.01),
+    # }
+    #
+    # # Reduces the bounds declared above during optimization to quickly diverge towards optimal points.
+    # # Resources: https://github.com/fmfn/BayesianOptimization/blob/master/examples/domain_reduction.ipynb
+    # bounds_transformer = SequentialDomainReductionTransformer()
+    #
+    # # Create optimizer object.
+    # optimizer = BayesianOptimization(
+    #     f=model_manager.search_for_best_model,
+    #     pbounds=p_bounds,
+    #     random_state=the_meaning_of_life,
+    #     bounds_transformer=bounds_transformer,
+    # )
+    #
+    # optimizer.maximize(
+    #     init_points=2,
+    #     n_iter=10,
+    # )
+
+
+if __name__ == '__main__':
     # Only log errors.
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-    # Create dataset dataframe and split it into train, validation, and test.
-    df: DataFrame = create_data_frame_from_path(
-        sett.dataset_path,
-        number_of_samples_for_each_class=num_of_samples_per_instrument
-    )
-
-    df_train, df_val, df_test = split_stratified_into_train_val_test(df)  # type: DataFrame, DataFrame, DataFrame
-
-    # Store the data generator data frame for recreating the data generator if needed.
-    df_train.to_csv(join(sett.logs_path, 'train_data.csv'))
-    df_val.to_csv(join(sett.logs_path, 'val_data.csv'))
-    df_test.to_csv(join(sett.logs_path, 'test_data.csv'))
-
-    # Create Generators.
-    train_data_generator: DataGenerator = DataGenerator(df_train, batch_size=batch_size)
-    validation_data_generator: DataGenerator = DataGenerator(df_val, batch_size=batch_size)
-    test_data_generator: DataGenerator = DataGenerator(df_test, batch_size=batch_size)
-
-    model_manager = ModelManager(
-        dynamic_conv2d_model,
-        train_data_generator,
-        validation_data_generator,
-        test_data_generator,
-        path_to_logs=sett.logs_path,
-        model_checkpoint_dir=sett.model_checkpoint_path,
-    )
-
-    # Parameters from model build function to optimize.
-    p_bounds: dict = {
-        'num_conv_block': (3, 10),
-        'dense_dropout_amount': (0, 0.4),
-        'conv_dropout_amount': (0, 0.3),
-        'regularization_amount': (0, 0.01),
-    }
-
-    # Reduces the bounds declared above during optimization to quickly diverge towards optimal points.
-    # Resources: https://github.com/fmfn/BayesianOptimization/blob/master/examples/domain_reduction.ipynb
-    bounds_transformer = SequentialDomainReductionTransformer()
-
-    # Create optimizer object.
-    optimizer = BayesianOptimization(
-        f=model_manager.search_for_best_model,
-        pbounds=p_bounds,
-        random_state=the_meaning_of_life,
-        bounds_transformer=bounds_transformer,
-    )
-
-    optimizer.maximize(
-        init_points=2,
-        n_iter=10,
-    )
-
-
-if __name__ == '__main__':
     main()

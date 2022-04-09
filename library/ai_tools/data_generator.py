@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from concurrent.futures import Future, ProcessPoolExecutor, as_completed
+from os.path import join
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
@@ -9,7 +10,7 @@ from pandas import DataFrame
 from tensorflow.keras.utils import Sequence
 
 import utils.constants as consts
-from ai_tools.helpers import create_data_frame_from_path
+from ai_tools.helpers import create_data_frame_from_path, split_stratified_into_train_val_test
 
 
 class DataGenerator(Sequence):
@@ -105,6 +106,54 @@ class DataGenerator(Sequence):
             include_pitch_labels,
             num_thread_workers
         )
+
+
+    @classmethod
+    def create_train_val_test_data_generators(
+            cls,
+            path_to_dataset: str,
+            num_of_samples_per_instrument: int = 50_000,
+            path_to_logs: str = './logs',
+            training_batch_size: int = 32,
+            test_split: float = 0.2,
+    ) -> Tuple[DataGenerator, DataGenerator, DataGenerator]:
+        """
+        :param path_to_dataset: String path to root folder of dataset.
+        :param num_of_samples_per_instrument: Number of samples for each instrument in the ontology.
+        :param path_to_logs: Path to logs. Datasets are shuffled randomly, therefore they are stored in CSV format
+        for the purpose of reproducing any tests.
+        :param training_batch_size: Batch size for training.
+        :param test_split: Percentage of data for test and validation.
+        :return: Returns training, validation, testing data generators.
+
+        Creates a train, validation, and test DataGenerator for training.
+        The sets are also logged in csv format.
+        """
+
+        # Create dataset dataframe and split it into train, validation, and test.
+        df: DataFrame = create_data_frame_from_path(
+            path_to_dataset,
+            number_of_samples_for_each_class=num_of_samples_per_instrument
+        )
+
+        # Split dataset into train, test, and validation sets.
+        df_train, df_val, df_test = split_stratified_into_train_val_test(
+            df,
+            frac_val=test_split,
+            frac_test=test_split
+        )  # type: DataFrame, DataFrame, DataFrame
+
+        # Store the data generator data frame for recreating the data generator if needed.
+        df_train.to_csv(join(path_to_logs, 'train_data.csv'))
+        df_val.to_csv(join(path_to_logs, 'val_data.csv'))
+        df_test.to_csv(join(path_to_logs, 'test_data.csv'))
+
+        # Create Generators.
+        train_data_generator: DataGenerator = DataGenerator(df_train, batch_size=training_batch_size)
+        validation_data_generator: DataGenerator = DataGenerator(df_val, batch_size=training_batch_size)
+        test_data_generator: DataGenerator = DataGenerator(df_test, batch_size=training_batch_size)
+
+        return train_data_generator, validation_data_generator, test_data_generator
 
 
     # =================================================================================================================
