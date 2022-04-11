@@ -371,7 +371,7 @@ class ModelManager:
         """
 
         if exists(self._path_to_model_evaluation_logs) is False:
-            open(self._path_to_model_evaluation_logs, 'x')
+            open(self._path_to_model_evaluation_logs)
 
         if exists(self._model_summary_dir) is False:
             os.makedirs(self._model_summary_dir)

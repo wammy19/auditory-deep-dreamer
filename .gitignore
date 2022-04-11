@@ -9,8 +9,13 @@ jupyter-notebooks/.ipynb_checkpoints/
 # Data
 datasets
 models
+model-checkpoints
 .aim
 aim-logs
 logs
 long-audio
 runs
+
+# Misc
+aspit002_AI_coursework_2
+install-library.sh

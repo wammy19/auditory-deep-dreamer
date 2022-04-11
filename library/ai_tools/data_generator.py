@@ -143,10 +143,15 @@ class DataGenerator(Sequence):
             frac_test=test_split
         )  # type: DataFrame, DataFrame, DataFrame
 
+        datasets: List[str] = ['train_data.csv', 'val_data.csv', 'test_data.csv']
+
+        # for set in datasets:
+        #     open(join(path_to_logs, set), 'w')
+
         # Store the data generator data frame for recreating the data generator if needed.
-        df_train.to_csv(join(path_to_logs, 'train_data.csv'))
-        df_val.to_csv(join(path_to_logs, 'val_data.csv'))
-        df_test.to_csv(join(path_to_logs, 'test_data.csv'))
+        # df_train.to_csv(join(path_to_logs, 'train_data.csv'))
+        # df_val.to_csv(join(path_to_logs, 'val_data.csv'))
+        # df_test.to_csv(join(path_to_logs, 'test_data.csv'))
 
         # Create Generators.
         train_data_generator: DataGenerator = DataGenerator(df_train, batch_size=training_batch_size)

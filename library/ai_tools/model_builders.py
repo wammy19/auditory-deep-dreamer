@@ -1,4 +1,6 @@
 from typing import Tuple
+from random import choice
+
 
 from kapre.composed import get_melspectrogram_layer
 from tensorflow.keras import Input, Sequential
@@ -66,7 +68,7 @@ def build_conv2d_example(N_CLASSES: int = 10, input_shape: Tuple[int, int, int] 
     Builds a simple Conv2D network as an example.
     """
 
-    input_layer = Input(input_shape=input_shape)
+    input_layer = Input(shape=input_shape)
 
     x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
 
@@ -106,26 +108,29 @@ def build_conv2d_example(N_CLASSES: int = 10, input_shape: Tuple[int, int, int] 
 
 
 def bayesian_optimization_test_model(
-        neuronPct: float = 0.1,
-        neuronShrink: float = 0.25,
+        neuron_pct: float = 0.1,
+        neuron_shrink: float = 0.25,
         input_shape: Tuple[int, int, int] = X_SHAPE,
         num_classes: int = 10,
-        max_units: int = 5_000
+        max_units: int = 5_000,
+        drop_out_amount: float = 0.2
 ) -> Model:
     """
-    :param neuronPct:
-    :param neuronShrink:
+    :param neuron_pct:
+    :param neuron_shrink:
     :param input_shape:
     :param num_classes:
     :param max_units:
+    :param drop_out_amount:
     :return:
 
     Returns a compiled tensorflow.keras.models.Model ready for fitting.
     """
 
-    neuronCount = int(neuronPct * max_units)
+    neuronCount = int(neuron_pct * max_units)
     layer: int = 0
 
+    # Input layer.
     input_layer = Input(shape=input_shape)
     x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
 
@@ -138,10 +143,11 @@ def bayesian_optimization_test_model(
             # kernel_regularizer=l2(0.001)
         )(x)
 
-        x = SpatialDropout2D(0.2)(x)
+        x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+        x = SpatialDropout2D(drop_out_amount)(x)
 
         layer += 1
-        neuronCount *= neuronShrink
+        neuronCount *= neuron_shrink
 
     x = Flatten(name='flatten')(x)
 
