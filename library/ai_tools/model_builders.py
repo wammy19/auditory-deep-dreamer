@@ -132,7 +132,6 @@ def bayesian_optimization_test_model(
     """
 
     neuron_count = int(neuron_pct * int(max_units))
-    print(neuron_count)
     layer: int = 0
 
     # Input layer.
@@ -245,7 +244,8 @@ def build_conv2d_model(
         x = Dense(
             dense_layer_units,
             activation=relu,
-            name=f'dense_{dense_layer_num}'
+            name=f'dense_{dense_layer_num}',
+            activity_regularizer=l2(0.001)
         )(x)
 
         x = Dropout(dense_dropout_amount, name=f'dense_dropout_{dense_layer_num}')(x)
