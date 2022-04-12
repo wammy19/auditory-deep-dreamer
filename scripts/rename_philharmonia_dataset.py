@@ -6,7 +6,7 @@ from typing import List
 
 def main():
     note_pattern: re.Pattern = re.compile(r'(?<=_)(.*?)(?=_)')
-    path_to_dataset: str = '../../data-sets/philharmonia_dataset'
+    path_to_dataset: str = '../../datasets/processed_philharmonia_dataset'
     ontology: List[str] = os.listdir(path_to_dataset)
 
     for instrument in ontology:

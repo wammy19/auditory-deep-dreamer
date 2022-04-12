@@ -12,6 +12,7 @@ from utils.audio_tools import load_and_convert_audio_into_mel_spectrogram
 PATH_TO_DATASET: str = '/home/andrea/dev/uni/datasets/processed_philharmonia_dataset'
 PATH_TO_SERIALIZED_DATASET: str = '../../datasets/serialized_philharmonia_dataset'
 
+
 def serialize_and_save(path_to_samples: str, path_for_saving: str, sample: str) -> None:
     """
     :param path_to_samples:

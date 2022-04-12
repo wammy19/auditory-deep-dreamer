@@ -8,7 +8,7 @@
 #model_evaluation_csv_log_path: '/home/andrea/dev/uni/auditory-deepdream/logs/model_evaluation.csv'
 
 # Docker paths.
-dataset_path: '/mnt/datasets/serialized_dataset'
+dataset_path: '/mnt/datasets/serialized_philharmonia_dataset'
 logs_path: '/mnt/logs'
 aim_logs_path: '/mnt/aim'
 model_checkpoint_path: '/mnt/model-checkpoints'

@@ -13,8 +13,6 @@ from tensorflow.keras.models import Model, load_model
 
 from ai_tools import DataGenerator
 import numpy as np
-import statistics
-from sklearn import metrics
 
 
 class MissingModelBuilderError(Exception):
@@ -31,7 +29,6 @@ class ModelManager:
     performing model epochs are saved.
     """
 
-
     # =================================================================================================================
     # ---------------------------------------------- Class Constructors -----------------------------------------------
     # =================================================================================================================
@@ -39,19 +36,30 @@ class ModelManager:
     def __init__(
             self,
             model_builder_func: Optional[Callable] = None,
-            train_data_generator: Optional[DataGenerator] = None,
-            validation_data_generator: Optional[DataGenerator] = None,
-            test_data_generator: Optional[DataGenerator] = None,
+            train_data: Optional[Union[DataGenerator, np.ndarray]] = None,
+            validation_data: Optional[Union[DataGenerator, np.ndarray]] = None,
+            test_data: Optional[Union[DataGenerator, np.ndarray]] = None,
             path_to_logs: str = './logs',
             model_checkpoint_dir: str = './models',
             training_batch_size: int = 32,
+            train_labels: Union[np.ndarray, None] = None,
+            validation_labels: Union[np.ndarray, None] = None,
+            test_labels: Union[np.ndarray, None] = None,
             model: Model = None
     ):
         """
+        :param model_builder_func:
+        :param train_data:
+        :param train_labels:
+        :param validation_data:
+        :param validation_labels:
+        :param test_data:
+        :param test_labels:
         :param path_to_logs:
         :param model_checkpoint_dir:
         :param training_batch_size:
         :param model:
+
         """
 
         # Logs paths.
@@ -73,9 +81,14 @@ class ModelManager:
         self.model_builder: Callable = model_builder_func
 
         # Datasets.
-        self.train_data_generator: DataGenerator = train_data_generator
-        self.validation_data_generator: DataGenerator = validation_data_generator
-        self.test_data_generator: DataGenerator = test_data_generator
+        self.train_data: Optional[Union[DataGenerator, np.ndarray]] = train_data
+        self.validation_data: Optional[Union[DataGenerator, np.ndarray]] = validation_data
+        self.test_data: Optional[Union[DataGenerator, np.ndarray]] = test_data
+
+        # Labels.
+        self.train_labels: Union[np.ndarray, None] = train_labels
+        self.validation_labels: Union[np.ndarray, None] = validation_labels
+        self.test_labels: Union[np.ndarray, None] = test_labels
 
         # Initialize model ID.
         self._model_ID: int = len(os.listdir(model_checkpoint_dir))
@@ -103,12 +116,12 @@ class ModelManager:
 
         # Load best model at best epoch for evaluation. None will be returned if the name can't be found in the logs.
         model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
-        results = self._current_model.evaluate(self.validation_data_generator)
+        results = self._current_model.evaluate(self.test_data)
 
         self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
         self._model_ID += 1
 
-        return results[1]  # Return acuracy.
+        return results[1]  # Return accuracy.
 
 
     def get_model_history(self, model_id: Optional[int] = None) -> History:
@@ -255,21 +268,36 @@ class ModelManager:
             mode='max',
         )
 
-        # Train model.
-        self._current_history: History = model.fit(
-            self.train_data_generator,
-            steps_per_epoch=len(self.train_data_generator.get_data_frame.index) // self._batch_size,
-            epochs=epochs,
-            validation_data=self.validation_data_generator,
-            validation_steps=len(self.validation_data_generator.get_data_frame.index) // self._batch_size,
-            batch_size=self._batch_size,
-            verbose=True,
-            callbacks=[
-                aim_callback,
-                early_stopping,
-                checkpoint
-            ]
-        )
+        if type(self.train_data) == DataGenerator:
+            self._current_history: History = model.fit(
+                self.train_data,
+                steps_per_epoch=len(self.train_data.get_data_frame.index) // self._batch_size,
+                epochs=epochs,
+                validation_data=self.validation_data,
+                validation_steps=len(self.validation_data.get_data_frame.index) // self._batch_size,
+                batch_size=self._batch_size,
+                verbose=True,
+                callbacks=[
+                    aim_callback,
+                    early_stopping,
+                    checkpoint
+                ]
+            )
+
+        else:
+            self._current_history: History = model.fit(
+                self.train_data,
+                self.train_labels,
+                epochs=epochs,
+                validation_data=(self.validation_data, self.validation_labels),
+                batch_size=self._batch_size,
+                verbose=True,
+                callbacks=[
+                    aim_callback,
+                    early_stopping,
+                    checkpoint
+                ]
+            )
 
         # Log model settings, evaluation and training history.
         self._save_model_history(self._current_history)
