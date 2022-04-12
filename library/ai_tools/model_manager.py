@@ -108,7 +108,7 @@ class ModelManager:
         self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
         self._model_ID += 1
 
-        return -results[0]  # Return log loss.
+        return results[1]  # Return acuracy.
 
 
     def get_model_history(self, model_id: Optional[int] = None) -> History:
