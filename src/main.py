@@ -22,7 +22,6 @@ def main() -> None:
         training_batch_size
     )
 
-
     # Set up model manager.
     model_manager = ModelManager(
         bayesian_optimization_test_model,
@@ -35,18 +34,18 @@ def main() -> None:
     )
 
     # bayesian_optimization_test_model params.
-    # model_builder_params = dict(
-    #         neuron_pct=0.5,
-    #         neuron_shrink=0.9,  # Max 0.9
-    #         max_units=1_000,  # Min 1_000
-    #         drop_out_amount=0.2,
-    #         learning_rate=0.01,
-    #         kernel_regularization=0.01,
-    #         activity_regularization=0.01
-    # )
-    #
-    # model: Model = model_manager.build_model(**model_builder_params)
-    # model_manager.train_model(model)
+    model_builder_params = dict(
+            neuron_pct=0.5,
+            neuron_shrink=0.9,  # Max 0.9
+            max_units=1_000,  # Min 1_000
+            drop_out_amount=0.2,
+            learning_rate=0.01,
+            kernel_regularization=0.01,
+            activity_regularization=0.01
+    )
+
+    model: Model = model_manager.build_model(**model_builder_params)
+    model_manager.train_model(model)
 
     # Parameters from model build function to optimize.
     pbounds = dict(

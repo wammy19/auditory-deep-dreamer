@@ -113,15 +113,12 @@ class DataGenerator(Sequence):
             cls,
             path_to_dataset: str,
             num_of_samples_per_instrument: int = 50_000,
-            path_to_logs: str = './logs',
             training_batch_size: int = 32,
             test_split: float = 0.2,
     ) -> Tuple[DataGenerator, DataGenerator, DataGenerator]:
         """
         :param path_to_dataset: String path to root folder of dataset.
         :param num_of_samples_per_instrument: Number of samples for each instrument in the ontology.
-        :param path_to_logs: Path to logs. Datasets are shuffled randomly, therefore they are stored in CSV format
-        for the purpose of reproducing any tests.
         :param training_batch_size: Batch size for training.
         :param test_split: Percentage of data for test and validation.
         :return: Returns training, validation, testing data generators.
@@ -142,11 +139,6 @@ class DataGenerator(Sequence):
             frac_val=test_split,
             frac_test=test_split
         )  # type: DataFrame, DataFrame, DataFrame
-
-        datasets: List[str] = ['train_data.csv', 'val_data.csv', 'test_data.csv']
-
-        # for set in datasets:
-        #     open(join(path_to_logs, set), 'w')
 
         # Store the data generator data frame for recreating the data generator if needed.
         # df_train.to_csv(join(path_to_logs, 'train_data.csv'))
