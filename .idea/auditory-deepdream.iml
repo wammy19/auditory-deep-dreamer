@@ -21,7 +21,7 @@
       <excludeFolder url="file://$MODULE_DIR$/runs" />
       <excludeFolder url="file://$MODULE_DIR$/aspit002_AI_coursework_2" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7 (auditory-deepdream) (2)" jdkType="Python SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyNamespacePackagesService">

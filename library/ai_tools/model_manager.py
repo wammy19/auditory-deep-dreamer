@@ -12,6 +12,9 @@ from tensorflow.keras.callbacks import EarlyStopping, History, ModelCheckpoint
 from tensorflow.keras.models import Model, load_model
 
 from ai_tools import DataGenerator
+import numpy as np
+import statistics
+from sklearn import metrics
 
 
 class MissingModelBuilderError(Exception):
@@ -88,19 +91,24 @@ class ModelManager:
     # =================================================================================================================
 
     def search_for_best_model(self, epochs: int = 100, early_stopping_patience: int = 5, **kwargs) -> float:
+        """
+        :param epochs:
+        :param early_stopping_patience:
+        :param kwargs:
+        :return:
+        """
 
         self.current_model: Model = self.build_model(**kwargs)
         self.train_model(self.current_model, epochs, early_stopping_patience)
 
         # Load best model at best epoch for evaluation. None will be returned if the name can't be found in the logs.
         model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
-        results: List[float] = model.evaluate(self.test_data_generator)
+        results = self._current_model.evaluate(self.validation_data_generator)
 
         self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
-
         self._model_ID += 1
 
-        return results[1]  # Return model accuracy.
+        return -results[0]  # Return log loss.
 
 
     def get_model_history(self, model_id: Optional[int] = None) -> History:
@@ -217,7 +225,7 @@ class ModelManager:
             epochs: int = 100,
             early_stopping_patience: int = 5,
             update_current_model_id: bool = False
-    ) -> History:
+    ) -> EarlyStopping:
         """
         :param model: A compiled model ready for training.
         :param epochs: Number of epochs to train for, Early stopping is also in place.
@@ -229,7 +237,15 @@ class ModelManager:
 
         # Callbacks.
         aim_callback = AimCallback(repo=self._aim_logs_dir, experiment=f'model_{self._model_ID}')
-        early_stopping = EarlyStopping(monitor='val_loss', patience=early_stopping_patience, verbose=False)
+
+        early_stopping = EarlyStopping(
+            monitor='val_loss',
+            patience=early_stopping_patience,
+            verbose=False,
+            mode='auto',
+            restore_best_weights=True
+        )
+
         checkpoint = ModelCheckpoint(
             join(join(self._model_checkpoint_dir, f'model_{self._model_ID}'), 'epoch-{epoch:02d}.pb'),
             monitor='val_accuracy',
@@ -263,7 +279,7 @@ class ModelManager:
         if update_current_model_id:
             self._model_ID += 1  # Increment model ID for the next model.
 
-        return self._current_history
+        return early_stopping
 
 
     # =================================================================================================================
@@ -371,7 +387,7 @@ class ModelManager:
         """
 
         if exists(self._path_to_model_evaluation_logs) is False:
-            open(self._path_to_model_evaluation_logs)
+            open(self._path_to_model_evaluation_logs, 'w')
 
         if exists(self._model_summary_dir) is False:
             os.makedirs(self._model_summary_dir)

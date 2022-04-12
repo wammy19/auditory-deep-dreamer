@@ -1,6 +1,4 @@
 from typing import Tuple
-from random import choice
-
 
 from kapre.composed import get_melspectrogram_layer
 from tensorflow.keras import Input, Sequential
@@ -10,7 +8,7 @@ from tensorflow.keras.layers import BatchNormalization, Conv2D, Dense, Dropout, 
 from tensorflow.keras.losses import binary_crossentropy, categorical_crossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.regularizers import l2
+from tensorflow.keras.regularizers import l2, l1, l1_l2
 
 import utils.constants as consts
 from utils.constants import X_SHAPE
@@ -110,44 +108,53 @@ def build_conv2d_example(N_CLASSES: int = 10, input_shape: Tuple[int, int, int] 
 def bayesian_optimization_test_model(
         neuron_pct: float = 0.1,
         neuron_shrink: float = 0.25,
-        input_shape: Tuple[int, int, int] = X_SHAPE,
-        num_classes: int = 10,
         max_units: int = 5_000,
-        drop_out_amount: float = 0.2
+        drop_out_amount: float = 0.2,
+        learning_rate: float = 1.0E-3,
+        kernel_regularization: float = 1.0E-3,
+        activity_regularization: float = 1.0E-3,
+        num_classes: int = 10,
+        input_shape: Tuple[int, int, int] = X_SHAPE,
 ) -> Model:
     """
     :param neuron_pct:
     :param neuron_shrink:
-    :param input_shape:
-    :param num_classes:
     :param max_units:
     :param drop_out_amount:
+    :param learning_rate:
+    :param kernel_regularization:
+    :param activity_regularization:
+    :param num_classes:
+    :param input_shape:
     :return:
 
     Returns a compiled tensorflow.keras.models.Model ready for fitting.
     """
 
-    neuronCount = int(neuron_pct * max_units)
+    neuron_count = int(neuron_pct * int(max_units))
+    print(neuron_count)
     layer: int = 0
 
     # Input layer.
     input_layer = Input(shape=input_shape)
     x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
 
-    while neuronCount > 25 and layer < 10:
+    while neuron_count > 25 and layer < 10:
         x = Conv2D(
-            neuronCount,
+            neuron_count,
             kernel_size=(3, 3),
             activation=relu,
             padding='same',
-            # kernel_regularizer=l2(0.001)
+            kernel_regularizer=l1_l2(kernel_regularization),
+            # activity_regularizer=l2(activity_regularization)
         )(x)
 
         x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
+        x = BatchNormalization()(x)
         x = SpatialDropout2D(drop_out_amount)(x)
 
         layer += 1
-        neuronCount *= neuron_shrink
+        neuron_count *= neuron_shrink
 
     x = Flatten(name='flatten')(x)
 
@@ -160,7 +167,7 @@ def bayesian_optimization_test_model(
     _model = Model(inputs=input_layer, outputs=output)
 
     _model.compile(
-        optimizer=Adam(),
+        optimizer=Adam(learning_rate=learning_rate),
         loss=categorical_crossentropy,
         metrics=['accuracy']
     )

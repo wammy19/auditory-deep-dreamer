@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.7 (auditory-deepdream) (2)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (auditory-deepdream)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
@@ -8,28 +8,24 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="4374" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_manager.py" />
+          <option name="caretOffset" value="889" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/config.yml" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
+          <option name="caretOffset" value="4666" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_builders.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="5054" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/data_generator.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="524" />
+          <option name="caretOffset" value="469" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="698" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/deep_dream/deep_dreamer.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="1900" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/docker-compose.yml" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="4071" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_builders.py" />
+          <option name="caretOffset" value="3977" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_manager.py" />
         </OpenedFileInfo>
       </list>
     </option>
