@@ -12,7 +12,7 @@ from ai_tools.model_builders import bayesian_optimization_test_model, build_conv
 def main() -> None:
     the_meaning_of_life: int = 42
     training_batch_size: int = 32
-    num_samples_per_instrument: int = 10
+    num_samples_per_instrument: int = 1_000
 
     # Create data generators.
     train_data, val_data, test_data = DataGenerator.create_train_val_test_data_generators(
