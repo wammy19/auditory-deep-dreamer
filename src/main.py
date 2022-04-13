@@ -1,4 +1,4 @@
-from ai_tools.model_builders import build_conv2d_model
+from ai_tools.model_builders import build_conv2d_model, bayesian_optimization_test_model
 import settings as sett
 from ai_tools import ModelManager
 from typing import List
@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from random import shuffle
+from bayes_opt import SequentialDomainReductionTransformer, BayesianOptimization
 from tensorflow.keras.models import Model
 
 
@@ -50,23 +51,27 @@ def load_data(path_to_data_set: str):
 
 def main() -> None:
     the_meaning_of_life: int = 42
-    training_batch_size: int = 32
+    training_batch_size: int = 64
 
     X, y = load_data(sett.dataset_path)  # type: np.ndarray, np.ndarray
     X, X_test, y, y_test = train_test_split(X, y, test_size=0.2)  # type: np.ndarray, np.ndarray, np.ndarray, np.ndarray
     X, X_val, y, y_val = train_test_split(X, y, test_size=0.2)  # type: np.ndarray, np.ndarray, np.ndarray, np.ndarray
 
-    model_params = dict(
-        num_conv_block=9,
-        num_filters=128,
-        num_dense_layers=2,
-        dense_layer_units=64,
-        conv_dropout_amount=0.1,
-        num_classes=15,
+    num_classes: int = y.shape[-1]
+
+    pbounds = dict(
+        neuron_pct=(0.0, 1.0),
+        neuron_shrink=(0.0, 0.9),
+        max_units=(100, 1_000),
+        drop_out_amount=(0.0, 0.499),
+        learning_rate=(0, 0.1),
+        kernel_regularization=(0.0, 0.1),
+        activity_regularization=(0.0, 0.1),
+        num_classes=(num_classes, num_classes)
     )
 
     model_manager = ModelManager(
-        model_builder_func=build_conv2d_model,
+        model_builder_func=bayesian_optimization_test_model,
         train_data=X,
         validation_data=X_val,
         test_data=X_test,
@@ -78,9 +83,22 @@ def main() -> None:
         training_batch_size=training_batch_size
     )
 
-    model: Model = model_manager.build_model(**model_params)
-    model_manager.train_model(model, early_stopping_patience=10)
-    model_manager.current_model.evaluate(X_test, y_test)
+    # Create optimizer object.
+    optimizer = BayesianOptimization(
+        f=model_manager.search_for_best_model,
+        pbounds=pbounds,
+        random_state=the_meaning_of_life,
+        bounds_transformer=SequentialDomainReductionTransformer(),
+    )
+
+    optimizer.maximize(
+        init_points=15,
+        n_iter=50,
+    )
+
+    # model: Model = model_manager.build_model(**model_params)
+    # model_manager.train_model(model, early_stopping_patience=10)
+    # model_manager.current_model.evaluate(X_test, y_test)
 
     # model: Model = build_conv2d_model(**model_params)
     #

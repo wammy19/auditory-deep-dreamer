@@ -16,7 +16,7 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/helpers.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="5448" />
+          <option name="caretOffset" value="4835" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_builders.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
@@ -24,7 +24,11 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_manager.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1532" />
+          <option name="caretOffset" value="35" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main_old.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="2084" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
         </OpenedFileInfo>
       </list>

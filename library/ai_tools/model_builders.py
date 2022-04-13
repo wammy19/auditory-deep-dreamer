@@ -145,7 +145,7 @@ def bayesian_optimization_test_model(
             activation=relu,
             padding='same',
             kernel_regularizer=l1_l2(kernel_regularization),
-            # activity_regularizer=l2(activity_regularization)
+            activity_regularizer=l2(activity_regularization)
         )(x)
 
         x = MaxPooling2D(pool_size=(2, 2), padding='same')(x)
