@@ -8,7 +8,6 @@ from tensorflow import Tensor
 from typing import Union
 
 
-
 def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool = False, sample_rate: int = SAMPLE_RATE) -> None:
     """
     :param mel_spec: np.ndarray that is returned from librosa.feature.melspectrogram
