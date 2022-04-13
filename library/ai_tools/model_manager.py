@@ -103,28 +103,132 @@ class ModelManager:
     # ----------------------------------------------- Public functions ------------------------------------------------
     # =================================================================================================================
 
-    def search_for_best_model(self, epochs: int = 100, early_stopping_patience: int = 5, **kwargs) -> float:
+    def build_train_and_evaluate_model(
+            self,
+            epochs: int = 100,
+            early_stopping_patience: int = 10,
+            update_current_model_id=True,
+            **kwargs
+    ) -> float:
         """
         :param epochs:
         :param early_stopping_patience:
+        :param update_current_model_id:
         :param kwargs:
         :return:
         """
 
         self.build_model(**kwargs)
-        self.train_model(epochs, early_stopping_patience, update_current_model_id=True)
+        self.train_model(epochs, early_stopping_patience)
+
         results: Tuple[float, float] = self.evaluate_model()
+
+        if update_current_model_id:
+            self._model_ID += 1  # Increment model ID for the next model.
 
         return results[1]  # Return accuracy.
 
 
+    def build_model(self, model_builder: Optional[Callable] = None, **kwargs) -> None:
+        """
+        :param model_builder:
+        :param kwargs:
+        :return:
+        """
+
+        if model_builder:
+            self.model_builder = model_builder
+
+        elif self.model_builder is None:
+            raise MissingModelBuilderError(
+                'Missing a callable function for building a model. This can be set when creating a ModelManager, or'
+                'passed in with the ModelManager.build_model() as the first argument.'
+            )
+
+        # Store settings of model for later logging.
+        self._current_model_builder = self.model_builder.__name__
+        self._current_model_settings = kwargs
+        self.current_model = self.model_builder(**kwargs)
+
+
+    def train_model(
+            self,
+            epochs: int = 100,
+            early_stopping_patience: int = 5,
+    ) -> EarlyStopping:
+        """
+        :param epochs: Number of epochs to train for, Early stopping is also in place.
+        :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
+        is no improvement.
+        :return:
+        """
+
+        # Callbacks.
+        aim_callback = AimCallback(repo=self._aim_logs_dir, experiment=f'model_{self._model_ID}')
+
+        early_stopping = EarlyStopping(
+            monitor='val_accuracy',
+            patience=early_stopping_patience,
+            verbose=False,
+            mode='auto',
+            restore_best_weights=True
+        )
+
+        checkpoint = ModelCheckpoint(
+            join(join(self._model_checkpoint_dir, f'model_{self._model_ID}'), 'epoch-{epoch:02d}.pb'),
+            monitor='val_accuracy',
+            verbose=False,
+            save_weights_only=False,
+            save_best_only=True,
+            mode='max',
+        )
+
+        if type(self.train_data) == DataGenerator:
+            self._current_history: History = self.current_model.fit(
+                self.train_data,
+                steps_per_epoch=len(self.train_data.get_data_frame.index) // self._batch_size,
+                epochs=epochs,
+                validation_data=self.validation_data,
+                validation_steps=len(self.validation_data.get_data_frame.index) // self._batch_size,
+                batch_size=self._batch_size,
+                verbose=True,
+                callbacks=[
+                    aim_callback,
+                    early_stopping,
+                    checkpoint
+                ]
+            )
+
+        else:
+            self._current_history: History = self.current_model.fit(
+                self.train_data,
+                self.train_labels,
+                epochs=epochs,
+                validation_data=(self.validation_data, self.validation_labels),
+                batch_size=self._batch_size,
+                verbose=True,
+                callbacks=[
+                    aim_callback,
+                    early_stopping,
+                    checkpoint
+                ]
+            )
+
+        # Log model settings, evaluation and training history.
+        self._save_model_history(self._current_history)
+        self._save_model_summary(self.current_model)
+        self._save_model_settings_to_csv(self._current_model_builder, self._current_model_settings)
+
+        return early_stopping
+
+
     def evaluate_model(self) -> Tuple[float, float]:
+        """
+        :return:
+        """
 
-        # Load best model at best epoch for evaluation. None will be returned if the name can't be found in the logs.
-        model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
-        results = self.current_model.evaluate(self.test_data)
-
-        self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
+        results = self.current_model.evaluate(self.test_data, self.test_labels)
+        self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1])
 
         return results
 
@@ -212,104 +316,6 @@ class ModelManager:
             print("Can't print model summary as no model has been loaded.")
 
 
-    def build_model(self, model_builder: Optional[Callable] = None, **kwargs) -> None:
-        """
-        :param model_builder:
-        :param kwargs:
-        :return:
-        """
-
-        if model_builder:
-            self.model_builder = model_builder
-
-        elif self.model_builder is None:
-            raise MissingModelBuilderError(
-                'Missing a callable function for building a model. This can be set when creating a ModelManager, or'
-                'passed in with the ModelManager.build_model() as the first argument.'
-            )
-
-        # Store settings of model for later logging.
-        self._current_model_builder = self.model_builder.__name__
-        self._current_model_settings = kwargs
-        self.current_model = self.model_builder(**kwargs)
-
-
-    def train_model(
-            self,
-            epochs: int = 100,
-            early_stopping_patience: int = 5,
-            update_current_model_id: bool = False
-    ) -> EarlyStopping:
-        """
-        :param epochs: Number of epochs to train for, Early stopping is also in place.
-        :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
-        is no improvement.
-        :param update_current_model_id: Useful if you want to overwrite models being trained.
-        :return:
-        """
-
-        # Callbacks.
-        aim_callback = AimCallback(repo=self._aim_logs_dir, experiment=f'model_{self._model_ID}')
-
-        early_stopping = EarlyStopping(
-            monitor='val_loss',
-            patience=early_stopping_patience,
-            verbose=False,
-            mode='auto',
-            restore_best_weights=True
-        )
-
-        checkpoint = ModelCheckpoint(
-            join(join(self._model_checkpoint_dir, f'model_{self._model_ID}'), 'epoch-{epoch:02d}.pb'),
-            monitor='val_accuracy',
-            verbose=False,
-            save_weights_only=False,
-            save_best_only=True,
-            mode='max',
-        )
-
-        if type(self.train_data) == DataGenerator:
-            self._current_history: History = self.current_model.fit(
-                self.train_data,
-                steps_per_epoch=len(self.train_data.get_data_frame.index) // self._batch_size,
-                epochs=epochs,
-                validation_data=self.validation_data,
-                validation_steps=len(self.validation_data.get_data_frame.index) // self._batch_size,
-                batch_size=self._batch_size,
-                verbose=True,
-                callbacks=[
-                    aim_callback,
-                    early_stopping,
-                    checkpoint
-                ]
-            )
-
-        else:
-            self._current_history: History = self.current_model.fit(
-                self.train_data,
-                self.train_labels,
-                epochs=epochs,
-                validation_data=(self.validation_data, self.validation_labels),
-                batch_size=self._batch_size,
-                verbose=True,
-                callbacks=[
-                    aim_callback,
-                    early_stopping,
-                    checkpoint
-                ]
-            )
-
-        # Log model settings, evaluation and training history.
-        self._save_model_history(self._current_history)
-        self._save_model_summary(self.current_model)
-        self._save_model_settings_to_csv(self._current_model_builder, self._current_model_settings)
-
-        if update_current_model_id:
-            self._model_ID += 1  # Increment model ID for the next model.
-
-        return early_stopping
-
-
     # =================================================================================================================
     # ----------------------------------------------- Private functions -----------------------------------------------
     # =================================================================================================================
@@ -347,13 +353,11 @@ class ModelManager:
             model_id: int,
             model_loss: float,
             model_accuracy: float,
-            epoch: str
     ) -> None:
         """
         :param model_id: Model id number.
         :param model_loss:
         :param model_accuracy:
-        :param epoch: Epoch the results were measured at.
         :return:
         """
 
@@ -361,7 +365,6 @@ class ModelManager:
             'model_ID': model_id,
             'loss': model_loss,
             'accuracy': model_accuracy,
-            'epoch': epoch
         }
 
         csv_headers: List[str] = []

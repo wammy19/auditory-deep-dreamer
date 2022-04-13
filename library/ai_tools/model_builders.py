@@ -8,7 +8,7 @@ from tensorflow.keras.layers import BatchNormalization, Conv2D, Dense, Dropout, 
 from tensorflow.keras.losses import binary_crossentropy, categorical_crossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.regularizers import l2, l1, l1_l2
+from tensorflow.keras.regularizers import l2, l1_l2
 
 import utils.constants as consts
 from utils.constants import X_SHAPE

@@ -1,4 +1,4 @@
-from ai_tools.model_builders import build_conv2d_model, bayesian_optimization_test_model
+from ai_tools.model_builders import build_conv2d_model, bayesian_optimization_test_model, vgg_like_model
 import settings as sett
 from ai_tools import ModelManager
 from typing import List
@@ -58,27 +58,10 @@ def main() -> None:
     X_test, y_test = load_data(join(sett.dataset_path, 'test'))
     num_classes: int = y.shape[-1]
 
-    # pbounds = dict(
-    #     num_conv_block=9,
-    #     num_filters=128,
-    #     num_dense_layers=2,
-    #     dense_layer_units=64,
-    #     conv_dropout_amount=0.1,
-    #     num_classes=num_classes,
-    # )
-
-    # # Create optimizer object.
-    # optimizer = BayesianOptimization(
-    #     f=model_manager.search_for_best_model,
-    #     pbounds=pbounds,
-    #     random_state=the_meaning_of_life,
-    #     bounds_transformer=SequentialDomainReductionTransformer(),
-    # )
-    #
-    # optimizer.maximize(
-    #     init_points=15,
-    #     n_iter=50,
-    # )
+    # X, y = load_data(sett.dataset_path)  # type: np.ndarray, np.ndarray
+    # X, X_test, y, y_test = train_test_split(X, y, test_size=0.2)  # type: np.ndarray, np.ndarray, np.ndarray, np.ndarray
+    # X, X_val, y, y_val = train_test_split(X, y, test_size=0.2)  # type: np.ndarray, np.ndarray, np.ndarray, np.ndarray
+    # num_classes: int = y.shape[-1]
 
     model_params = dict(
         num_conv_block=9,
@@ -90,7 +73,7 @@ def main() -> None:
     )
 
     model_manager = ModelManager(
-        model_builder_func=build_conv2d_model,
+        model_builder_func=vgg_like_model,
         train_data=X,
         validation_data=X_val,
         test_data=X_test,
@@ -102,9 +85,32 @@ def main() -> None:
         training_batch_size=training_batch_size
     )
 
-    model_manager.build_model(**model_params)
-    model_manager.train_model(model_manager.current_model, early_stopping_patience=15, update_current_model_id=True)
-    model_manager.current_model.evaluate(X_test, y_test)
+    pbounds = dict(
+        num_first_conv_blocks=(1, 9),
+        num_second_conv_blocks=(1, 9),
+        num_third_conv_blocks=(1, 9),
+        num_fourth_conv_blocks=(1, 9),
+        dropout_amount=(0.0, 0.499),
+        learning_rate=(0.0, 0.0001),
+        num_classes=(y.shape[-1], y.shape[-1])
+    )
+
+    # Create optimizer object.
+    optimizer = BayesianOptimization(
+        f=model_manager.build_train_and_evaluate_model,
+        pbounds=pbounds,
+        random_state=the_meaning_of_life,
+        bounds_transformer=SequentialDomainReductionTransformer(),
+    )
+
+    optimizer.maximize(
+        init_points=15,
+        n_iter=50,
+    )
+
+    # accuracy: float = model_manager.build_train_and_evaluate_model(early_stopping_patience=15, **model_params)
+
+    # print(f'Model accuracy: {accuracy}')
 
 
 if __name__ == '__main__':

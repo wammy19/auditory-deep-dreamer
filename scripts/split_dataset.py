@@ -5,7 +5,7 @@ from random import shuffle
 from shutil import move
 from typing import List
 
-test_set_split: int = 4  # Percent.
+test_set_split: int = 5  # Percent.
 
 
 def create_directories(path_to_dataset: str, ontology: List[str]) -> None:
