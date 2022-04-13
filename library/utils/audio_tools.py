@@ -1,5 +1,5 @@
 from os.path import join
-from typing import List
+from typing import List, Optional
 
 import IPython.display as display
 import numpy as np
@@ -52,11 +52,17 @@ def segment_signal(
     return all_audio_segments
 
 
-def create_audio_player(signal: np.ndarray, sample_rate: int = consts.SAMPLE_RATE, normalize: bool = False) -> None:
+def create_audio_player(
+        signal: np.ndarray,
+        sample_rate: int = consts.SAMPLE_RATE,
+        normalize: bool = False,
+        mel_n_iterations: int = consts.MEL_TO_AUDIO_N_ITERATIONS
+) -> None:
     """
     :param signal: A 1D raw audio signal, or a mel spectrogram.
     :param sample_rate: Sample rate of signal.
     :param normalize: Normalize audio. Default is False.
+    :param mel_n_iterations:
     :return:
 
     Displays an audio player for playback.
@@ -74,7 +80,7 @@ def create_audio_player(signal: np.ndarray, sample_rate: int = consts.SAMPLE_RAT
         signal: np.ndarray = mel_to_audio(
             signal,
             sr=consts.SAMPLE_RATE,
-            n_iter=consts.MEL_TO_AUDIO_N_ITERATIONS
+            n_iter=mel_n_iterations
         )
 
     core_display(display.Audio(signal, rate=sample_rate, normalize=normalize))
@@ -98,15 +104,21 @@ def time_stretch_signal(path_to_sample: str, sample: str, instrument, path_for_w
     sf.write(join(path_for_writing, instrument, file_name), stretched_sample, consts.SAMPLE_RATE)
 
 
-def load_and_convert_audio_into_mel_spectrogram(path_to_data: str) -> np.ndarray:
+def load_and_convert_audio_into_mel_spectrogram(
+        path_to_data: str,
+        reshape: bool = False,
+        duration: Optional[float] = None
+) -> np.ndarray:
     """
     :param path_to_data - Path to wav file.
+    :param reshape - Reshape spectrogram for be digested by model.
+    :param duration:
     :return:
 
     Load an audio file and encode it into a mel spectrogram.
     """
 
-    sample: np.ndarray = load(path_to_data, mono=True)[0]
+    sample: np.ndarray = load(path_to_data, mono=True, duration=duration)[0]
     mel_spectrogram: np.ndarray = melspectrogram(
         y=sample,
         sr=consts.SAMPLE_RATE,
@@ -115,5 +127,8 @@ def load_and_convert_audio_into_mel_spectrogram(path_to_data: str) -> np.ndarray
         n_mels=consts.NUM_MELS,
         win_length=consts.MEL_WINDOW_LEN
     )
+
+    if reshape:
+        mel_spectrogram = mel_spectrogram.reshape((1, 300, 44, 1))
 
     return mel_spectrogram
