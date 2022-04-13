@@ -8,28 +8,20 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="3928" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/data_generator.py" />
+          <option name="caretOffset" value="2925" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="386" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/helpers.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="4835" />
+          <option name="caretOffset" value="7150" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_builders.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="471" />
+          <option name="caretOffset" value="2581" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/split_data_set.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="8396" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_manager.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="35" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main_old.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="2084" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
         </OpenedFileInfo>
       </list>
     </option>

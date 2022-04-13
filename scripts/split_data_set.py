@@ -5,10 +5,13 @@ from random import shuffle
 from shutil import move
 from typing import List
 
+test_set_split: int = 4  # Percent.
+
 
 def create_directories(path_to_dataset: str, ontology: List[str]) -> None:
     """
     :param path_to_dataset:
+    :param ontology:
     :return:
 
     Creates a 'validation', 'test', and 'train' directories in specified path.
@@ -54,7 +57,7 @@ def move_files(path_to_dataset: str, instrument: str) -> None:
     shuffle(instrument_paths)
 
     number_of_paths: int = len(instrument_paths)
-    test_split_amount: int = number_of_paths // 10  # 10% of entire data set for testing and validation.
+    test_split_amount: int = number_of_paths // test_set_split
 
     # Splits
     test_split: List[str] = instrument_paths[:test_split_amount].copy()
@@ -96,7 +99,7 @@ def move_files(path_to_dataset: str, instrument: str) -> None:
 
 
 def main() -> None:
-    path_to_dataset: str = '../../data-sets/processed_dataset'
+    path_to_dataset: str = '../../datasets/philharmonia_split'
     ontology: List[str] = sorted(os.listdir(path_to_dataset))
 
     if 'test' in ontology:
@@ -109,6 +112,9 @@ def main() -> None:
     with ProcessPoolExecutor(max_workers=len(ontology)) as process_executor:
         for instrument in ontology:
             process_executor.submit(move_files, path_to_dataset, instrument)
+
+    for instrument in ontology:
+        os.rmdir(join(path_to_dataset, instrument))
 
 
 if __name__ == '__main__':

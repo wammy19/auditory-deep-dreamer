@@ -53,25 +53,44 @@ def main() -> None:
     the_meaning_of_life: int = 42
     training_batch_size: int = 64
 
-    X, y = load_data(sett.dataset_path)  # type: np.ndarray, np.ndarray
-    X, X_test, y, y_test = train_test_split(X, y, test_size=0.2)  # type: np.ndarray, np.ndarray, np.ndarray, np.ndarray
-    X, X_val, y, y_val = train_test_split(X, y, test_size=0.2)  # type: np.ndarray, np.ndarray, np.ndarray, np.ndarray
-
+    X, y = load_data(join(sett.dataset_path, 'train'))
+    X_val, y_val = load_data(join(sett.dataset_path, 'validation'))
+    X_test, y_test = load_data(join(sett.dataset_path, 'test'))
     num_classes: int = y.shape[-1]
 
-    pbounds = dict(
-        neuron_pct=(0.0, 1.0),
-        neuron_shrink=(0.0, 0.9),
-        max_units=(100, 1_000),
-        drop_out_amount=(0.0, 0.499),
-        learning_rate=(0, 0.1),
-        kernel_regularization=(0.0, 0.1),
-        activity_regularization=(0.0, 0.1),
-        num_classes=(num_classes, num_classes)
+    # pbounds = dict(
+    #     num_conv_block=9,
+    #     num_filters=128,
+    #     num_dense_layers=2,
+    #     dense_layer_units=64,
+    #     conv_dropout_amount=0.1,
+    #     num_classes=num_classes,
+    # )
+
+    # # Create optimizer object.
+    # optimizer = BayesianOptimization(
+    #     f=model_manager.search_for_best_model,
+    #     pbounds=pbounds,
+    #     random_state=the_meaning_of_life,
+    #     bounds_transformer=SequentialDomainReductionTransformer(),
+    # )
+    #
+    # optimizer.maximize(
+    #     init_points=15,
+    #     n_iter=50,
+    # )
+
+    model_params = dict(
+        num_conv_block=9,
+        num_filters=128,
+        num_dense_layers=2,
+        dense_layer_units=64,
+        conv_dropout_amount=0.1,
+        num_classes=num_classes,
     )
 
     model_manager = ModelManager(
-        model_builder_func=bayesian_optimization_test_model,
+        model_builder_func=build_conv2d_model,
         train_data=X,
         validation_data=X_val,
         test_data=X_test,
@@ -83,35 +102,9 @@ def main() -> None:
         training_batch_size=training_batch_size
     )
 
-    # Create optimizer object.
-    optimizer = BayesianOptimization(
-        f=model_manager.search_for_best_model,
-        pbounds=pbounds,
-        random_state=the_meaning_of_life,
-        bounds_transformer=SequentialDomainReductionTransformer(),
-    )
-
-    optimizer.maximize(
-        init_points=15,
-        n_iter=50,
-    )
-
-    # model: Model = model_manager.build_model(**model_params)
-    # model_manager.train_model(model, early_stopping_patience=10)
-    # model_manager.current_model.evaluate(X_test, y_test)
-
-    # model: Model = build_conv2d_model(**model_params)
-    #
-    # model.fit(
-    #     X,
-    #     y,
-    #     validation_split=0.2,
-    #     epochs=100,
-    #     verbose=True,
-    #     batch_size=64
-    # )
-
-    # model.evaluate(X_test, y_test)
+    model_manager.build_model(**model_params)
+    model_manager.train_model(model_manager.current_model, early_stopping_patience=15, update_current_model_id=True)
+    model_manager.current_model.evaluate(X_test, y_test)
 
 
 if __name__ == '__main__':

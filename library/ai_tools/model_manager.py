@@ -93,7 +93,7 @@ class ModelManager:
         # Initialize model ID.
         self._model_ID: int = len(os.listdir(model_checkpoint_dir))
         self._batch_size: int = training_batch_size
-        self._current_model: Optional[Model] = model
+        self.current_model: Optional[Model] = model
 
         # Regex Patterns
         self._epoch_from_model_logs_patter: re.Pattern = re.compile(r'\d+')
@@ -111,17 +111,22 @@ class ModelManager:
         :return:
         """
 
-        self.current_model: Model = self.build_model(**kwargs)
-        self.train_model(self.current_model, epochs, early_stopping_patience)
+        self.build_model(**kwargs)
+        self.train_model(epochs, early_stopping_patience, update_current_model_id=True)
+        results: Tuple[float, float] = self.evaluate_model()
+
+        return results[1]  # Return accuracy.
+
+
+    def evaluate_model(self) -> Tuple[float, float]:
 
         # Load best model at best epoch for evaluation. None will be returned if the name can't be found in the logs.
         model, best_epoch = self.load_model_at_best_epoch(self._model_ID)  # type: Model, str
-        results = self._current_model.evaluate(self.test_data)
+        results = self.current_model.evaluate(self.test_data)
 
         self._save_model_evaluation_to_csv(self._model_ID, results[0], results[1], best_epoch)
-        self._model_ID += 1
 
-        return results[1]  # Return accuracy.
+        return results
 
 
     def get_model_history(self, model_id: Optional[int] = None) -> History:
@@ -200,14 +205,14 @@ class ModelManager:
         :return:s
         """
 
-        if self._current_model is not None:
-            print(self._current_model.summary())
+        if self.current_model is not None:
+            print(self.current_model.summary())
 
         else:
             print("Can't print model summary as no model has been loaded.")
 
 
-    def build_model(self, model_builder: Optional[Callable] = None, **kwargs) -> Model:
+    def build_model(self, model_builder: Optional[Callable] = None, **kwargs) -> None:
         """
         :param model_builder:
         :param kwargs:
@@ -223,24 +228,19 @@ class ModelManager:
                 'passed in with the ModelManager.build_model() as the first argument.'
             )
 
-        model: Model = self.model_builder(**kwargs)
-
         # Store settings of model for later logging.
         self._current_model_builder = self.model_builder.__name__
         self._current_model_settings = kwargs
-
-        return model
+        self.current_model = self.model_builder(**kwargs)
 
 
     def train_model(
             self,
-            model: Model,
             epochs: int = 100,
             early_stopping_patience: int = 5,
             update_current_model_id: bool = False
     ) -> EarlyStopping:
         """
-        :param model: A compiled model ready for training.
         :param epochs: Number of epochs to train for, Early stopping is also in place.
         :param early_stopping_patience: EarlyStopping callback patience amount. This will stop training early if there
         is no improvement.
@@ -269,7 +269,7 @@ class ModelManager:
         )
 
         if type(self.train_data) == DataGenerator:
-            self._current_history: History = model.fit(
+            self._current_history: History = self.current_model.fit(
                 self.train_data,
                 steps_per_epoch=len(self.train_data.get_data_frame.index) // self._batch_size,
                 epochs=epochs,
@@ -285,7 +285,7 @@ class ModelManager:
             )
 
         else:
-            self._current_history: History = model.fit(
+            self._current_history: History = self.current_model.fit(
                 self.train_data,
                 self.train_labels,
                 epochs=epochs,
@@ -301,7 +301,7 @@ class ModelManager:
 
         # Log model settings, evaluation and training history.
         self._save_model_history(self._current_history)
-        self._save_model_summary(model)
+        self._save_model_summary(self.current_model)
         self._save_model_settings_to_csv(self._current_model_builder, self._current_model_settings)
 
         if update_current_model_id:
@@ -428,35 +428,3 @@ class ModelManager:
 
         if exists(self._history_log_dir) is False:
             os.makedirs(self._history_log_dir)
-
-
-    # =================================================================================================================
-    # ----------------------------------------------- Getter/Setter functions -----------------------------------------
-    # =================================================================================================================
-
-    @property
-    def current_model(self) -> Union[Model, None]:
-        """
-        :return: A tensorflow.keras.models.Model or None if a model hasn't been set.
-
-        Returns the last model that was constructed by the model manager. None will be returned if no model has
-        been built yet.
-        """
-
-        return self._current_model
-
-
-    @current_model.setter
-    def current_model(self, model: Model) -> None:
-        """
-        :param model: a compiled tensorflow.keras.models.Model ready for fitting.
-        :return:
-
-        Updates the model stored by the manager with a model that is passed in.
-        """
-
-        # Type check.
-        if isinstance(model, Model) is False:
-            raise ValueError('The current model must be a compiled tensorflow.keras.models.Model')
-
-        self._current_model = model

@@ -18,7 +18,6 @@ class DataGenerator(Sequence):
     Data generator class loads in raw audio and encodes the signal into a mel spectrogram in a set batch size.
     """
 
-
     # =================================================================================================================
     # ---------------------------------------------- Class Constructors -----------------------------------------------
     # =================================================================================================================
@@ -87,7 +86,7 @@ class DataGenerator(Sequence):
         |         |____string_1.wav ...
         |
         |_________reed
-                  |11
+                  |
                   |____reed_1.wav ...
         """
 
