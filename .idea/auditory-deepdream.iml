@@ -20,8 +20,9 @@
       <excludeFolder url="file://$MODULE_DIR$/long-audio" />
       <excludeFolder url="file://$MODULE_DIR$/runs" />
       <excludeFolder url="file://$MODULE_DIR$/aspit002_AI_coursework_2" />
+      <excludeFolder url="file://$MODULE_DIR$/layer_outputs" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7 (auditory-deepdream) (2)" jdkType="Python SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyNamespacePackagesService">

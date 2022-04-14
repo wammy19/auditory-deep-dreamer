@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.7 (auditory-deepdream) (2)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (auditory-deepdream)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
@@ -8,35 +8,11 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="7683" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_builders.py" />
+          <option name="caretOffset" value="2061" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main_training_script.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="6223" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_manager.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="123" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/logs/build_conv2d_model.csv" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/logs/model_evaluation.csv" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/logs/model_summaries/model_0.txt" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="613" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/config.yml" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="185" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/split_dataset.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="2485" />
+          <option name="caretOffset" value="715" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
         </OpenedFileInfo>
       </list>
