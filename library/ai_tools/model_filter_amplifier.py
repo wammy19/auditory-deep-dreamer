@@ -1,3 +1,7 @@
+"""
+Class used to amplify features learnt in a CNN's filter onto and input audio signal using gradient ascent.
+"""
+
 import sys
 import numpy as np
 from keras.engine.keras_tensor import KerasTensor
@@ -15,54 +19,59 @@ class ModelFilterAmplifier:
     Amplifies features stored in individual filters of a CNN.
     """
 
+    # =================================================================================================================
+    # ---------------------------------------------- Dunder Methods  --------------------------------------------------
+    # =================================================================================================================
 
-    def __int__(
+    def __init__(
             self,
             model: Model,
+            padding_amount: int
     ):
 
         self._model: Model = model
-        self._model_layers: List[Model] = self._get_model_layers(self._model)
-        self._conv_block_indicis: List[int] = self._get_conv_layer_indicis(self._model_layers)
+        self._model_layers: List[Model] = self._get_model_layers()
+        self._conv_block_indicis: List[int] = self._get_conv_layer_indices()
+        self._current_layer: Model = self._model.get_layer(name=self._model_layers[self._conv_block_indicis[0]].name)
+        self._feature_extractor = Model(inputs=self._model.inputs, outputs=self._current_layer.output)
+        self._padding_amount: int = padding_amount
 
-        self._current_layer = self._model.get_layer(name=self._model_layers[self._conv_block_indicis[0]].name)
-        self._feature_extractor = Model(input_shape=self._model.inputs, outputs=self._current_layer.output)
+        self.max_num_neurons: int = len(self._model.layers) - 1
 
 
     def __call__(
             self,
-            signal: np.ndarray,
+            input_signal: np.ndarray,
             filter_index: int,
             learning_rate: float = 10.0,
             iterations: int = 1,
+            filter_amount: float = 0.0
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
+        :param input_signal:
         :param filter_index:
         :param learning_rate:
         :param iterations:
-        :param signal:
         :return:
         """
 
         # Segment audio signal and convert segments into mel spectrograms
-        mel_spec_segments: List[np.ndarray] = convert_signal_into_mel_spectrogram_segments(signal)
+        mel_spec_segments: List[np.ndarray] = convert_signal_into_mel_spectrogram_segments(input_signal)
+
+        # Initialize lists for putting back together segmented signal after processing.
         mel_specs: List[np.ndarray] = []
         processed_signal: List[np.ndarray] = []
 
         for mel in mel_spec_segments:
+            neuron_feature: np.ndarray = self._visualize_filter(
+                filter_index,
+                mel,
+                learning_rate=learning_rate,
+                iterations=iterations,
+                filter_amount=filter_amount
+            )
 
-            # Perform gradient ascent.
-            for _ in range(iterations):
-                mel: np.ndarray = self._gradient_ascent_step(
-                    self._feature_extractor,
-                    mel,
-                    filter_index,
-                    learning_rate
-                )
-
-            # Decode the resulting input image.
-            mel = self._post_process_signal(signal[0].numpy())
-            neuron_feature = mel.reshape(consts.NUM_MELS, -1)
+            neuron_feature = neuron_feature.reshape(consts.NUM_MELS, -1)
 
             # convert mel spectrogram into audio.
             signal: np.ndarray = mel_to_audio(
@@ -80,6 +89,11 @@ class ModelFilterAmplifier:
         mel_specs_concate: np.ndarray = np.concatenate(np.stack(mel_specs))
 
         return final_signal, mel_specs_concate
+
+
+    # =================================================================================================================
+    # ----------------------------------------------- Public functions ------------------------------------------------
+    # =================================================================================================================
 
 
     def set_current_layer(self, layer_index: int):
@@ -102,60 +116,94 @@ class ModelFilterAmplifier:
         self._feature_extractor = Model(input_shape=self._model.inputs, outputs=self._current_layer.output)
 
 
-    @staticmethod
-    def _get_model_layers(model: Model) -> List[Model]:
+    # =================================================================================================================
+    # ----------------------------------------------- Private functions -----------------------------------------------
+    # =================================================================================================================
+
+
+    def _visualize_filter(
+            self,
+            filter_index: int,
+            signal: np.ndarray,
+            learning_rate: float = 10.0,
+            iterations: int = 30,
+            filter_amount: float = 0.0
+    ) -> np.ndarray:
         """
-        :param model:
+        :param filter_index:
+        :param signal:
+        :param learning_rate:
+        :param iterations:
+        :param filter_amount:
         :return:
         """
 
-        layer_output: List[KerasTensor] = [_layer.output for _layer in model.layers[:len(model.layers) - 1]]
-        activation_model = Model(inputs=model.input, outputs=layer_output)
+        for _ in range(iterations):
+            signal: np.ndarray = self._gradient_ascent_step(
+                signal,
+                filter_index,
+                learning_rate
+            )
+
+        # Decode the resulting input image.
+        signal: np.ndarray = self._post_process_signal(signal[0].numpy(), filter_amount)
+
+        return signal
+
+
+    def _get_model_layers(self) -> List[Model]:
+        """
+        :return:
+        """
+
+        layer_output: List[KerasTensor] = [layer.output for layer in self._model.layers[:len(self._model.layers) - 1]]
+        activation_model = Model(inputs=self._model.input, outputs=layer_output)
 
         return activation_model.layers
 
 
-    @staticmethod
-    def _get_conv_layer_indicis(model_layers: List[Model]) -> List[int]:
+    def _get_conv_layer_indices(self) -> List[int]:
         """
-        :param model_layers:
         :return:
         """
 
-        conv_block_indicis: List[int] = []
+        conv_block_indices: List[int] = []
 
-        for i, layer in enumerate(model_layers):
+        for layer_i, layer in enumerate(self._model_layers):
             if 'conv' in layer.name:
-                conv_block_indicis.append(i)
+                conv_block_indices.append(layer_i)
 
-        return conv_block_indicis
+        return conv_block_indices
 
 
     def _compute_loss(
             self,
-            _feature_extractor: Model,
-            _input_signal: np.ndarray,
-            _filter_index: int
+            input_signal: np.ndarray,
+            filter_index: int
     ) -> float:
         """
-        :param _feature_extractor:
-        :param _input_signal:
-        :param _filter_index:
+        :param input_signal:
+        :param filter_index:
         :return:
         """
 
-        activation: List[np.ndarray] = _feature_extractor(_input_signal)
+        activation: List[np.ndarray] = self._feature_extractor(input_signal)
 
         try:
-            filter_activation = activation[:, :, :, _filter_index]
+            filter_activation = activation[
+                                :,
+                                self._padding_amount: -self._padding_amount,
+                                self._padding_amount: -self._padding_amount,
+                                filter_index
+                                ]
 
-        except IndexError:
+        except ValueError or IndexError:
             print(
                 f'Filter index is set out of bounds. Max filter index possible is: '
                 f'{self._current_layer.output.shape[-1] - 1}'
             )
 
-            sys.exit(2)
+            sys.exit(1)
 
         return reduce_mean(filter_activation)
 
@@ -163,13 +211,11 @@ class ModelFilterAmplifier:
     @tf.function
     def _gradient_ascent_step(
             self,
-            feature_extractor: Model,
             signal: np.ndarray,
             filter_index: int,
             learning_rate: float
     ) -> np.ndarray:
         """
-        :param feature_extractor:
         :param signal:
         :param filter_index:
         :param learning_rate:
@@ -178,10 +224,10 @@ class ModelFilterAmplifier:
 
         with GradientTape() as tape:
             tape.watch(signal)
-            _loss = self._compute_loss(feature_extractor, signal, filter_index)
+            loss: float = self._compute_loss(signal, filter_index)
 
         # Compute gradients.
-        grads = tape.gradient(_loss, signal)
+        grads = tape.gradient(loss, signal)
 
         # Normalize gradients.
         grads = tf.math.l2_normalize(grads)
@@ -191,18 +237,14 @@ class ModelFilterAmplifier:
 
 
     @staticmethod
-    def _post_process_signal(signal: np.ndarray) -> np.ndarray:
+    def _post_process_signal(signal: np.ndarray, filter_amount: float = 0.0) -> np.ndarray:
         """
         :param signal:
+        :param filter_amount:
         :return:
         """
 
-        # Normalize array: center on 0., ensure variance is 0.15.
-        signal -= signal.mean()
-        signal /= signal.std() + 1e-5
-        signal *= 0.15
-
-        # Clip to [0, 1].
+        signal -= filter_amount
         signal = np.clip(signal, 0, 1)
 
         return signal

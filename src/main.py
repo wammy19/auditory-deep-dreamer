@@ -1,105 +1,49 @@
-import os
-from tensorflow.keras.models import load_model, Model
-from keras.engine.keras_tensor import KerasTensor
-from typing import List
 import numpy as np
-from utils.audio_tools import load_and_convert_audio_into_mel_spectrogram
-import utils.constants as consts
-from librosa.feature.inverse import mel_to_audio
+from tensorflow.keras.models import Model, load_model
+from ai_tools import ModelFilterAmplifier
+from librosa import load
+from utils.audio_tools import create_audio_player
+from utils.displays import display_mel_spectrogram
 from soundfile import write
 from os.path import join
+from os import makedirs
+import utils.constants as consts
+from matplotlib import pyplot as plt
 from librosa.display import specshow
-from librosa import power_to_db
-import matplotlib.pyplot as plt
-from concurrent.futures import ProcessPoolExecutor
-from utils.constants import X_SHAPE
 
+PATH_TO_MODEL: str = '../runs/models/model_3/epoch-96.pb'
+PATH_TO_AUDIO: str = '../long-audio/debussy.wav'
+OUTPUT_DIR: str = '../feature_visualization'
 
-PATH_TO_MODEL: str = '../models/model_0/epoch-26.pb'
-PATH_TO_AUDIO: str = '../media/audio/string_a#.wav'
-OUTPUT_DIR: str = '../layer_outputs'
-NUM_LAYERS: int = 44
-NUM_WORKERS: int = 16
+makedirs(OUTPUT_DIR, exist_ok=True)
+makedirs(join(OUTPUT_DIR, 'mel_specs'), exist_ok=True)
 
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# Load model and sample.
+model: Model = load_model(PATH_TO_MODEL)
+sample: np.ndarray = load(PATH_TO_AUDIO)[0]
 
+# Write audio file.
+write(join(OUTPUT_DIR, 'input') + '.wav', sample, samplerate=consts.SAMPLE_RATE)
 
-def save_neuron_output(layer_activation, neuron_i, path_to_out_dir, path_to_mel_specs):
-    """
-    :param layer_activation:
-    :param neuron_i:
-    :param path_to_out_dir:
-    :param path_to_mel_specs:
-    :return:
-    """
+model_filter_amplifier = ModelFilterAmplifier(model, 2)
 
-    print(f'Processing {neuron_i}')
+# Loop over all neurons and save their output.
+for neuron_i in range(model_filter_amplifier.max_num_neurons):
+    audio_signal, mel_spec = model_filter_amplifier(
+        sample,
+        filter_index=neuron_i,
+        iterations=1,
+        filter_amount=0.06,  # Mild high cut. 0 is no filtering, 1 is completely closed filter.
+    )  # type: np.ndarray, np.ndarray
 
-    mel_spec: np.ndarray = layer_activation[0, :, :, neuron_i]
-    pad_left: np.ndarray = X_SHAPE[0] - mel_spec.shape[0]
-    pad_right: np.ndarray = X_SHAPE[1] - mel_spec.shape[1]
-    mel_spec = np.pad(mel_spec, ((0, pad_left), (0, pad_right)), 'minimum')
-
-    signal: np.ndarray = mel_to_audio(
-        mel_spec,
-        sr=consts.SAMPLE_RATE,
-        n_iter=consts.MEL_TO_AUDIO_N_ITERATIONS
-    )
+    create_audio_player(audio_signal)
+    display_mel_spectrogram(mel_spec)
 
     neuron_name: str = f'neuron_{neuron_i}'
-    write(join(path_to_out_dir, neuron_name) + '.wav', signal, consts.SAMPLE_RATE)
 
-    mel_spec_log: np.ndarray = power_to_db(mel_spec, ref=np.max)
-    specshow(mel_spec_log, sr=consts.SAMPLE_RATE)
-    plt.savefig(join(path_to_mel_specs, neuron_name + '.png'))
+    # Write audio file.
+    write(join(OUTPUT_DIR, neuron_name) + '.wav', audio_signal, samplerate=consts.SAMPLE_RATE)
 
-
-def main():
-    input_data: np.ndarray = load_and_convert_audio_into_mel_spectrogram(PATH_TO_AUDIO, True, 1.0)
-
-    print('Loading model.')
-    # Create model for feature visualization.
-    model: Model = load_model(PATH_TO_MODEL)
-    layer_output: List[KerasTensor] = [layer.output for layer in model.layers[:NUM_LAYERS]]
-    activation_model = Model(inputs=model.input, outputs=layer_output)
-
-    print('Gathering layers.')
-
-    # Collect indicis to model's conv block layers.
-    layers = activation_model.layers
-    conv_block_indicis: List[int] = []
-
-    for i, layer in enumerate(layers):
-        if 'conv_block' in layer.name:
-            conv_block_indicis.append(i)
-
-    activations: List[np.ndarray] = activation_model.predict(input_data)
-
-    print('Looping over layers.')
-
-    # Loop over all conv blocks.
-    for layer_i in conv_block_indicis:
-        layer_activation: np.ndarray = activations[layer_i]
-        layer_name: str = f'conv_block_{layer_i}'
-
-        path_to_out_dir: str = join(OUTPUT_DIR, layer_name)
-        path_to_mel_specs: str = join(path_to_out_dir, 'mel_specs')
-
-        os.makedirs(path_to_out_dir, exist_ok=True)
-        os.makedirs(path_to_mel_specs, exist_ok=True)
-
-        # Loop over each neuron and save audio.
-        for neuron_i in range(layer_activation.shape[-1] - 1):
-
-            with ProcessPoolExecutor(max_workers=NUM_WORKERS) as process_pool_executor:
-                process_pool_executor.submit(
-                    save_neuron_output,
-                    layer_activation,
-                    neuron_i,
-                    path_to_out_dir,
-                    path_to_mel_specs
-                )
-
-
-if __name__ == '__main__':
-    main()
+    # Write mel spectrogram to file.
+    specshow(mel_spec, sr=consts.SAMPLE_RATE)
+    plt.savefig(join(OUTPUT_DIR, 'mel_specs', neuron_name + '.png'))

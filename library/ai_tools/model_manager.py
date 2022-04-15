@@ -29,6 +29,7 @@ class ModelManager:
     performing model epochs are saved.
     """
 
+
     # =================================================================================================================
     # ---------------------------------------------- Class Constructors -----------------------------------------------
     # =================================================================================================================
@@ -102,6 +103,7 @@ class ModelManager:
     # =================================================================================================================
     # ----------------------------------------------- Public functions ------------------------------------------------
     # =================================================================================================================
+
 
     def build_train_and_evaluate_model(
             self,
@@ -320,6 +322,7 @@ class ModelManager:
     # ----------------------------------------------- Private functions -----------------------------------------------
     # =================================================================================================================
 
+
     def _save_model_settings_to_csv(self, model_name: str, model_config: Dict[str, any]) -> None:
         """
         :param model_config: A dict containing the parameter to constructing a model, and it's value.
@@ -328,7 +331,7 @@ class ModelManager:
         Appends the model settings to a csv file.
         """
 
-        new_model_config: Dict[str, any] = {'model_ID': self._model_ID}
+        new_model_config: Dict[str, any] = { 'model_ID': self._model_ID }
         new_model_config.update(model_config)
 
         csv_headers: List[str] = []

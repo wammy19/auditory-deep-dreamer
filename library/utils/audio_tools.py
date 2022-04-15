@@ -5,7 +5,7 @@ import IPython.display as display
 import numpy as np
 import soundfile as sf
 from IPython.core.display import display as core_display
-from librosa import load
+from librosa import load, tone
 from librosa.effects import time_stretch
 from librosa.feature import melspectrogram
 from librosa.feature.inverse import mel_to_audio
@@ -160,3 +160,31 @@ def load_and_convert_audio_into_mel_spectrogram(
         mel_spectrogram = mel_spectrogram.reshape((1, 300, 44, 1))
 
     return mel_spectrogram
+
+
+def generate_sine_wave_mel_spectrogram(
+        freq: int = 440,
+        duration: float = 1.0,
+        sample_rate: int = consts.SAMPLE_RATE
+) -> np.ndarray:
+    """
+    :param freq: Frequency in Hz. 440hz == A
+    :param duration: Time in seconds.
+    :param sample_rate:
+    :return:
+
+    Generates a sine wave and encodes it into a mel spectrogram.
+    """
+
+    sine_wave: np.ndarray = tone(freq, duration=duration, sr=sample_rate)
+
+    encoded_sine_wave: np.ndarray = melspectrogram(
+        y=sine_wave,
+        sr=consts.SAMPLE_RATE,
+        n_fft=consts.NUM_FFT,
+        hop_length=consts.MEL_HOP_LEN,
+        n_mels=consts.NUM_MELS,
+        win_length=consts.MEL_WINDOW_LEN
+    )
+
+    return np.array([encoded_sine_wave.reshape(consts.X_SHAPE)])
