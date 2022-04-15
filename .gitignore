@@ -16,6 +16,8 @@ logs
 long-audio
 runs
 layer_outputs
+feature_visualization
+*.zip
 
 # Misc
 aspit002_AI_coursework_2

@@ -52,6 +52,34 @@ def segment_signal(
     return all_audio_segments
 
 
+def convert_signal_into_mel_spectrogram_segments(audio_signal: np.ndarray) -> List[np.ndarray]:
+    """
+    :param audio_signal:
+    :return:
+    """
+
+    # Segment signal into 1 second samples
+    signal_segments: List[np.ndarray] = segment_signal(audio_signal, window_leap_fraction=1)
+    mel_spec_segments: List[np.ndarray] = []
+
+    # Loop over all segments and encode them into mel spectrograms.
+    for sample in signal_segments:
+        encoded_segment: np.ndarray = melspectrogram(
+            y=sample,
+            sr=consts.SAMPLE_RATE,
+            n_fft=consts.NUM_FFT,
+            hop_length=consts.MEL_HOP_LEN,
+            n_mels=consts.NUM_MELS,
+            win_length=consts.MEL_WINDOW_LEN
+        )
+
+        # Reshape mel spectrograms
+        encoded_segment = np.array([encoded_segment.reshape(consts.X_SHAPE)])
+        mel_spec_segments.append(encoded_segment)
+
+    return mel_spec_segments
+
+
 def create_audio_player(
         signal: np.ndarray,
         sample_rate: int = consts.SAMPLE_RATE,
