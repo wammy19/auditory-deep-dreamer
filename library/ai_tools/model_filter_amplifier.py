@@ -12,6 +12,7 @@ import tensorflow as tf
 import utils.constants as consts
 from librosa.feature.inverse import mel_to_audio
 from utils.audio_tools import convert_signal_into_mel_spectrogram_segments
+from maad.util import crossfade_list
 
 
 class ModelFilterAmplifier:
@@ -45,13 +46,16 @@ class ModelFilterAmplifier:
             filter_index: int,
             learning_rate: float = 10.0,
             iterations: int = 1,
-            filter_amount: float = 0.0
+            filter_amount: float = 0.0,
+            cross_fade_time: float = 1.0
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
         :param input_signal:
         :param filter_index:
         :param learning_rate:
         :param iterations:
+        :param filter_amount:
+        :param cross_fade_time:
         :return:
         """
 
@@ -84,8 +88,7 @@ class ModelFilterAmplifier:
             processed_signal.append(signal)
             mel_specs.append(neuron_feature)
 
-        # Put together all audio and mel spectrogram signals.
-        final_signal = np.concatenate(np.stack(processed_signal))
+        final_signal: np.ndarray = crossfade_list(processed_signal, 1, cross_fade_time)
         mel_specs_concate: np.ndarray = np.concatenate(np.stack(mel_specs))
 
         return final_signal, mel_specs_concate
@@ -113,7 +116,7 @@ class ModelFilterAmplifier:
                 f'{len(self._conv_block_indicis) - 1}'
             )
 
-        self._feature_extractor = Model(input_shape=self._model.inputs, outputs=self._current_layer.output)
+        self._feature_extractor = Model(inputs=self._model.inputs, outputs=self._current_layer.output)
 
 
     # =================================================================================================================

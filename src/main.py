@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from librosa.display import specshow
 
 PATH_TO_MODEL: str = '../runs/models/model_3/epoch-96.pb'
-PATH_TO_AUDIO: str = '../long-audio/debussy.wav'
+PATH_TO_AUDIO: str = '../long-audio/casio_1.wav'
 OUTPUT_DIR: str = '../feature_visualization'
 
 makedirs(OUTPUT_DIR, exist_ok=True)
@@ -35,9 +35,6 @@ for neuron_i in range(model_filter_amplifier.max_num_neurons):
         iterations=1,
         filter_amount=0.06,  # Mild high cut. 0 is no filtering, 1 is completely closed filter.
     )  # type: np.ndarray, np.ndarray
-
-    create_audio_player(audio_signal)
-    display_mel_spectrogram(mel_spec)
 
     neuron_name: str = f'neuron_{neuron_i}'
 

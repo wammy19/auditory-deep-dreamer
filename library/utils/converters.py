@@ -18,12 +18,12 @@ def open_image_as_np_array(path_to_img: str, max_dim: Optional[int] = None) -> n
     will be resized.
     """
 
-    _image: PIL.Image = PIL.Image.open(path_to_img)
+    image: PIL.Image = PIL.Image.open(path_to_img)
 
     if max_dim is not None:
-        _image.thumbnail((max_dim, max_dim))
+        image.thumbnail((max_dim, max_dim))
 
-    return np.array(_image)
+    return np.array(image)
 
 
 def convert_wav_as_log_mel(
