@@ -33,7 +33,7 @@ class ModelFilterAmplifier:
         self._model: Model = model
         self._model_layers: List[Model] = self._get_model_layers()
         self._conv_block_indicis: List[int] = self._get_conv_layer_indices()
-        self._current_layer: Model = self._model.get_layer(name=self._model_layers[self._conv_block_indicis[0]].name)
+        self._current_layer: Model = self._model.get_layer(index=self._conv_block_indicis[0])
         self._feature_extractor = Model(inputs=self._model.inputs, outputs=self._current_layer.output)
         self._padding_amount: int = padding_amount
 

@@ -25,15 +25,18 @@ def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool = False, samp
     if not is_log_mel:  # Convert mel spec to log scale.
         mel_spec: np.ndarray = librosa.power_to_db(mel_spec, ref=np.max)
 
+    if len(mel_spec.shape) > 2:
+        mel_spec = mel_spec.reshape(mel_spec.shape[0], mel_spec.shape[1])
+
     image = librosa.display.specshow(
         mel_spec,
         x_axis='time',
         y_axis='mel',
         sr=sample_rate,
-        ax=ax
+        ax=ax,
     )
 
-    fig.colorbar(image, ax=ax, format='%+2.0f dB')
+    fig.colorbar(image, format='%+2.0f dB')
     ax.set(title='Mel-frequency spectrogram')
     plt.show()
 
