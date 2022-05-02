@@ -13,7 +13,7 @@ from utils.helpers import unix_url_substring_pattern
 
 def main():
     data_gen = DataGenerator.from_path_to_audio(
-        '/home/andrea/dev/uni/datasets/serialized_dataset',
+        '/home/andrea/dev/uni/datasets/nsynth',
         number_of_samples_for_each_class=200_000
     )
 
@@ -29,20 +29,20 @@ def main():
     plt.xlabel('Instrument families')
     plt.ylabel('Number of samples')
     plt.bar(instruments_counter.keys(), instruments_counter.values())
-    plt.savefig('../plots/instrument_distro_post_time_stretching.png', bbox_inches='tight')
+    plt.savefig('../plots/instrument_distro_original.png', bbox_inches='tight')
 
     # Get pitch data.
-    pitches: List[str] = [decode_pitch(df.loc[i]['pitch_label']) for i in range(num_paths)]
-    pitches_counter = Counter(pitches)
+    # pitches: List[str] = [decode_pitch(df.loc[i]['pitch_label']) for i in range(num_paths)]
+    # pitches_counter = Counter(pitches)
 
     plt.clf()
 
     # Pitch Bar Plot.
-    plt.title('Pitch distribution.')
-    plt.xlabel('Pitches')
-    plt.ylabel('Number of samples')
-    plt.bar(pitches_counter.keys(), pitches_counter.values())
-    plt.savefig('../plots/pitch_distro_post_time_stretching.png', bbox_inches='tight')
+    # plt.title('Pitch distribution.')
+    # plt.xlabel('Pitches')
+    # plt.ylabel('Number of samples')
+    # plt.bar(pitches_counter.keys(), pitches_counter.values())
+    # plt.savefig('../plots/pitch_distro_post_time_stretching.png', bbox_inches='tight')
 
 
 if __name__ == '__main__':

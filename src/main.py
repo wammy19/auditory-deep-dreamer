@@ -11,7 +11,7 @@ import utils.constants as consts
 from matplotlib import pyplot as plt
 from librosa.display import specshow
 
-PATH_TO_MODEL: str = '../runs/models/model_3/epoch-96.pb'
+PATH_TO_MODEL: str = '../models/model_3/epoch-96.pb'
 PATH_TO_AUDIO: str = '../long-audio/debussy.wav'
 OUTPUT_DIR: str = '../feature_visualization'
 
@@ -29,15 +29,15 @@ model_filter_amplifier = ModelFilterAmplifier(model, 2)
 
 # Loop over all neurons and save their output.
 for neuron_i in range(model_filter_amplifier.max_num_neurons):
+
+    print(f'Processing neuron: {neuron_i}')
+
     audio_signal, mel_spec = model_filter_amplifier(
         sample,
         filter_index=neuron_i,
         iterations=1,
         filter_amount=0.06,  # Mild high cut. 0 is no filtering, 1 is completely closed filter.
     )  # type: np.ndarray, np.ndarray
-
-    create_audio_player(audio_signal)
-    display_mel_spectrogram(mel_spec)
 
     neuron_name: str = f'neuron_{neuron_i}'
 

@@ -88,7 +88,6 @@ def main() -> None:
         num_fourth_conv_blocks=(1, 9),
         dropout_amount=(0.0, 0.499),
         learning_rate=(0.0, 0.0001),
-        num_classes=(y.shape[-1], y.shape[-1])
     )
 
     # Create optimizer object.

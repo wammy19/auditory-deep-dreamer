@@ -5,9 +5,10 @@ from typing import List
 
 from utils.audio_tools import time_stretch_signal
 
+
 # Settings.
-path_to_data_to_augment: str = '/home/andrea/dev/uni/datasets/nsynth_small'
-path_for_writing: str = '/home/andrea/dev/uni/datasets/nsynth'
+path_to_data_to_augment: str = '/home/andrea/dev/uni/datasets/nsynth_for_stretch'
+path_for_writing: str = '/home/andrea/dev/uni/datasets/nsynth_time_stretched'
 
 
 def main():
@@ -16,6 +17,8 @@ def main():
     for instrument in instruments:
         path_to_samples: str = join(path_to_data_to_augment, instrument)
         sample_paths: List[str] = os.listdir(path_to_samples)
+
+        os.makedirs(join(path_for_writing, instrument), exist_ok=True)
 
         print(f'\nProcessing {instrument}.')
         print(f'Num Samples: {len(sample_paths)}\n\n')

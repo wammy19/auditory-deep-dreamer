@@ -32,7 +32,7 @@ def create_data_frame_from_path(path_to_dataset: str, number_of_samples_for_each
     shuffle(wav_paths)
 
     # One hot encoded labels.
-    encoded_pitch_labels, pitch_labels = get_pitch_encodings(wav_paths)  # type: np.ndarray, List[str]
+    # encoded_pitch_labels, pitch_labels = get_pitch_encodings(wav_paths)  # type: np.ndarray, List[str]
     encoded_instrument_labels, instrument_labels = get_instrument_encodings(
         wav_paths,
         instrument_classes
@@ -42,9 +42,9 @@ def create_data_frame_from_path(path_to_dataset: str, number_of_samples_for_each
         {
             'path': wav_paths,
             'instrument': [label for label in instrument_labels],
-            'pitch': [label for label in pitch_labels],
+            # 'pitch': [label for label in pitch_labels],
             'instrument_label': [label for label in encoded_instrument_labels],
-            'pitch_label': [label for label in encoded_pitch_labels],
+            # 'pitch_label': [label for label in encoded_pitch_labels],
         }
     )
 

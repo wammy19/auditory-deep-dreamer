@@ -55,10 +55,7 @@ class ModelFilterAmplifier:
         :return:
         """
 
-        # Segment audio signal and convert segments into mel spectrograms
         mel_spec_segments: List[np.ndarray] = convert_signal_into_mel_spectrogram_segments(input_signal)
-
-        # Initialize lists for putting back together segmented signal after processing.
         mel_specs: List[np.ndarray] = []
         processed_signal: List[np.ndarray] = []
 

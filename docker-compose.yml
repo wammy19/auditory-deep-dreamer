@@ -34,11 +34,13 @@ services:
     image: aspit002/audio-deepdream-dev-env
     volumes:
       - ../datasets:/mnt/datasets
-      - ./models:/mnt/model-checkpoints
+      - ./models:/mnt/models
       - ./logs:/mnt/logs
+      - ./long-audio:/mnt/long-audio
       - ./media:/mnt/media
       - ./runs:/mnt/runs
       - ./layer_outputs:/mnt/layer_outputs
+      - ./feature_visualization:/mnt/feature_visualization
 
       # Mounting my library directory to the PYTHONPATH in the docker container.
       - ./library/deep_dream:/usr/local/lib/python3.8/dist-packages/deep_dream

@@ -273,7 +273,7 @@ def vgg_like_model(
         dropout_amount: float = 0.1,
         learning_rate: float = 0.001,
         input_shape: Tuple[int, int, int] = X_SHAPE,
-        num_classes: int = 10
+        num_classes: int = 15
 ) -> Model:
     """
     :param num_first_conv_blocks:

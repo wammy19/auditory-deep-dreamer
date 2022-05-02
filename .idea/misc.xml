@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.7 (auditory-deepdream)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (auditory-deepdream)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
@@ -8,12 +8,28 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="2061" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main_training_script.py" />
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/segment_data.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="715" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main.py" />
+          <option name="caretOffset" value="333" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/time_stretching.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1438" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/instrument_distro_plots.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/helpers.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="6359" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_builders.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="3573" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/data_generator.py" />
         </OpenedFileInfo>
       </list>
     </option>
