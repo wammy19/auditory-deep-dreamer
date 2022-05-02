@@ -1,7 +1,9 @@
 import tensorflow as tf
-from tensorflow import Tensor
 from tensorflow.keras import Model
+from tensorflow.keras.applications import InceptionV3
 from typing import List, Tuple
+import numpy as np
+from tensorflow import TensorSpec
 
 
 class DeepDreamer(tf.Module):
@@ -26,21 +28,21 @@ class DeepDreamer(tf.Module):
         # Resources:
         # Keras Documentation: https://keras.io/api/applications/inceptionv3/
         # Incite into the models' architecture: https://iq.opengenus.org/inception-v3-model-architecture/
-        _base_model: Model = tf.keras.applications.InceptionV3(include_top=False, weights='imagenet')
-        layers: List[str] = [_base_model.get_layer(name).output for name in layer_names_for_amplification]
+        base_model: Model = InceptionV3(include_top=False, weights='imagenet')
+        layers: List[str] = [base_model.get_layer(name).output for name in layer_names_for_amplification]
 
         # Create the feature extraction model.
-        self.model = tf.keras.Model(inputs=_base_model.input, outputs=layers)
+        self.model = Model(inputs=base_model.input, outputs=layers)
 
 
     @tf.function(
         input_signature=(
-                tf.TensorSpec(shape=[None, None, 3], dtype=tf.float32),
-                tf.TensorSpec(shape=[], dtype=tf.int32),)
+                TensorSpec(shape=[None, None, 3], dtype=tf.float32),
+                TensorSpec(shape=[], dtype=tf.int32),)
     )
-    def __call__(self, _image: Tensor, tile_size: int = 512) -> Tensor:
+    def __call__(self, image: np.ndarray, tile_size: int = 512) -> np.ndarray:
         """
-        :param _image: A loaded image that's been converted to a tf.Tensor.
+        :param image: A loaded image that's been converted to a tf.Tensor.
         :param tile_size:
         :return:
 
@@ -48,18 +50,18 @@ class DeepDreamer(tf.Module):
         you will have created an image that increasingly excites the activations of certain layers in the network."
         """
 
-        shift, img_rolled = self._random_roll(_image, tile_size)
+        shift, img_rolled = self._random_roll(image, tile_size)  # type: np.ndarray, np.ndarray
 
         # Initialize the image gradients to zero.
-        gradients: Tensor = tf.zeros_like(img_rolled)
+        gradients: np.ndarray = tf.zeros_like(img_rolled)
 
         # Skip the last tile, unless there's only one tile.
-        xs = tf.range(0, img_rolled.shape[0], tile_size)[:-1]
+        xs: np.ndarray = tf.range(0, img_rolled.shape[0], tile_size)[:-1]
 
         if not tf.cast(len(xs), bool):
             xs = tf.constant([0])
 
-        ys = tf.range(0, img_rolled.shape[1], tile_size)[:-1]
+        ys: np.ndarray = tf.range(0, img_rolled.shape[1], tile_size)[:-1]
 
         if not tf.cast(len(ys), bool):
             ys = tf.constant([0])
@@ -73,7 +75,7 @@ class DeepDreamer(tf.Module):
 
                     # Extract a tile out of the image.
                     img_tile = img_rolled[x:x + tile_size, y:y + tile_size]
-                    loss = self._calculate_loss(img_tile)
+                    loss: np.ndarray = self._calculate_loss(img_tile)
 
                 # Update the image gradients for this tile.
                 gradients = gradients + tape.gradient(loss, img_rolled)
@@ -89,14 +91,14 @@ class DeepDreamer(tf.Module):
 
     def dreamify(
             self,
-            _img: Tensor,
+            img: np.ndarray,
             steps_per_octave: int = 10,
             step_size: float = 0.01,
             octaves: range = range(-2, 3),
             octave_scale: float = 1.3,
-    ) -> Tensor:
+    ) -> np.ndarray:
         """
-        :param _img:
+        :param img:
         :param steps_per_octave:
         :param step_size:
         :param octaves:
@@ -106,31 +108,30 @@ class DeepDreamer(tf.Module):
         Will create a deep dream image returned as a tf.Tensor.
         """
 
-        _base_shape: Tensor = tf.shape(_img)
-        _img = tf.keras.preprocessing.image.img_to_array(_img)
-        _img = tf.keras.applications.inception_v3.preprocess_input(_img)
+        base_shape: np.ndarray = tf.shape(img)
+        img = tf.keras.preprocessing.image.img_to_array(img)
+        img = tf.keras.applications.inception_v3.preprocess_input(img)
 
-        initial_shape = _img.shape[:-1]
-        print(initial_shape)
-        _img = tf.image.resize(_img, initial_shape)
+        initial_shape = img.shape[:-1]
+        img = tf.image.resize(img, initial_shape)
 
         for octave in octaves:
             # Scale the image based on the octave
-            new_size = tf.cast(tf.convert_to_tensor(_base_shape[:-1]), tf.float32) * (octave_scale ** octave)
-            _img = tf.image.resize(_img, tf.cast(new_size, tf.int32))
+            new_size: float = tf.cast(tf.convert_to_tensor(base_shape[:-1]), tf.float32) * (octave_scale ** octave)
+            img = tf.image.resize(img, tf.cast(new_size, tf.int32))
 
             for step in range(steps_per_octave):
-                gradients = self(_img)
-                _img = _img + gradients * step_size
-                _img = tf.clip_by_value(_img, -1, 1)
+                gradients = self(img)
+                img += gradients * step_size
+                img = tf.clip_by_value(img, -1, 1)
 
-        result: Tensor = self._normalize_image(_img)
+        result: np.ndarray = self._normalize_image(img)
 
         return result
 
-    def getLayerName(self):
-        """
 
+    def get_layer_name(self) -> None:
+        """
         :return:
         """
 
@@ -138,9 +139,9 @@ class DeepDreamer(tf.Module):
             print(layer.name)
 
 
-    def _calculate_loss(self, _image: Tensor) -> Tensor:
+    def _calculate_loss(self, image: np.ndarray) -> np.ndarray:
         """
-        :param _image: A loaded image that has been converted into a tf.Tensor
+        :param image: A loaded image that has been converted into a tf.Tensor
         :return:
 
         Pass forward the image through the model to retrieve the activations.
@@ -157,39 +158,39 @@ class DeepDreamer(tf.Module):
         you will maximize this loss via gradient ascent.
         """
 
-        img_batch: Tensor = tf.expand_dims(_image, axis=0)
-        layer_activations: Tensor = self.model(img_batch)
+        img_batch: np.ndarray = tf.expand_dims(image, axis=0)
+        layer_activations: np.ndarray = self.model(img_batch)
 
         if len(layer_activations) == 1:
-            layer_activations: List[Tensor] = [layer_activations]
+            layer_activations: List[np.ndarray] = [layer_activations]
 
-        losses: List[Tensor] = []
+        losses: List[np.ndarray] = []
 
-        for act in layer_activations:
-            loss: Tensor = tf.math.reduce_mean(act)
+        for activation in layer_activations:
+            loss: np.ndarray = tf.math.reduce_mean(activation)
             losses.append(loss)
 
         return tf.reduce_sum(losses)
 
 
     @staticmethod
-    def _random_roll(_image: Tensor, max_roll) -> Tuple[Tensor, Tensor]:
+    def _random_roll(image: np.ndarray, max_roll) -> Tuple[np.ndarray, np.ndarray]:
         """
-        :param _image:
+        :param image:
         :param max_roll:
         :return:
 
         Randomly shift the image to avoid tiled boundaries.
         """
 
-        shift: Tensor = tf.random.uniform(shape=[2], minval=-max_roll, maxval=max_roll, dtype=tf.int32)
-        img_rolled: Tensor = tf.roll(_image, shift=shift, axis=[0, 1])
+        shift: np.ndarray = tf.random.uniform(shape=[2], minval=-max_roll, maxval=max_roll, dtype=tf.int32)
+        img_rolled: np.ndarray = tf.roll(image, shift=shift, axis=[0, 1])
 
         return shift, img_rolled
 
 
     @staticmethod
-    def _normalize_image(input_image: Tensor) -> Tensor:
+    def _normalize_image(input_image: np.ndarray) -> np.ndarray:
         """
         :param input_image:
         :return:
@@ -197,6 +198,6 @@ class DeepDreamer(tf.Module):
         Normalizes an image.
         """
 
-        output_image: Tensor = 255 * (input_image + 1) / 2
+        output_image: np.ndarray = 255 * (input_image + 1) / 2
 
         return tf.cast(output_image, tf.uint8)

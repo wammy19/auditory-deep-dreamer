@@ -74,10 +74,28 @@ def convert_signal_into_mel_spectrogram_segments(audio_signal: np.ndarray) -> Li
         )
 
         # Reshape mel spectrograms
+        # TODO: Investigate if wrapping this numpy array in another array produces the correct
+        #  shape for model to process. resulting shape: (1, 300, 44, 1).
         encoded_segment = np.array([encoded_segment.reshape(consts.X_SHAPE)])
         mel_spec_segments.append(encoded_segment)
 
     return mel_spec_segments
+
+
+def convert_signal_into_mel_spectrogram(signal: np.ndarray) -> np.ndarray:
+    """
+    :param signal:
+    :return:
+    """
+
+    return melspectrogram(
+        y=signal,
+        sr=consts.SAMPLE_RATE,
+        n_fft=consts.NUM_FFT,
+        hop_length=consts.MEL_HOP_LEN,
+        n_mels=consts.NUM_MELS,
+        win_length=consts.MEL_WINDOW_LEN
+    )
 
 
 def create_audio_player(
