@@ -23,6 +23,7 @@ PyYAML = "^6.0"
 aim = "^3.6.0"
 bayesian-optimization = "^1.2.0"
 opencv-python = "^4.5.5"
+scikit-maad = "^1.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

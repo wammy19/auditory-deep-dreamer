@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from concurrent.futures import Future, ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor
 from os.path import join
 from typing import List, Optional, Tuple, Union
 
@@ -17,6 +17,7 @@ class DataGenerator(Sequence):
     """
     Data generator class loads in raw audio and encodes the signal into a mel spectrogram in a set batch size.
     """
+
 
     # =================================================================================================================
     # ---------------------------------------------- Class Constructors -----------------------------------------------
@@ -112,12 +113,14 @@ class DataGenerator(Sequence):
             cls,
             path_to_dataset: str,
             num_of_samples_per_instrument: int = 50_000,
+            path_to_logs: str = '../logs',
             training_batch_size: int = 32,
             test_split: float = 0.2,
     ) -> Tuple[DataGenerator, DataGenerator, DataGenerator]:
         """
         :param path_to_dataset: String path to root folder of dataset.
         :param num_of_samples_per_instrument: Number of samples for each instrument in the ontology.
+        :param path_to_logs:
         :param training_batch_size: Batch size for training.
         :param test_split: Percentage of data for test and validation.
         :return: Returns training, validation, testing data generators.
@@ -140,9 +143,9 @@ class DataGenerator(Sequence):
         )  # type: DataFrame, DataFrame, DataFrame
 
         # Store the data generator data frame for recreating the data generator if needed.
-        # df_train.to_csv(join(path_to_logs, 'train_data.csv'))
-        # df_val.to_csv(join(path_to_logs, 'val_data.csv'))
-        # df_test.to_csv(join(path_to_logs, 'test_data.csv'))
+        df_train.to_csv(join(path_to_logs, 'train_data.csv'))
+        df_val.to_csv(join(path_to_logs, 'val_data.csv'))
+        df_test.to_csv(join(path_to_logs, 'test_data.csv'))
 
         # Create Generators.
         train_data_generator: DataGenerator = DataGenerator(df_train, batch_size=training_batch_size)
@@ -183,14 +186,17 @@ class DataGenerator(Sequence):
 
         # Future data.
         X: List[np.ndarray] = []
-        futures: List[Future[np.ndarray]] = []
+        # futures: List[Future[np.ndarray]] = []
 
-        # Concurrently load and encode data.
         for path in wav_paths:
-            futures.append(self._process_pool_executor.submit(self._load_mel_spectrogram, path))
+            X.append(np.load(path))
 
-        for future in as_completed(futures):
-            X.append(future.result())
+        # # Concurrently load and encode data.
+        # for path in wav_paths:
+        #     futures.append(self._process_pool_executor.submit(self._load_mel_spectrogram, path))
+        #
+        # for future in as_completed(futures):
+        #     X.append(future.result())
 
         # Convert into a numpy array.
         X: np.ndarray = np.stack(X)

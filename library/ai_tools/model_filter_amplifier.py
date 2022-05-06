@@ -3,22 +3,25 @@ Class used to amplify features learnt in a CNN's filter onto and input audio sig
 """
 
 import sys
-import numpy as np
-from keras.engine.keras_tensor import KerasTensor
-from tensorflow.keras.models import Model
 from typing import List, Tuple
-from tensorflow import GradientTape, reduce_mean
+
+import numpy as np
 import tensorflow as tf
-import utils.constants as consts
+from keras.engine.keras_tensor import KerasTensor
 from librosa.feature.inverse import mel_to_audio
-from utils.audio_tools import convert_signal_into_mel_spectrogram_segments
 from maad.util import crossfade_list
+from tensorflow import GradientTape, reduce_mean
+from tensorflow.keras.models import Model
+
+import utils.constants as consts
+from utils.audio_tools import convert_signal_into_mel_spectrogram_segments
 
 
 class ModelFilterAmplifier:
     """
     Amplifies features stored in individual filters of a CNN.
     """
+
 
     # =================================================================================================================
     # ---------------------------------------------- Dunder Methods  --------------------------------------------------
@@ -27,13 +30,14 @@ class ModelFilterAmplifier:
     def __init__(
             self,
             model: Model,
-            padding_amount: int
+            padding_amount: int,
+            layer: int = 0
     ):
 
         self._model: Model = model
         self._model_layers: List[Model] = self._get_model_layers()
         self._conv_block_indicis: List[int] = self._get_conv_layer_indices()
-        self._current_layer: Model = self._model.get_layer(index=self._conv_block_indicis[0])
+        self._current_layer: Model = self._model.get_layer(index=self._conv_block_indicis[layer])
         self._feature_extractor = Model(inputs=self._model.inputs, outputs=self._current_layer.output)
         self._padding_amount: int = padding_amount
 
@@ -86,15 +90,14 @@ class ModelFilterAmplifier:
             mel_specs.append(neuron_feature)
 
         final_signal: np.ndarray = crossfade_list(processed_signal, 1, cross_fade_time)
-        mel_specs_concate: np.ndarray = np.concatenate(np.stack(mel_specs))
+        mel_specs_concat: np.ndarray = np.concatenate(np.stack(mel_specs))
 
-        return final_signal, mel_specs_concate
+        return final_signal, mel_specs_concat
 
 
     # =================================================================================================================
     # ----------------------------------------------- Public functions ------------------------------------------------
     # =================================================================================================================
-
 
     def set_current_layer(self, layer_index: int):
         """
@@ -119,7 +122,6 @@ class ModelFilterAmplifier:
     # =================================================================================================================
     # ----------------------------------------------- Private functions -----------------------------------------------
     # =================================================================================================================
-
 
     def _visualize_filter(
             self,

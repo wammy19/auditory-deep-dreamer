@@ -1,19 +1,20 @@
 import os
-from tensorflow.keras.models import load_model, Model
-from keras.engine.keras_tensor import KerasTensor
+from concurrent.futures import ProcessPoolExecutor
+from os.path import join
 from typing import List
+
+import matplotlib.pyplot as plt
 import numpy as np
-from utils.audio_tools import load_and_convert_audio_into_mel_spectrogram
-import utils.constants as consts
+from keras.engine.keras_tensor import KerasTensor
+from librosa import power_to_db
+from librosa.display import specshow
 from librosa.feature.inverse import mel_to_audio
 from soundfile import write
-from os.path import join
-from librosa.display import specshow
-from librosa import power_to_db
-import matplotlib.pyplot as plt
-from concurrent.futures import ProcessPoolExecutor
-from utils.constants import X_SHAPE
+from tensorflow.keras.models import Model, load_model
 
+import utils.constants as consts
+from utils.audio_tools import load_and_convert_audio_into_mel_spectrogram
+from utils.constants import X_SHAPE
 
 PATH_TO_MODEL: str = '../models/model_0/epoch-26.pb'
 PATH_TO_AUDIO: str = '../media/audio/string_a#.wav'
@@ -90,7 +91,6 @@ def main():
 
         # Loop over each neuron and save audio.
         for neuron_i in range(layer_activation.shape[-1] - 1):
-
             with ProcessPoolExecutor(max_workers=NUM_WORKERS) as process_pool_executor:
                 process_pool_executor.submit(
                     save_neuron_output,

@@ -7,12 +7,12 @@ from csv import DictWriter
 from os.path import exists, join
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
+import numpy as np
 from aim.keras import AimCallback
 from tensorflow.keras.callbacks import EarlyStopping, History, ModelCheckpoint
 from tensorflow.keras.models import Model, load_model
 
 from ai_tools import DataGenerator
-import numpy as np
 
 
 class MissingModelBuilderError(Exception):
@@ -104,7 +104,6 @@ class ModelManager:
     # ----------------------------------------------- Public functions ------------------------------------------------
     # =================================================================================================================
 
-
     def build_train_and_evaluate_model(
             self,
             epochs: int = 100,
@@ -144,7 +143,7 @@ class ModelManager:
         elif self.model_builder is None:
             raise MissingModelBuilderError(
                 'Missing a callable function for building a model. This can be set when creating a ModelManager, or'
-                'passed in with the ModelManager.build_model() as the first argument.'
+                'by passed in with the ModelManager.build_model() as the first argument.'
             )
 
         # Store settings of model for later logging.
@@ -322,7 +321,6 @@ class ModelManager:
     # ----------------------------------------------- Private functions -----------------------------------------------
     # =================================================================================================================
 
-
     def _save_model_settings_to_csv(self, model_name: str, model_config: Dict[str, any]) -> None:
         """
         :param model_config: A dict containing the parameter to constructing a model, and it's value.
@@ -331,7 +329,7 @@ class ModelManager:
         Appends the model settings to a csv file.
         """
 
-        new_model_config: Dict[str, any] = { 'model_ID': self._model_ID }
+        new_model_config: Dict[str, any] = {'model_ID': self._model_ID}
         new_model_config.update(model_config)
 
         csv_headers: List[str] = []

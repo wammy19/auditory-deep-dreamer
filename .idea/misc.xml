@@ -8,15 +8,11 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/segment_data.py" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
           <option name="caretOffset" value="333" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/time_stretching.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1438" />
+          <option name="caretOffset" value="1150" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/instrument_distro_plots.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
@@ -28,8 +24,12 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/model_builders.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="3573" />
+          <option name="caretOffset" value="857" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/library/ai_tools/data_generator.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="56" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/scripts/segment_data.py" />
         </OpenedFileInfo>
       </list>
     </option>

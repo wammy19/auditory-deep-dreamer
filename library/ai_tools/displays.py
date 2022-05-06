@@ -1,12 +1,13 @@
-import matplotlib.pyplot as plt
-import numpy as np
-from tensorflow.keras.callbacks import History
-from .data_generator import DataGenerator
-
-from tensorflow.keras.models import Model, load_model
 import os
 from os.path import join
 from typing import List
+
+import matplotlib.pyplot as plt
+import numpy as np
+from tensorflow.keras.callbacks import History
+from tensorflow.keras.models import Model, load_model
+
+from .data_generator import DataGenerator
 
 
 def plot_learning_metrics(
@@ -100,7 +101,6 @@ def evaluate_model_and_display_results(
         test_data_generator: DataGenerator,
         root_directory: str = '/mnt/model-checkpoints',
 ) -> None:
-
     # Get path to desired model.
     path_to_model: str = join(root_directory, model_name)
     best_model: str = sorted(os.listdir(path_to_model))[-1]

@@ -1,9 +1,98 @@
+from typing import List, Tuple
+
+import numpy as np
 import tensorflow as tf
+from tensorflow import Tensor, TensorSpec
 from tensorflow.keras import Model
 from tensorflow.keras.applications import InceptionV3
-from typing import List, Tuple
-import numpy as np
-from tensorflow import TensorSpec
+
+
+class AudioDeepDreamer(tf.Module):
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+
+    @tf.function(
+        input_signature=(
+                tf.TensorSpec(shape=[300, 44, 1], dtype=tf.float32),
+                tf.TensorSpec(shape=[], dtype=tf.int32),
+                tf.TensorSpec(shape=[], dtype=tf.float32),)
+    )
+    def __call__(self, signal, steps, step_size) -> Tuple[Tensor, Tensor]:
+        """
+        :param signal:
+        :param steps:
+        :param step_size:
+        :return:
+        """
+
+        loss = tf.constant(0.0)
+
+        for _ in tf.range(steps):
+            with tf.GradientTape() as tape:
+                tape.watch(signal)
+                loss = self._calc_loss(signal, self.model)
+
+            gradients = tape.gradient(loss, signal)
+            gradients /= tf.math.reduce_std(gradients) + 1e-8
+
+            signal = signal + gradients * step_size
+            signal = tf.clip_by_value(signal, -1, 1)
+
+        return loss, signal
+
+
+    def dreamify(self, signal: np.ndarray, steps: int = 5, step_size: float = 0.01):
+        """
+        :param signal: Mel spectrogram to DeepDream.
+        :param steps: Number of iterations of maximizing the activations of the hidden layer.
+        :param step_size: Optimizers step size.
+        :return:
+        """
+
+        signal: Tensor = tf.convert_to_tensor(signal)
+        step_size: Tensor = tf.convert_to_tensor(step_size)
+        steps_remaining = steps
+        step = 0
+
+        while steps_remaining:
+
+            if steps_remaining > 100:
+                run_steps = tf.constant(100)
+
+            else:
+                run_steps = tf.constant(steps_remaining)
+
+            steps_remaining -= run_steps
+            step += run_steps
+
+            loss, signal = self(signal, run_steps, tf.constant(step_size))
+
+        return signal
+
+
+    @staticmethod
+    def _calc_loss(signal, model) -> Tensor:
+        """
+        :param signal:
+        :param model:
+        :return:
+        """
+
+        signal_batch: Tensor = tf.expand_dims(signal, axis=0)
+        layer_activations = model(signal_batch)
+
+        if len(layer_activations) == 1:
+            layer_activations = [layer_activations]
+
+        losses: List[Tensor] = []
+        for activation in layer_activations:
+            loss: Tensor = tf.math.reduce_mean(activation)
+            losses.append(loss)
+
+        return tf.reduce_sum(losses)
 
 
 class DeepDreamer(tf.Module):

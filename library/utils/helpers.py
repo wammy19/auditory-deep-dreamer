@@ -80,16 +80,17 @@ def get_paths_to_wav_files(path_to_dataset: str, num_of_each_class: int = 50) ->
     wav_paths: List[str] = []
 
     for instrument in ontology:
+        num_of_paths_to_get: int = num_of_each_class
         path_to_instrument: str = join(path_to_dataset, instrument)
         paths: List[str] = os.listdir(path_to_instrument)
 
         shuffle(paths)
 
         # Use all the paths there are if the number given was greater than the number of paths there are.
-        if num_of_each_class > len(paths):
-            num_of_each_class = len(paths)
+        if num_of_paths_to_get > len(paths):
+            num_of_paths_to_get = len(paths)
 
-        for i in range(num_of_each_class):
+        for i in range(num_of_paths_to_get):
             wav_paths.append(join(path_to_instrument, paths[i]))
 
     return wav_paths

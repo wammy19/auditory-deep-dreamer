@@ -198,11 +198,11 @@ def generate_sine_wave_mel_spectrogram(
 
     encoded_sine_wave: np.ndarray = melspectrogram(
         y=sine_wave,
-        sr=consts.SAMPLE_RATE,
+        sr=sample_rate,
         n_fft=consts.NUM_FFT,
         hop_length=consts.MEL_HOP_LEN,
         n_mels=consts.NUM_MELS,
         win_length=consts.MEL_WINDOW_LEN
     )
 
-    return np.array([encoded_sine_wave.reshape(consts.X_SHAPE)])
+    return encoded_sine_wave

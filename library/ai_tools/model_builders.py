@@ -8,7 +8,7 @@ from tensorflow.keras.layers import BatchNormalization, Conv2D, Dense, Dropout, 
 from tensorflow.keras.losses import binary_crossentropy, categorical_crossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.regularizers import l2, l1_l2
+from tensorflow.keras.regularizers import l1_l2, l2
 
 import utils.constants as consts
 from utils.constants import X_SHAPE
@@ -129,6 +129,7 @@ def bayesian_optimization_test_model(
     :return:
 
     Returns a compiled tensorflow.keras.models.Model ready for fitting.
+    This model always results with an out-of memory error with certain settings.
     """
 
     neuron_count = int(neuron_pct * int(max_units))
@@ -181,61 +182,54 @@ def build_conv2d_model(
         num_dense_layers: int = 1,
         dense_layer_units: float = 32,
         dense_dropout_amount: float = 0.1,
+        learning_rate: float = 0.01,
+        kernel_regularization: float = 1.0E-3,
+        activity_regularization: float = 1.0E-3,
         input_shape: Tuple[int, int, int] = X_SHAPE,
         num_classes: int = 10
 ) -> Model:
     """
+    :param activity_regularization:
+    :param kernel_regularization:
     :param num_conv_block:
     :param num_filters:
     :param conv_dropout_amount:
     :param num_dense_layers:
     :param dense_layer_units:
     :param dense_dropout_amount:
+    :param learning_rate:
     :param input_shape:
     :param num_classes:
     :return:
     """
+
+    # Ensure values being passed in are ints.
+    num_conv_block = int(num_conv_block)
+    num_filters = int(num_filters)
+    num_dense_layers = int(num_dense_layers)
 
     input_layer = Input(shape=input_shape)
 
     # Normalize data.
     x = LayerNormalization(axis=2, name='batch_norm')(input_layer)
 
-    # Set kernel size for conv layer. This will decrease over every layer if there are more than 3 blocks.
-    if num_conv_block >= 3:
-        kernel_size = 7
-    else:
-        kernel_size = 3
+    kernel_size: int = 4
 
     # Conv blocks.
     for block_num in range(num_conv_block):
-
         x = Conv2D(
             num_filters,
             kernel_size=(kernel_size, kernel_size),
             activation=relu,
             padding='same',
-            name=f'conv_block_{block_num}'
+            name=f'conv_block_{block_num}',
+            kernel_regularizer=l1_l2(kernel_regularization),
+            activity_regularizer=l2(activity_regularization)
         )(x)
 
         x = MaxPooling2D(pool_size=(2, 2), padding='same', name=f'pooling_{block_num}')(x)
-
-        # "BatchNormalization is used liberally in many of the advanced convent architectures."
         x = BatchNormalization(name=f'batch_norm_{block_num}')(x)
-
-        # Add dropout.
         x = Dropout(conv_dropout_amount, name=f'conv_dropout{block_num}')(x)
-
-        # Decrease kernel size. Pattern:
-        # Layer 1 kernel size = 7
-        # Layer 2 kernel size = 5
-        # Layer 3 and greater kernel size = 3
-        if num_conv_block >= 3:
-            if block_num == 1:
-                kernel_size = 5
-
-            elif block_num > 2:
-                kernel_size = 3
 
     x = Flatten(name='flatten')(x)
 
@@ -257,7 +251,7 @@ def build_conv2d_model(
     _model = Model(inputs=input_layer, outputs=output)
 
     _model.compile(
-        optimizer='adam',
+        optimizer=Adam(learning_rate=learning_rate),
         loss=categorical_crossentropy,
         metrics=['accuracy']
     )
@@ -273,7 +267,7 @@ def vgg_like_model(
         dropout_amount: float = 0.1,
         learning_rate: float = 0.001,
         input_shape: Tuple[int, int, int] = X_SHAPE,
-        num_classes: int = 15
+        num_classes: int = 10
 ) -> Model:
     """
     :param num_first_conv_blocks:

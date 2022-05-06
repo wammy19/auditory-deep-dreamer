@@ -1,11 +1,13 @@
-from .constants import SAMPLE_RATE
+from typing import Union
+
 import IPython.display as display
+import PIL.Image
+import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
-import librosa.display
-import PIL.Image
 from tensorflow import Tensor
-from typing import Union
+
+from .constants import SAMPLE_RATE
 
 
 def display_mel_spectrogram(mel_spec: np.ndarray, is_log_mel: bool = False, sample_rate: int = SAMPLE_RATE) -> None:

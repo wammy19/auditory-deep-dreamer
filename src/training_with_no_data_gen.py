@@ -1,16 +1,16 @@
-from ai_tools.model_builders import build_conv2d_model, bayesian_optimization_test_model, vgg_like_model
+import os
+from dataclasses import dataclass
+from os.path import join
+from random import shuffle
+from typing import List
+
+import numpy as np
+from bayes_opt import BayesianOptimization, SequentialDomainReductionTransformer
+from tensorflow.keras.utils import to_categorical
+
 import settings as sett
 from ai_tools import ModelManager
-from typing import List
-import numpy as np
-import os
-from os.path import join
-from dataclasses import dataclass
-from tensorflow.keras.utils import to_categorical
-from sklearn.model_selection import train_test_split
-from random import shuffle
-from bayes_opt import SequentialDomainReductionTransformer, BayesianOptimization
-from tensorflow.keras.models import Model
+from ai_tools.model_builders import vgg_like_model
 
 
 @dataclass
@@ -56,17 +56,6 @@ def main() -> None:
     X, y = load_data(join(sett.dataset_path, 'train'))
     X_val, y_val = load_data(join(sett.dataset_path, 'validation'))
     X_test, y_test = load_data(join(sett.dataset_path, 'test'))
-    num_classes: int = y.shape[-1]
-
-
-    # model_params = dict(
-    #     num_conv_block=9,
-    #     num_filters=128,
-    #     num_dense_layers=2,
-    #     dense_layer_units=64,
-    #     conv_dropout_amount=0.1,
-    #     num_classes=num_classes,
-    # )
 
     model_manager = ModelManager(
         model_builder_func=vgg_like_model,
@@ -81,7 +70,7 @@ def main() -> None:
         training_batch_size=training_batch_size
     )
 
-    pbounds = dict(
+    p_bounds = dict(
         num_first_conv_blocks=(1, 9),
         num_second_conv_blocks=(1, 9),
         num_third_conv_blocks=(1, 9),
@@ -93,7 +82,7 @@ def main() -> None:
     # Create optimizer object.
     optimizer = BayesianOptimization(
         f=model_manager.build_train_and_evaluate_model,
-        pbounds=pbounds,
+        pbounds=p_bounds,
         random_state=the_meaning_of_life,
         bounds_transformer=SequentialDomainReductionTransformer(),
     )
@@ -102,10 +91,6 @@ def main() -> None:
         init_points=15,
         n_iter=50,
     )
-
-    # accuracy: float = model_manager.build_train_and_evaluate_model(early_stopping_patience=15, **model_params)
-
-    # print(f'Model accuracy: {accuracy}')
 
 
 if __name__ == '__main__':
