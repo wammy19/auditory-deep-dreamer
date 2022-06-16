@@ -1,5 +1,5 @@
 """
-The settings from ./config.yml are read and set in this file so that they can be accessed globally.
+The settings from ../config.yml are read and set in this file so that they can be accessed globally.
 """
 
 import yaml

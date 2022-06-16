@@ -6,7 +6,7 @@
 
 Small data set (≈4.6gb):
 
-`wget https://www.dropbox.com/s/v6hbvfwuyjm2ajp/small_nsynth.zip && unzip small_nsynth.zip`
+`wget https://www.dropbox.com/s/fxvt2l6bacrya7j/serialized_dataset.zip && unzip serialized_dataset.zip`
 
 ### Running with Docker
 
@@ -28,10 +28,7 @@ Build docker images:
 
 Before spinning up the containers, have a look at the docker-compose.yml file. If your machine doesn't have an Nvidia
 GPU, you will need to comment out the devices being passed into the container. Also set the memory for the container
-appropriately. It's currently set to 20gb because I have a lot of memory on machine.
-
-You also won't be able to run any notebooks that require a dataset as they are not available in the repo. In the future,
-I might create downloader scripts so this isn't an issue.
+appropriately.
 
 To start up the Jupyter server run:
 

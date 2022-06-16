@@ -1,3 +1,7 @@
+"""
+Main training loop with bayesian optimization. Various paths can be set in the ../config.yml file.
+"""
+
 import os
 
 import tensorflow as tf
